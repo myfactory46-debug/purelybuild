@@ -5,14 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PurelyBuild | Automated Website Factory</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col justify-between">
     
     <!-- Navigation -->
     <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-            <span class="text-xl font-bold bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">PurelyBuild</span>
+            <span class="text-xl font-bold bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">PurelyBuild <span class="text-xs text-blue-400/80 bg-blue-950 px-2 py-0.5 rounded border border-blue-800">v2.0</span></span>
             <button class="bg-blue-600 hover:bg-blue-500 text-white font-medium px-4 py-2 rounded-lg text-sm transition">Get Started</button>
         </div>
     </header>
@@ -21,7 +20,7 @@
     <main class="max-w-4xl mx-auto px-6 py-20 text-center flex-grow flex flex-col items-center justify-center">
         <div class="inline-flex items-center space-x-2 bg-slate-900 border border-slate-800 rounded-full px-4 py-1.5 text-xs text-slate-400 mb-8">
             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span>System Operational • Supabase Connected</span>
+            <span>System Operational • Direct API</span>
         </div>
         
         <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-6">
@@ -32,10 +31,11 @@
             The automated platform designed to generate, host, and manage production-ready websites at scale with zero friction.
         </p>
 
-        <form id="waitlist-form" class="flex flex-col sm:flex-row gap-4 w-full justify-center max-w-sm mb-2">
-            <input id="email-input" type="email" required placeholder="Enter your email" class="bg-slate-900 border border-slate-800 text-slate-200 text-sm rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 flex-1">
-            <button type="submit" id="submit-btn" class="bg-blue-600 hover:bg-blue-500 text-white font-medium px-6 py-3 rounded-lg text-sm transition whitespace-nowrap">Join Waitlist</button>
-        </form>
+        <!-- Direct Form Container -->
+        <div class="flex flex-col sm:flex-row gap-4 w-full justify-center max-w-sm mb-4">
+            <input id="email-input" type="email" placeholder="Enter your email" class="bg-slate-900 border border-slate-800 text-slate-200 text-sm rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 flex-1">
+            <button type="button" id="submit-btn" class="bg-blue-600 hover:bg-blue-500 text-white font-medium px-6 py-3 rounded-lg text-sm transition whitespace-nowrap">Join Waitlist</button>
+        </div>
         <div id="response-msg" class="text-sm font-medium h-6"></div>
     </main>
 
@@ -46,30 +46,50 @@
 
     <script>
         const SUPABASE_URL = 'https://zpxqetyrzpeleimnvzgq.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_f8An8GUjq9__N2pzvfmsKg_nrPGnKKY';
+        const SUPABASE_KEY = 'sb_publishable_f8An8GUjq9__N2pzvfmsKg_nrPGnKKY';
 
-        const { createClient } = window.supabase;
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        document.getElementById('submit-btn').addEventListener('click', async () => {
+            const emailInput = document.getElementById('email-input');
+            const msg = document.getElementById('response-msg');
+            const email = emailInput.value.trim();
 
-        const form = document.getElementById('waitlist-form');
-        const emailInput = document.getElementById('email-input');
-        const msg = document.getElementById('response-msg');
+            if (!email || !email.includes('@')) {
+                msg.className = 'text-sm font-medium text-amber-400';
+                msg.innerText = '⚠️ Please enter a valid email address.';
+                return;
+            }
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = emailInput.value;
             msg.className = 'text-sm font-medium text-slate-400';
             msg.innerText = 'Submitting...';
 
-            const { error } = await supabase.from('waitlist').insert([{ email }]);
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/waitlist`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify({ email: email })
+                });
 
-            if (error) {
+                if (response.ok) {
+                    msg.className = 'text-sm font-medium text-emerald-400';
+                    msg.innerText = '🎉 Success! You are on the waitlist.';
+                    emailInput.value = '';
+                } else {
+                    const errorData = await response.json().catch(() => ({}));
+                    msg.className = 'text-sm font-medium text-red-400';
+                    if (response.status === 409 || (errorData.message && errorData.message.includes('unique'))) {
+                        msg.innerText = '⚠️ You are already registered!';
+                    } else {
+                        msg.innerText = '❌ Error (' + response.status + '): ' + (errorData.message || 'Invalid API Key or Permissions');
+                    }
+                }
+            } catch (err) {
                 msg.className = 'text-sm font-medium text-red-400';
-                msg.innerText = error.message.includes('unique') ? '⚠️ You are already registered!' : '❌ Error: ' + error.message;
-            } else {
-                msg.className = 'text-sm font-medium text-emerald-400';
-                msg.innerText = '🎉 Success! You are on the waitlist.';
-                emailInput.value = '';
+                msg.innerText = '❌ Network Error: ' + err.message;
             }
         });
     </script>
