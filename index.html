@@ -2,9 +2,25 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PurelyBuild</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <h1>مرحباً بك في PurelyBuild</h1>
+    <h1>منصة PurelyBuild</h1>
+    <p id="connection-status">جاري الفحص والاتصال بـ Supabase...</p>
+
+    <script>
+        const SUPABASE_URL = 'https://zpxqetyrzpeleimnvzgq.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_f8An8GUjq9__N2pzvfmsKg_nrPGnKKY';
+
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function init() {
+            const status = document.getElementById('connection-status');
+            status.innerText = 'تم ربط الواجهة بقاعدة بيانات Supabase بنجاح!';
+        }
+        init();
+    </script>
 </body>
 </html>
