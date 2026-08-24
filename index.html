@@ -1,26 +1,29 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PurelyBuild</title>
+    <title>PurelyBuild | Automated Website Factory</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body>
-    <h1>منصة PurelyBuild</h1>
-    <p id="connection-status">جاري الفحص والاتصال بـ Supabase...</p>
+<body style="font-family: system-ui, -apple-system, sans-serif; padding: 40px; text-align: center; background-color: #0f172a; color: #f8fafc;">
+    <h1>PurelyBuild Platform</h1>
+    <p id="connection-status" style="font-size: 1.1rem; color: #94a3b8;">Checking database connection...</p>
 
     <script>
         const SUPABASE_URL = 'https://zpxqetyrzpeleimnvzgq.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_f8An8GUjq9__N2pzvfmsKg_nrPGnKKY';
 
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        async function init() {
-            const status = document.getElementById('connection-status');
-            status.innerText = 'تم ربط الواجهة بقاعدة بيانات Supabase بنجاح!';
+        try {
+            const { createClient } = window.supabase;
+            const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            
+            document.getElementById('connection-status').style.color = '#22c55e';
+            document.getElementById('connection-status').innerText = '✅ Supabase database connected successfully!';
+        } catch (error) {
+            document.getElementById('connection-status').style.color = '#ef4444';
+            document.getElementById('connection-status').innerText = '❌ Connection error: ' + error.message;
         }
-        init();
     </script>
 </body>
 </html>
