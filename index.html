@@ -4,26 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PurelyBuild | Automated Website Factory</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body style="font-family: system-ui, -apple-system, sans-serif; padding: 40px; text-align: center; background-color: #0f172a; color: #f8fafc;">
-    <h1>PurelyBuild Platform</h1>
-    <p id="connection-status" style="font-size: 1.1rem; color: #94a3b8;">Checking database connection...</p>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col justify-between">
+    
+    <!-- Navigation -->
+    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <span class="text-xl font-bold bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">PurelyBuild</span>
+            </div>
+            <button class="bg-blue-600 hover:bg-blue-500 text-white font-medium px-4 py-2 rounded-lg text-sm transition">Get Started</button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <main class="max-w-4xl mx-auto px-6 py-20 text-center flex-grow flex flex-col items-center justify-center">
+        <div class="inline-flex items-center space-x-2 bg-slate-900 border border-slate-800 rounded-full px-4 py-1.5 text-xs text-slate-400 mb-8">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>System Operational • Supabase Connected</span>
+        </div>
+        
+        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-6">
+            Build & Deploy Websites <span class="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">Instantly</span>
+        </h1>
+        
+        <p class="text-lg text-slate-400 max-w-2xl mb-10 leading-relaxed">
+            The automated platform designed to generate, host, and manage production-ready websites at scale with zero friction.
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-4 w-full justify-center max-w-sm">
+            <input type="email" placeholder="Enter your email" class="bg-slate-900 border border-slate-800 text-slate-200 text-sm rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 flex-1">
+            <button class="bg-blue-600 hover:bg-blue-500 text-white font-medium px-6 py-3 rounded-lg text-sm transition whitespace-nowrap">Join Waitlist</button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-900 py-6 text-center text-xs text-slate-600">
+        <p>&copy; 2026 PurelyBuild. All rights reserved.</p>
+    </footer>
 
     <script>
         const SUPABASE_URL = 'https://zpxqetyrzpeleimnvzgq.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_f8An8GUjq9__N2pzvfmsKg_nrPGnKKY';
-
-        try {
-            const { createClient } = window.supabase;
-            const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            
-            document.getElementById('connection-status').style.color = '#22c55e';
-            document.getElementById('connection-status').innerText = '✅ Supabase database connected successfully!';
-        } catch (error) {
-            document.getElementById('connection-status').style.color = '#ef4444';
-            document.getElementById('connection-status').innerText = '❌ Connection error: ' + error.message;
-        }
+        const { createClient } = window.supabase;
+        const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     </script>
 </body>
 </html>
