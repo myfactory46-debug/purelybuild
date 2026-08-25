@@ -70,6 +70,24 @@
         </div>
     </div>
 
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-sm w-full shadow-2xl text-center">
+            <div class="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center mx-auto mb-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-1">Delete Website?</h3>
+            <p class="text-xs text-slate-400 mb-6">Are you sure you want to delete this website? This action cannot be undone.</p>
+            
+            <div class="flex gap-3 justify-center">
+                <button type="button" onclick="closeDeleteModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium px-4 py-2.5 rounded-lg transition flex-1">Cancel</button>
+                <button type="button" id="confirm-delete-btn" onclick="executeDeleteSite()" class="bg-red-600 hover:bg-red-500 text-white text-xs font-medium px-4 py-2.5 rounded-lg transition flex-1 cursor-pointer">Delete</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="border-t border-slate-900 py-6 text-center text-xs text-slate-600">
         <p>&copy; 2026 PurelyBuild. All rights reserved.</p>
@@ -80,6 +98,7 @@
         const SUPABASE_KEY = 'sb_publishable_f8An8GUjq9__N2pzvfmsKg_nrPGnKKY';
         let supabaseClient = null;
         let currentUserId = null;
+        let siteToDeleteId = null;
 
         function getSupabase() {
             if (!supabaseClient && window.supabase) {
@@ -129,8 +148,10 @@
                                 <h3 class="font-semibold text-white text-base">${site.name || site.site_name || 'Untitled Site'}</h3>
                                 <div class="flex items-center gap-2">
                                     <span class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full font-medium">Active</span>
-                                    <button onclick="handleDeleteSite(${site.id})" title="Delete Site" class="text-slate-500 hover:text-red-400 p-1 transition cursor-pointer text-xs">
-                                        🗑️
+                                    <button onclick="promptDeleteSite(${site.id})" title="Delete Site" class="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition cursor-pointer border border-transparent hover:border-red-500/20">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                        </svg>
                                     </button>
                                 </div>
                             </div>
@@ -165,6 +186,39 @@
         function closeModal() {
             document.getElementById('create-modal').classList.add('hidden');
             document.getElementById('create-site-form').reset();
+        }
+
+        function promptDeleteSite(siteId) {
+            siteToDeleteId = siteId;
+            document.getElementById('delete-modal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            siteToDeleteId = null;
+            document.getElementById('delete-modal').classList.add('hidden');
+        }
+
+        async function executeDeleteSite() {
+            if (!siteToDeleteId) return;
+
+            const btn = document.getElementById('confirm-delete-btn');
+            btn.disabled = true;
+            btn.innerText = 'Deleting...';
+
+            try {
+                const client = getSupabase();
+                const { error } = await client.from('projects').delete().eq('id', siteToDeleteId).eq('user_id', currentUserId);
+
+                if (error) throw error;
+                
+                closeDeleteModal();
+                await loadSites();
+            } catch (err) {
+                alert('Error deleting site: ' + (err.message || 'Unknown error'));
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Delete';
+            }
         }
 
         async function handleCreateSite(e) {
@@ -207,20 +261,6 @@
                 msg.innerText = '❌ ' + (err.message || 'Error creating site');
                 btn.disabled = false;
                 btn.innerText = 'Deploy Site';
-            }
-        }
-
-        async function handleDeleteSite(siteId) {
-            if (!confirm('Are you sure you want to delete this site?')) return;
-
-            try {
-                const client = getSupabase();
-                const { error } = await client.from('projects').delete().eq('id', siteId).eq('user_id', currentUserId);
-
-                if (error) throw error;
-                await loadSites();
-            } catch (err) {
-                alert('Error deleting site: ' + (err.message || 'Unknown error'));
             }
         }
 
