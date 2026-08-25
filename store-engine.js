@@ -11,28 +11,32 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   try {
-    const { data: storeData, error: storeError } = await supabase
+    // 1. جلب بيانات المتجر (بدون .single لتجنب خطأ 406 إذا لم يطابق تماماً)
+    const { data: stores, error: storeError } = await supabase
       .from('stores')
       .select('*')
-      .eq('slug', storeSlug)
-      .single();
+      .eq('slug', storeSlug);
 
-    if (storeError || !storeData) {
-      console.error('Store not found');
+    if (storeError || !stores || stores.length === 0) {
+      console.error('Store not found or database error:', storeError);
       return;
     }
 
+    const storeData = stores[0];
+
+    // 2. تحديث عنوان الموقع واسمه
     document.title = storeData.store_name;
     const storeTitleEl = document.getElementById('store-title');
     if (storeTitleEl) storeTitleEl.textContent = storeData.store_name;
 
+    // 3. جلب منتجات المتجر
     const { data: productsData, error: productsError } = await supabase
       .from('products')
       .select('*')
       .eq('store_id', storeData.id);
 
     if (productsError) {
-      console.error('Error fetching products');
+      console.error('Error fetching products:', productsError);
       return;
     }
 
