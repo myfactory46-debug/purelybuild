@@ -23,8 +23,8 @@
             
             <!-- Tabs -->
             <div class="flex border-b border-slate-800 mb-6">
-                <button id="tab-login" class="flex-1 py-3 text-center text-sm font-semibold border-b-2 border-blue-500 text-blue-400 focus:outline-none">Sign In</button>
-                <button id="tab-signup" class="flex-1 py-3 text-center text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 focus:outline-none">Create Account</button>
+                <button type="button" id="tab-login" class="flex-1 py-3 text-center text-sm font-semibold border-b-2 border-blue-500 text-blue-400 focus:outline-none cursor-pointer">Sign In</button>
+                <button type="button" id="tab-signup" class="flex-1 py-3 text-center text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 focus:outline-none cursor-pointer">Create Account</button>
             </div>
 
             <!-- Header Text -->
@@ -42,14 +42,14 @@
 
                 <div>
                     <label class="block text-xs font-medium text-slate-400 mb-1">Password</label>
-                    <input id="auth-password" type="password" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-sm rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500">
+                    <input id="auth-password" type="password" required minlength="6" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-sm rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500">
                 </div>
 
                 <button type="submit" id="auth-submit-btn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-3 rounded-lg text-sm transition mt-2">Sign In</button>
             </form>
 
             <!-- Status Message -->
-            <div id="auth-msg" class="text-center text-xs font-medium mt-4 h-5"></div>
+            <div id="auth-msg" class="text-center text-xs font-medium mt-4 min-h-[20px]"></div>
         </div>
     </main>
 
@@ -59,79 +59,79 @@
     </footer>
 
     <script>
-        const SUPABASE_URL = 'https://zpxqetyrzpeleimnvzgq.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_f8An8GUjq9__N2pzvfmsKg_nrPGnKKY';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        document.addEventListener('DOMContentLoaded', () => {
+            const SUPABASE_URL = 'https://zpxqetyrzpeleimnvzgq.supabase.co';
+            const SUPABASE_KEY = 'sb_publishable_f8An8GUjq9__N2pzvfmsKg_nrPGnKKY';
+            const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let currentMode = 'login';
+            let currentMode = 'login';
 
-        const tabLogin = document.getElementById('tab-login');
-        const tabSignup = document.getElementById('tab-signup');
-        const formTitle = document.getElementById('form-title');
-        const formSubtitle = document.getElementById('form-subtitle');
-        const submitBtn = document.getElementById('auth-submit-btn');
-        const authForm = document.getElementById('auth-form');
-        const emailInput = document.getElementById('auth-email');
-        const passwordInput = document.getElementById('auth-password');
-        const msg = document.getElementById('auth-msg');
+            const tabLogin = document.getElementById('tab-login');
+            const tabSignup = document.getElementById('tab-signup');
+            const formTitle = document.getElementById('form-title');
+            const formSubtitle = document.getElementById('form-subtitle');
+            const submitBtn = document.getElementById('auth-submit-btn');
+            const authForm = document.getElementById('auth-form');
+            const msg = document.getElementById('auth-msg');
 
-        async function checkSession() {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session) {
-                window.location.href = 'dashboard.html';
-            }
-        }
-        checkSession();
-
-        tabLogin.addEventListener('click', () => {
-            currentMode = 'login';
-            tabLogin.className = 'flex-1 py-3 text-center text-sm font-semibold border-b-2 border-blue-500 text-blue-400 focus:outline-none';
-            tabSignup.className = 'flex-1 py-3 text-center text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 focus:outline-none';
-            formTitle.innerText = 'Welcome Back';
-            formSubtitle.innerText = 'Enter your credentials to access your dashboard';
-            submitBtn.innerText = 'Sign In';
-            msg.innerText = '';
-        });
-
-        tabSignup.addEventListener('click', () => {
-            currentMode = 'signup';
-            tabSignup.className = 'flex-1 py-3 text-center text-sm font-semibold border-b-2 border-blue-500 text-blue-400 focus:outline-none';
-            tabLogin.className = 'flex-1 py-3 text-center text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 focus:outline-none';
-            formTitle.innerText = 'Create your account';
-            formSubtitle.innerText = 'Get started with PurelyBuild in seconds';
-            submitBtn.innerText = 'Create Account';
-            msg.innerText = '';
-        });
-
-        authForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = emailInput.value.trim();
-            const password = passwordInput.value;
-
-            msg.className = 'text-center text-xs font-medium text-slate-400 mt-4 h-5';
-            msg.innerText = 'Processing...';
-
-            if (currentMode === 'login') {
-                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-                if (error) {
-                    msg.className = 'text-center text-xs font-medium text-red-400 mt-4 h-5';
-                    msg.innerText = '❌ ' + error.message;
+            function setMode(mode) {
+                currentMode = mode;
+                msg.innerText = '';
+                if (mode === 'login') {
+                    tabLogin.className = 'flex-1 py-3 text-center text-sm font-semibold border-b-2 border-blue-500 text-blue-400 focus:outline-none cursor-pointer';
+                    tabSignup.className = 'flex-1 py-3 text-center text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 focus:outline-none cursor-pointer';
+                    formTitle.innerText = 'Welcome Back';
+                    formSubtitle.innerText = 'Enter your credentials to access your dashboard';
+                    submitBtn.innerText = 'Sign In';
                 } else {
-                    msg.className = 'text-center text-xs font-medium text-emerald-400 mt-4 h-5';
-                    msg.innerText = '🎉 Logged in successfully! Redirecting...';
-                    setTimeout(() => window.location.href = 'dashboard.html', 1000);
-                }
-            } else {
-                const { data, error } = await supabase.auth.signUp({ email, password });
-                if (error) {
-                    msg.className = 'text-center text-xs font-medium text-red-400 mt-4 h-5';
-                    msg.innerText = '❌ ' + error.message;
-                } else {
-                    msg.className = 'text-center text-xs font-medium text-emerald-400 mt-4 h-5';
-                    msg.innerText = '🎉 Account created! Redirecting...';
-                    setTimeout(() => window.location.href = 'dashboard.html', 1200);
+                    tabSignup.className = 'flex-1 py-3 text-center text-sm font-semibold border-b-2 border-blue-500 text-blue-400 focus:outline-none cursor-pointer';
+                    tabLogin.className = 'flex-1 py-3 text-center text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 focus:outline-none cursor-pointer';
+                    formTitle.innerText = 'Create your account';
+                    formSubtitle.innerText = 'Get started with PurelyBuild in seconds';
+                    submitBtn.innerText = 'Create Account';
                 }
             }
+
+            tabLogin.addEventListener('click', () => setMode('login'));
+            tabSignup.addEventListener('click', () => setMode('signup'));
+
+            authForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('auth-email').value.trim();
+                const password = document.getElementById('auth-password').value;
+
+                msg.className = 'text-center text-xs font-medium text-slate-400 mt-4';
+                msg.innerText = 'Processing...';
+
+                try {
+                    if (currentMode === 'login') {
+                        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                        if (error) throw error;
+                        msg.className = 'text-center text-xs font-medium text-emerald-400 mt-4';
+                        msg.innerText = '🎉 Logged in! Redirecting...';
+                        setTimeout(() => window.location.href = 'dashboard.html', 800);
+                    } else {
+                        const { data, error } = await supabase.auth.signUp({ 
+                            email, 
+                            password,
+                            options: { emailRedirectTo: 'https://purelybuild.com/dashboard.html' }
+                        });
+                        if (error) throw error;
+
+                        if (data.user && !data.session) {
+                            msg.className = 'text-center text-xs font-medium text-emerald-400 mt-4 leading-relaxed';
+                            msg.innerText = '📩 Confirmation link sent! Please check your email inbox.';
+                        } else if (data.session) {
+                            msg.className = 'text-center text-xs font-medium text-emerald-400 mt-4';
+                            msg.innerText = '🎉 Account created! Redirecting...';
+                            setTimeout(() => window.location.href = 'dashboard.html', 800);
+                        }
+                    }
+                } catch (err) {
+                    msg.className = 'text-center text-xs font-medium text-red-400 mt-4';
+                    msg.innerText = '❌ ' + err.message;
+                }
+            });
         });
     </script>
 </body>
