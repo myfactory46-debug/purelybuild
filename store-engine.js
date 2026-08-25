@@ -1,8 +1,20 @@
 document.addEventListener('DOMContentLoaded', async () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const storeSlug = urlParams.get('store');
+  const hostname = window.location.hostname; // مثال: mystore.purelybuild.com أو purelybuild.com
+  const parts = hostname.split('.');
+  
+  let storeSlug = null;
 
-  if (!storeSlug) return;
+  // التحقق مما إذا كان هناك نطاق فرعي (Subdomain)
+  // إذا كان الرابط يحتوي على أكثر من جزئين (مثل mystore.purelybuild.com)
+  if (parts.length > 2 && parts[0] !== 'www') {
+    storeSlug = parts[0];
+  } else {
+    // كحل احتياطي، دعم الطريقة القديمة (Query Parameter) للتجربة المحلية
+    const urlParams = new URLSearchParams(window.location.search);
+    storeSlug = urlParams.get('store');
+  }
+
+  if (!storeSlug) return; // إذا لم يكن هناك متجر محدد، يبقى الموقع كـ Landing Page عادية
 
   const supabase = window.supabaseClient;
   if (!supabase) {
@@ -11,25 +23,23 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   try {
-    // 1. جلب بيانات المتجر
+    // 1. جلب بيانات المتجر من قاعدة البيانات
     const { data: stores, error: storeError } = await supabase
       .from('stores')
       .select('*')
       .eq('slug', storeSlug);
 
     if (storeError || !stores || stores.length === 0) {
-      console.error('Store not found:', storeError);
+      console.error('Store not found for subdomain:', storeSlug);
       return;
     }
 
     const storeData = stores[0];
 
-    // 2. تحديث عنوان الصفحة واسم المتجر في الهيدر
+    // 2. تحديث عنوان الصفحة واسم المتجر
     document.title = storeData.store_name;
-    const storeTitleEl = document.getElementById('store-title');
-    if (storeTitleEl) storeTitleEl.textContent = storeData.store_name;
 
-    // 3. جلب منتجات المتجر
+    // 3. جلب منتجات المتجر باستخدام معرف المتجر
     const { data: productsData, error: productsError } = await supabase
       .from('products')
       .select('*')
@@ -40,10 +50,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    // 4. تنظيم الواجهة: إخفاء عناصر الـ Landing Page وإظهار محتوى المتجر بشكل مرتب
+    // 4. إعادة تنظيم واجهة العرض وإخفاء الـ Landing Page الافتراضية
     const mainContent = document.querySelector('main');
     if (mainContent) {
-      // إخفاء كل العناصر داخل الـ main ما عدا حاوية المنتجات
       Array.from(mainContent.children).forEach(child => {
         if (!child.contains(document.getElementById('products-container'))) {
           child.style.display = 'none';
@@ -54,7 +63,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const container = document.getElementById('products-container');
     if (!container) return;
 
-    // إضافة عنوان ترحيبي للمتجر فوق المنتجات إذا لم يكن موجوداً
+    // إضافة الترويسة الترحيبية للمتجر
     if (!document.getElementById('store-welcome-title')) {
       const welcomeHeader = document.createElement('div');
       welcomeHeader.id = 'store-welcome-title';
