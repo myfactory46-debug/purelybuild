@@ -39,3 +39,45 @@ async function loadStorefront() {
 }
 
 window.addEventListener('DOMContentLoaded', loadStorefront);
+// Fetch and render products belonging to the specific store
+async function loadStoreProducts(storeId) {
+    console.log("Loading products for store ID:", storeId);
+
+    try {
+        const { data: products, error } = await window.supabaseClient
+            .from('products') // Products table in database
+            .select('*')
+            .eq('store_id', storeId);
+
+        if (error) {
+            console.error("Error fetching products:", error);
+            return;
+        }
+
+        const productsContainer = document.getElementById('products-container');
+        if (!productsContainer) return;
+
+        productsContainer.innerHTML = '';
+
+        if (!products || products.length === 0) {
+            productsContainer.innerHTML = '<p>No products available in this store yet.</p>';
+            return;
+        }
+
+        // Render each product dynamically
+        products.forEach(product => {
+            const productCard = document.createElement('div');
+            productCard.className = 'product-card';
+            productCard.innerHTML = `
+                <img src="${product.image_url || 'default-product.png'}" alt="${product.name}" />
+                <h3>${product.name}</h3>
+                <p>${product.price} USD</p>
+                <button onclick="addToCart('${product.id}')">Add to Cart</button>
+            `;
+            productsContainer.appendChild(productCard);
+        });
+
+    } catch (err) {
+        console.error("Error loading products:", err);
+    }
+}
