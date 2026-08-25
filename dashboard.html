@@ -27,7 +27,7 @@
                 <h1 class="text-2xl font-bold text-white">My Websites</h1>
                 <p class="text-xs text-slate-400 mt-1">Manage and deploy your automated web projects</p>
             </div>
-            <button onclick="alert('Creating new site feature coming soon!')" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium px-5 py-3 rounded-lg transition self-start sm:self-auto cursor-pointer">+ Create New Site</button>
+            <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium px-5 py-3 rounded-lg transition self-start sm:self-auto cursor-pointer">+ Create New Site</button>
         </div>
 
         <!-- Sites Container -->
@@ -38,6 +38,38 @@
         </div>
     </main>
 
+    <!-- Create Site Modal -->
+    <div id="create-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full shadow-2xl relative">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
+                <h3 class="text-lg font-bold text-white">Create New Site</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white text-sm">✕</button>
+            </div>
+            
+            <form id="create-site-form" onsubmit="handleCreateSite(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Site Name</label>
+                    <input id="site-name" type="text" required placeholder="My Awesome Site" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-sm rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Subdomain</label>
+                    <div class="flex items-center">
+                        <input id="site-subdomain" type="text" required placeholder="mysite" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-sm rounded-l-lg px-4 py-3 focus:outline-none focus:border-blue-500">
+                        <span class="bg-slate-800 border border-l-0 border-slate-800 text-slate-400 text-xs px-3 py-3 rounded-r-lg">.purelybuild.com</span>
+                    </div>
+                </div>
+
+                <div id="modal-msg" class="text-xs text-center min-h-[16px]"></div>
+
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium px-4 py-2.5 rounded-lg transition">Cancel</button>
+                    <button type="submit" id="submit-site-btn" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium px-5 py-2.5 rounded-lg transition">Deploy Site</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="border-t border-slate-900 py-6 text-center text-xs text-slate-600">
         <p>&copy; 2026 PurelyBuild. All rights reserved.</p>
@@ -47,10 +79,10 @@
         const SUPABASE_URL = 'https://zpxqetyrzpeleimnvzgq.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_f8An8GUjq9__N2pzvfmsKg_nrPGnKKY';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        let currentUserId = null;
 
         async function initDashboard() {
             try {
-                // 1. Check current session
                 const { data: { session }, error } = await supabase.auth.getSession();
                 
                 if (error || !session) {
@@ -58,35 +90,48 @@
                     return;
                 }
 
-                // 2. Display email
+                currentUserId = session.user.id;
                 document.getElementById('user-email').innerText = session.user.email;
 
-                // 3. Load user sites
-                await loadSites(session.user.id);
+                await loadSites();
             } catch (err) {
                 console.error(err);
                 showEmptyState();
             }
         }
 
-        async function loadSites(userId) {
+        async function loadSites() {
             const container = document.getElementById('sites-container');
             
             try {
-                const { data: sites, error } = await supabase
-                    .from('sites')
+                let { data: sites, error } = await supabase
+                    .from('projects')
                     .select('*')
-                    .eq('user_id', userId);
+                    .eq('user_id', currentUserId);
 
-                if (error || !sites || sites.length === 0) {
+                if (error) {
+                    const res = await supabase.from('sites').select('*').eq('user_id', currentUserId);
+                    sites = res.data;
+                }
+
+                if (!sites || sites.length === 0) {
                     showEmptyState();
                     return;
                 }
 
                 container.innerHTML = sites.map(site => `
-                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition">
-                        <h3 class="font-semibold text-white text-base">${site.name || 'Untitled Site'}</h3>
-                        <p class="text-xs text-slate-400 mt-1">${site.domain || 'No domain'}</p>
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="font-semibold text-white text-base">${site.name || site.title || 'Untitled Site'}</h3>
+                                <span class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full font-medium">Active</span>
+                            </div>
+                            <p class="text-xs text-slate-400 font-mono">${site.subdomain ? site.subdomain + '.purelybuild.com' : (site.domain || 'no-domain')}</p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-slate-800/80 flex justify-between items-center text-xs">
+                            <span class="text-slate-500">Deployed</span>
+                            <a href="https://${site.subdomain || 'demo'}.purelybuild.com" target="_blank" class="text-blue-400 hover:underline font-medium">Visit Site →</a>
+                        </div>
                     </div>
                 `).join('');
             } catch (e) {
@@ -100,8 +145,60 @@
                 <div class="col-span-full text-center py-16 bg-slate-900/50 border border-slate-800 rounded-2xl p-8">
                     <p class="text-slate-300 text-sm font-medium mb-1">Welcome to your dashboard!</p>
                     <p class="text-slate-500 text-xs mb-6">You haven't created any websites yet.</p>
-                    <button onclick="alert('Creating new site feature coming soon!')" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium px-4 py-2.5 rounded-lg transition">+ Create Your First Site</button>
+                    <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium px-4 py-2.5 rounded-lg transition">+ Create Your First Site</button>
                 </div>`;
+        }
+
+        function openModal() {
+            document.getElementById('create-modal').classList.remove('hidden');
+            document.getElementById('modal-msg').innerText = '';
+        }
+
+        function closeModal() {
+            document.getElementById('create-modal').classList.add('hidden');
+            document.getElementById('create-site-form').reset();
+        }
+
+        async function handleCreateSite(e) {
+            e.preventDefault();
+            const name = document.getElementById('site-name').value.trim();
+            const subdomain = document.getElementById('site-subdomain').value.trim().toLowerCase();
+            const msg = document.getElementById('modal-msg');
+            const btn = document.getElementById('submit-site-btn');
+
+            btn.disabled = true;
+            btn.innerText = 'Deploying...';
+            msg.className = 'text-xs text-center text-slate-400 min-h-[16px]';
+            msg.innerText = 'Creating site...';
+
+            try {
+                let { error } = await supabase.from('projects').insert([
+                    { user_id: currentUserId, name: name, subdomain: subdomain }
+                ]);
+
+                if (error) {
+                    const res = await supabase.from('sites').insert([
+                        { user_id: currentUserId, name: name, subdomain: subdomain }
+                    ]);
+                    if (res.error) throw res.error;
+                }
+
+                msg.className = 'text-xs text-center text-emerald-400 min-h-[16px]';
+                msg.innerText = '🎉 Site deployed successfully!';
+                
+                setTimeout(() => {
+                    closeModal();
+                    btn.disabled = false;
+                    btn.innerText = 'Deploy Site';
+                    loadSites();
+                }, 1000);
+
+            } catch (err) {
+                msg.className = 'text-xs text-center text-red-400 min-h-[16px]';
+                msg.innerText = '❌ ' + (err.message || 'Error creating site');
+                btn.disabled = false;
+                btn.innerText = 'Deploy Site';
+            }
         }
 
         async function handleLogout() {
