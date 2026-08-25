@@ -60,11 +60,10 @@
     <!-- Scripts -->
     <script>
         const SUPABASE_URL = 'https://zpxqetyrpeleimnvzgq.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpweHFldHlyenBlbGVpbW52emdxIxlmciIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzg3NTkzMTUzLCJleHAiOjIxMDMxNjkxNTN9.2zkNQwBPY99wJhKQwbSXCo9bq640EXlm3E4j32sDmbU';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpweHFldHlyenBlbGVpbW52emdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc1OTMxNTMsImV4cCI6MjEwMzE2OTE1M30.2zkNQwBPY99wJhKQwbSXCo9bq640EXlm3E4j32sDmbU';
         
-        // Initialize Supabase Client
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        window.supabaseClient = supabase;
+        // Initialize Supabase Client globally for the engine
+        window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // Waitlist Form Handler
         const form = document.getElementById('waitlist-form');
@@ -83,7 +82,7 @@
                 formMsg.className = 'text-xs text-slate-400 mt-3 h-4';
                 formMsg.innerText = 'Connecting...';
 
-                const { error } = await supabase.from('leads').insert([{ email: email }]);
+                const { error } = await window.supabaseClient.from('leads').insert([{ email: email }]);
 
                 if (error) {
                     formMsg.className = 'text-xs text-red-400 mt-3 h-4';
