@@ -9,59 +9,34 @@
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col justify-between">
     
-    <!-- Top Bar -->
+    <!-- Header -->
     <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-            <span class="text-xl font-bold bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">PurelyBuild</span>
-            <div class="flex items-center space-x-4">
-                <span id="user-email" class="text-xs text-slate-400">Loading...</span>
-                <button id="logout-btn" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium px-3 py-1.5 rounded-lg transition">Sign Out</button>
+            <a href="index.html" class="text-xl font-bold bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">PurelyBuild</a>
+            <div class="flex items-center gap-4">
+                <span id="user-email" class="text-xs text-slate-400 font-medium">...</span>
+                <button id="logout-btn" onclick="handleLogout()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-4 py-2 rounded-lg transition border border-slate-700">Sign Out</button>
             </div>
         </div>
     </header>
 
-    <!-- Dashboard Content -->
+    <!-- Main Content -->
     <main class="max-w-6xl mx-auto px-6 py-10 w-full flex-grow">
-        
-        <!-- Header Actions -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
             <div>
                 <h1 class="text-2xl font-bold text-white">My Websites</h1>
                 <p class="text-xs text-slate-400 mt-1">Manage and deploy your automated web projects</p>
             </div>
-            <button id="open-modal-btn" class="bg-blue-600 hover:bg-blue-500 text-white font-medium px-4 py-2 rounded-lg text-sm transition self-start sm:self-auto">+ Create New Site</button>
+            <button onclick="alert('Creating new site feature coming soon!')" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium px-5 py-3 rounded-lg transition self-start sm:self-auto cursor-pointer">+ Create New Site</button>
         </div>
 
-        <!-- Projects Grid -->
-        <div id="projects-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="text-slate-500 text-sm col-span-full text-center py-10">Loading your sites...</div>
+        <!-- Sites Container -->
+        <div id="sites-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="col-span-full text-center py-16 text-slate-500 text-sm">
+                Loading your sites...
+            </div>
         </div>
     </main>
-
-    <!-- Create Site Modal -->
-    <div id="modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md">
-            <h3 class="text-lg font-bold text-white mb-4">Create New Website</h3>
-            <form id="create-site-form" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-1">Website Name</label>
-                    <input id="site-name" type="text" required placeholder="My Awesome Business" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-sm rounded-lg px-4 py-2.5 focus:outline-none focus:border-blue-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-1">Subdomain</label>
-                    <div class="flex items-center bg-slate-950 border border-slate-800 rounded-lg px-3 py-2.5">
-                        <input id="subdomain" type="text" required placeholder="mybusiness" class="bg-transparent text-slate-200 text-sm focus:outline-none flex-1">
-                        <span class="text-xs text-slate-500 font-mono">.purelybuild.com</span>
-                    </div>
-                </div>
-                <div id="modal-msg" class="text-xs h-4"></div>
-                <div class="flex justify-end space-x-3 mt-4">
-                    <button type="button" id="close-modal-btn" class="px-4 py-2 text-xs font-medium text-slate-400 hover:text-white">Cancel</button>
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium px-4 py-2 rounded-lg transition">Deploy Site</button>
-                </div>
-            </form>
-        </div>
-    </div>
 
     <!-- Footer -->
     <footer class="border-t border-slate-900 py-6 text-center text-xs text-slate-600">
@@ -73,100 +48,68 @@
         const SUPABASE_KEY = 'sb_publishable_f8An8GUjq9__N2pzvfmsKg_nrPGnKKY';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let currentUser = null;
-
-        // Check authentication status
         async function initDashboard() {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) {
-                window.location.href = 'auth.html';
-                return;
+            try {
+                // 1. Check current session
+                const { data: { session }, error } = await supabase.auth.getSession();
+                
+                if (error || !session) {
+                    window.location.href = 'auth.html';
+                    return;
+                }
+
+                // 2. Display email
+                document.getElementById('user-email').innerText = session.user.email;
+
+                // 3. Load user sites
+                await loadSites(session.user.id);
+            } catch (err) {
+                console.error(err);
+                showEmptyState();
             }
-            currentUser = session.user;
-            document.getElementById('user-email').innerText = currentUser.email;
-            loadProjects();
         }
 
-        // Fetch user projects
-        async function loadProjects() {
-            const container = document.getElementById('projects-list');
-            const { data: projects, error } = await supabase
-                .from('projects')
-                .select('*')
-                .order('created_at', { ascending: false });
+        async function loadSites(userId) {
+            const container = document.getElementById('sites-container');
+            
+            try {
+                const { data: sites, error } = await supabase
+                    .from('sites')
+                    .select('*')
+                    .eq('user_id', userId);
 
-            if (error) {
-                container.innerHTML = `<div class="text-red-400 text-sm col-span-full">Error loading projects: ${error.message}</div>`;
-                return;
-            }
+                if (error || !sites || sites.length === 0) {
+                    showEmptyState();
+                    return;
+                }
 
-            if (projects.length === 0) {
-                container.innerHTML = `
-                    <div class="border border-dashed border-slate-800 rounded-xl p-8 text-center col-span-full">
-                        <p class="text-slate-400 text-sm mb-3">No websites created yet</p>
-                        <button onclick="document.getElementById('modal').classList.remove('hidden'); document.getElementById('modal').classList.add('flex')" class="text-xs text-blue-400 hover:underline">+ Create your first site</button>
-                    </div>`;
-                return;
-            }
-
-            container.innerHTML = projects.map(p => `
-                <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition">
-                    <div class="flex items-center justify-between mb-3">
-                        <h3 class="font-bold text-white text-base">${p.site_name}</h3>
-                        <span class="text-[10px] font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded-full">${p.status}</span>
+                container.innerHTML = sites.map(site => `
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition">
+                        <h3 class="font-semibold text-white text-base">${site.name || 'Untitled Site'}</h3>
+                        <p class="text-xs text-slate-400 mt-1">${site.domain || 'No domain'}</p>
                     </div>
-                    <a href="https://${p.subdomain}.purelybuild.com" target="_blank" class="text-xs text-blue-400 hover:underline block mb-4 font-mono">${p.subdomain}.purelybuild.com ↗</a>
-                    <div class="text-[11px] text-slate-500 pt-3 border-t border-slate-800/60">Created: ${new Date(p.created_at).toLocaleDateString()}</div>
-                </div>
-            `).join('');
+                `).join('');
+            } catch (e) {
+                showEmptyState();
+            }
         }
 
-        // Modal Controls
-        const modal = document.getElementById('modal');
-        document.getElementById('open-modal-btn').addEventListener('click', () => { modal.classList.remove('hidden'); modal.classList.add('flex'); });
-        document.getElementById('close-modal-btn').addEventListener('click', () => { modal.classList.add('hidden'); modal.classList.remove('flex'); });
+        function showEmptyState() {
+            const container = document.getElementById('sites-container');
+            container.innerHTML = `
+                <div class="col-span-full text-center py-16 bg-slate-900/50 border border-slate-800 rounded-2xl p-8">
+                    <p class="text-slate-300 text-sm font-medium mb-1">Welcome to your dashboard!</p>
+                    <p class="text-slate-500 text-xs mb-6">You haven't created any websites yet.</p>
+                    <button onclick="alert('Creating new site feature coming soon!')" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium px-4 py-2.5 rounded-lg transition">+ Create Your First Site</button>
+                </div>`;
+        }
 
-        // Handle Site Creation
-        document.getElementById('create-site-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const name = document.getElementById('site-name').value.trim();
-            const sub = document.getElementById('subdomain').value.trim().toLowerCase();
-            const msg = document.getElementById('modal-msg');
-
-            msg.className = 'text-xs text-slate-400';
-            msg.innerText = 'Creating site...';
-
-            const { error } = await supabase.from('projects').insert([{
-                user_id: currentUser.id,
-                site_name: name,
-                subdomain: sub,
-                status: 'Active'
-            }]);
-
-            if (error) {
-                msg.className = 'text-xs text-red-400';
-                msg.innerText = error.message.includes('unique') ? '⚠️ Subdomain already taken' : '❌ ' + error.message;
-            } else {
-                msg.className = 'text-xs text-emerald-400';
-                msg.innerText = '🎉 Website added!';
-                document.getElementById('site-name').value = '';
-                document.getElementById('subdomain').value = '';
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                    modal.classList.remove('flex');
-                    msg.innerText = '';
-                    loadProjects();
-                }, 1000);
-            }
-        });
-
-        // Sign Out
-        document.getElementById('logout-btn').addEventListener('click', async () => {
+        async function handleLogout() {
             await supabase.auth.signOut();
             window.location.href = 'auth.html';
-        });
+        }
 
-        initDashboard();
+        document.addEventListener('DOMContentLoaded', initDashboard);
     </script>
 </body>
 </html>
