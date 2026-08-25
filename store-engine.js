@@ -1,83 +1,62 @@
-// Extract store slug from subdomain or path
-function getStoreSlug() {
-    const hostname = window.location.hostname;
-    const parts = hostname.split('.');
-    
-    if (parts.length > 2 && parts[0] !== 'www') {
-        return parts[0];
+document.addEventListener('DOMContentLoaded', async () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const storeSlug = urlParams.get('store');
+
+  if (!storeSlug) return;
+
+  const supabase = window.supabaseClient;
+  if (!supabase) {
+    console.error('Supabase client not initialized');
+    return;
+  }
+
+  try {
+    const { data: storeData, error: storeError } = await supabase
+      .from('stores')
+      .select('*')
+      .eq('slug', storeSlug)
+      .single();
+
+    if (storeError || !storeData) {
+      console.error('Store not found');
+      return;
     }
-    
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('store') || 'default-store';
-}
 
-// Fetch store data from Supabase and render it dynamically
-async function loadStorefront() {
-    const storeSlug = getStoreSlug();
-    console.log("Loading store for slug:", storeSlug);
+    document.title = storeData.store_name;
+    const storeTitleEl = document.getElementById('store-title');
+    if (storeTitleEl) storeTitleEl.textContent = storeData.store_name;
 
-    try {
-        const { data, error } = await window.supabaseClient
-            .from('stores')
-            .select('*')
-            .eq('slug', storeSlug)
-            .single();
+    const { data: productsData, error: productsError } = await supabase
+      .from('products')
+      .select('*')
+      .eq('store_id', storeData.id);
 
-        if (error || !data) {
-            document.body.innerHTML = `<h1 style="text-align:center; margin-top:20vh;">Store not found or closed 🚫</h1>`;
-            return;
-        }
-
-        document.getElementById('store-title').innerText = data.store_name;
-        document.getElementById('store-logo').src = data.logo_url || 'default-logo.png';
-        
-        loadStoreProducts(data.id);
-
-    } catch (err) {
-        console.error("Error fetching store data:", err);
+    if (productsError) {
+      console.error('Error fetching products');
+      return;
     }
-}
 
-window.addEventListener('DOMContentLoaded', loadStorefront);
-// Fetch and render products belonging to the specific store
-async function loadStoreProducts(storeId) {
-    console.log("Loading products for store ID:", storeId);
+    const container = document.getElementById('products-container');
+    if (!container) return;
 
-    try {
-        const { data: products, error } = await window.supabaseClient
-            .from('products') // Products table in database
-            .select('*')
-            .eq('store_id', storeId);
+    container.innerHTML = '';
 
-        if (error) {
-            console.error("Error fetching products:", error);
-            return;
-        }
-
-        const productsContainer = document.getElementById('products-container');
-        if (!productsContainer) return;
-
-        productsContainer.innerHTML = '';
-
-        if (!products || products.length === 0) {
-            productsContainer.innerHTML = '<p>No products available in this store yet.</p>';
-            return;
-        }
-
-        // Render each product dynamically
-        products.forEach(product => {
-            const productCard = document.createElement('div');
-            productCard.className = 'product-card';
-            productCard.innerHTML = `
-                <img src="${product.image_url || 'default-product.png'}" alt="${product.name}" />
-                <h3>${product.name}</h3>
-                <p>${product.price} USD</p>
-                <button onclick="addToCart('${product.id}')">Add to Cart</button>
-            `;
-            productsContainer.appendChild(productCard);
-        });
-
-    } catch (err) {
-        console.error("Error loading products:", err);
+    if (productsData && productsData.length > 0) {
+      productsData.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'bg-slate-900 border border-slate-800 p-6 rounded-xl text-left shadow-lg';
+        card.innerHTML = `
+          <h3 class="text-lg font-bold text-white mb-2">${product.name}</h3>
+          <p class="text-emerald-400 font-semibold text-xl mb-4">$${product.price}</p>
+          <button class="w-full bg-blue-600 hover:bg-blue-500 text-white py-2 px-4 rounded-lg text-sm transition">Buy Now</button>
+        `;
+        container.appendChild(card);
+      });
+    } else {
+      container.innerHTML = '<p class="text-slate-400 col-span-full">No products available in this store yet.</p>';
     }
-}
+
+  } catch (err) {
+    console.error('Unexpected error:', err);
+  }
+});
