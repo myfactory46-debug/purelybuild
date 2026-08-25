@@ -9,19 +9,19 @@
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col justify-between">
     
-    <!-- Header -->
+    <!-- Responsive Header -->
     <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-            <a href="index.html" class="text-xl font-bold bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">PurelyBuild</a>
-            <div class="flex items-center gap-4">
-                <span id="user-email" class="text-xs text-slate-300 font-medium">Loading session...</span>
-                <button type="button" id="logout-btn" onclick="handleLogout()" class="bg-red-500/10 hover:bg-red-600 text-red-400 hover:text-white text-xs px-3.5 py-1.5 rounded-lg border border-red-500/30 transition cursor-pointer">Sign Out</button>
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+            <a href="index.html" class="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent shrink-0">PurelyBuild</a>
+            <div class="flex items-center gap-2 sm:gap-4 overflow-hidden">
+                <span id="user-email" class="text-xs text-slate-400 font-medium truncate max-w-[130px] sm:max-w-none">...</span>
+                <button type="button" id="logout-btn" onclick="handleLogout()" class="bg-red-500/10 hover:bg-red-600 text-red-400 hover:text-white text-xs px-3 py-1.5 rounded-lg border border-red-500/30 transition cursor-pointer shrink-0">Sign Out</button>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-6xl mx-auto px-6 py-10 w-full flex-grow">
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-10 w-full flex-grow">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
             <div>
                 <h1 class="text-2xl font-bold text-white">My Websites</h1>
@@ -33,7 +33,7 @@
         <!-- Sites Container -->
         <div id="sites-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div class="col-span-full text-center py-16 text-slate-500 text-sm">
-                Checking authentication...
+                Loading your sites...
             </div>
         </div>
     </main>
@@ -82,12 +82,8 @@
         let currentUserId = null;
 
         function getSupabase() {
-            if (!supabaseClient) {
-                if (window.supabase && window.supabase.createClient) {
-                    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                } else {
-                    throw new Error('Supabase library loading...');
-                }
+            if (!supabaseClient && window.supabase) {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             }
             return supabaseClient;
         }
@@ -95,6 +91,8 @@
         async function initDashboard() {
             try {
                 const client = getSupabase();
+                if (!client) return;
+
                 const { data: { session }, error } = await client.auth.getSession();
                 
                 if (error || !session) {
@@ -108,11 +106,7 @@
                 await loadSites();
             } catch (err) {
                 console.error(err);
-                document.getElementById('sites-container').innerHTML = `
-                    <div class="col-span-full text-center py-12 bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
-                        <p class="text-slate-300 text-xs mb-4">Session verification pending...</p>
-                        <a href="auth.html" class="bg-blue-600 text-white text-xs font-medium px-4 py-2 rounded-lg inline-block">Re-authenticate</a>
-                    </div>`;
+                showEmptyState();
             }
         }
 
@@ -219,7 +213,7 @@
         async function handleLogout() {
             try {
                 const client = getSupabase();
-                await client.auth.signOut();
+                if (client) await client.auth.signOut();
             } catch (e) {}
             window.location.href = 'auth.html';
         }
