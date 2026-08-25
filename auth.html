@@ -23,8 +23,8 @@
             
             <!-- Tabs -->
             <div class="flex border-b border-slate-800 mb-6">
-                <button type="button" id="tab-login" class="flex-1 py-3 text-center text-sm font-semibold border-b-2 border-blue-500 text-blue-400 focus:outline-none cursor-pointer">Sign In</button>
-                <button type="button" id="tab-signup" class="flex-1 py-3 text-center text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 focus:outline-none cursor-pointer">Create Account</button>
+                <button type="button" id="tab-login" onclick="switchTab('login')" class="flex-1 py-3 text-center text-sm font-semibold border-b-2 border-blue-500 text-blue-400 focus:outline-none cursor-pointer">Sign In</button>
+                <button type="button" id="tab-signup" onclick="switchTab('signup')" class="flex-1 py-3 text-center text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 focus:outline-none cursor-pointer">Create Account</button>
             </div>
 
             <!-- Header Text -->
@@ -59,79 +59,87 @@
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const SUPABASE_URL = 'https://zpxqetyrzpeleimnvzgq.supabase.co';
-            const SUPABASE_KEY = 'sb_publishable_f8An8GUjq9__N2pzvfmsKg_nrPGnKKY';
-            const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        let currentMode = 'login';
+        const SUPABASE_URL = 'https://zpxqetyrzpeleimnvzgq.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_f8An8GUjq9__N2pzvfmsKg_nrPGnKKY';
+        let supabaseClient = null;
 
-            let currentMode = 'login';
+        function getSupabase() {
+            if (!supabaseClient) {
+                if (window.supabase && window.supabase.createClient) {
+                    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                } else {
+                    throw new Error('Supabase script not loaded yet. Please refresh the page.');
+                }
+            }
+            return supabaseClient;
+        }
 
+        function switchTab(mode) {
+            currentMode = mode;
             const tabLogin = document.getElementById('tab-login');
             const tabSignup = document.getElementById('tab-signup');
             const formTitle = document.getElementById('form-title');
             const formSubtitle = document.getElementById('form-subtitle');
             const submitBtn = document.getElementById('auth-submit-btn');
-            const authForm = document.getElementById('auth-form');
             const msg = document.getElementById('auth-msg');
 
-            function setMode(mode) {
-                currentMode = mode;
-                msg.innerText = '';
-                if (mode === 'login') {
-                    tabLogin.className = 'flex-1 py-3 text-center text-sm font-semibold border-b-2 border-blue-500 text-blue-400 focus:outline-none cursor-pointer';
-                    tabSignup.className = 'flex-1 py-3 text-center text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 focus:outline-none cursor-pointer';
-                    formTitle.innerText = 'Welcome Back';
-                    formSubtitle.innerText = 'Enter your credentials to access your dashboard';
-                    submitBtn.innerText = 'Sign In';
-                } else {
-                    tabSignup.className = 'flex-1 py-3 text-center text-sm font-semibold border-b-2 border-blue-500 text-blue-400 focus:outline-none cursor-pointer';
-                    tabLogin.className = 'flex-1 py-3 text-center text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 focus:outline-none cursor-pointer';
-                    formTitle.innerText = 'Create your account';
-                    formSubtitle.innerText = 'Get started with PurelyBuild in seconds';
-                    submitBtn.innerText = 'Create Account';
-                }
+            if (msg) msg.innerText = '';
+
+            if (mode === 'login') {
+                tabLogin.className = 'flex-1 py-3 text-center text-sm font-semibold border-b-2 border-blue-500 text-blue-400 focus:outline-none cursor-pointer';
+                tabSignup.className = 'flex-1 py-3 text-center text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 focus:outline-none cursor-pointer';
+                formTitle.innerText = 'Welcome Back';
+                formSubtitle.innerText = 'Enter your credentials to access your dashboard';
+                submitBtn.innerText = 'Sign In';
+            } else {
+                tabSignup.className = 'flex-1 py-3 text-center text-sm font-semibold border-b-2 border-blue-500 text-blue-400 focus:outline-none cursor-pointer';
+                tabLogin.className = 'flex-1 py-3 text-center text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 focus:outline-none cursor-pointer';
+                formTitle.innerText = 'Create your account';
+                formSubtitle.innerText = 'Get started with PurelyBuild in seconds';
+                submitBtn.innerText = 'Create Account';
             }
+        }
 
-            tabLogin.addEventListener('click', () => setMode('login'));
-            tabSignup.addEventListener('click', () => setMode('signup'));
+        document.getElementById('auth-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value;
+            const msg = document.getElementById('auth-msg');
 
-            authForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const email = document.getElementById('auth-email').value.trim();
-                const password = document.getElementById('auth-password').value;
+            msg.className = 'text-center text-xs font-medium text-slate-400 mt-4';
+            msg.innerText = 'Processing...';
 
-                msg.className = 'text-center text-xs font-medium text-slate-400 mt-4';
-                msg.innerText = 'Processing...';
+            try {
+                const client = getSupabase();
 
-                try {
-                    if (currentMode === 'login') {
-                        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-                        if (error) throw error;
+                if (currentMode === 'login') {
+                    const { data, error } = await client.auth.signInWithPassword({ email, password });
+                    if (error) throw error;
+                    msg.className = 'text-center text-xs font-medium text-emerald-400 mt-4';
+                    msg.innerText = '🎉 Logged in! Redirecting...';
+                    setTimeout(() => window.location.href = 'dashboard.html', 800);
+                } else {
+                    const { data, error } = await client.auth.signUp({ 
+                        email, 
+                        password,
+                        options: { emailRedirectTo: 'https://purelybuild.com/dashboard.html' }
+                    });
+                    if (error) throw error;
+
+                    if (data.user && !data.session) {
+                        msg.className = 'text-center text-xs font-medium text-emerald-400 mt-4 leading-relaxed';
+                        msg.innerText = '📩 Confirmation link sent! Please check your email inbox.';
+                    } else if (data.session) {
                         msg.className = 'text-center text-xs font-medium text-emerald-400 mt-4';
-                        msg.innerText = '🎉 Logged in! Redirecting...';
+                        msg.innerText = '🎉 Account created! Redirecting...';
                         setTimeout(() => window.location.href = 'dashboard.html', 800);
-                    } else {
-                        const { data, error } = await supabase.auth.signUp({ 
-                            email, 
-                            password,
-                            options: { emailRedirectTo: 'https://purelybuild.com/dashboard.html' }
-                        });
-                        if (error) throw error;
-
-                        if (data.user && !data.session) {
-                            msg.className = 'text-center text-xs font-medium text-emerald-400 mt-4 leading-relaxed';
-                            msg.innerText = '📩 Confirmation link sent! Please check your email inbox.';
-                        } else if (data.session) {
-                            msg.className = 'text-center text-xs font-medium text-emerald-400 mt-4';
-                            msg.innerText = '🎉 Account created! Redirecting...';
-                            setTimeout(() => window.location.href = 'dashboard.html', 800);
-                        }
                     }
-                } catch (err) {
-                    msg.className = 'text-center text-xs font-medium text-red-400 mt-4';
-                    msg.innerText = '❌ ' + err.message;
                 }
-            });
+            } catch (err) {
+                msg.className = 'text-center text-xs font-medium text-red-400 mt-4';
+                msg.innerText = '❌ ' + err.message;
+            }
         });
     </script>
 </body>
