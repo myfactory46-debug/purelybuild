@@ -14,8 +14,8 @@
         <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
             <a href="index.html" class="text-xl font-bold bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">PurelyBuild</a>
             <div class="flex items-center gap-4">
-                <span id="user-email" class="text-xs text-slate-400 font-medium">...</span>
-                <button id="logout-btn" onclick="handleLogout()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-4 py-2 rounded-lg transition border border-slate-700">Sign Out</button>
+                <span id="user-email" class="text-xs text-slate-300 font-medium">Loading session...</span>
+                <button type="button" id="logout-btn" onclick="handleLogout()" class="bg-red-500/10 hover:bg-red-600 text-red-400 hover:text-white text-xs px-3.5 py-1.5 rounded-lg border border-red-500/30 transition cursor-pointer">Sign Out</button>
             </div>
         </div>
     </header>
@@ -27,13 +27,13 @@
                 <h1 class="text-2xl font-bold text-white">My Websites</h1>
                 <p class="text-xs text-slate-400 mt-1">Manage and deploy your automated web projects</p>
             </div>
-            <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium px-5 py-3 rounded-lg transition self-start sm:self-auto cursor-pointer">+ Create New Site</button>
+            <button type="button" onclick="openModal()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-5 py-3 rounded-lg transition self-start sm:self-auto cursor-pointer shadow-lg shadow-blue-600/20">+ Create New Site</button>
         </div>
 
         <!-- Sites Container -->
         <div id="sites-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div class="col-span-full text-center py-16 text-slate-500 text-sm">
-                Loading your sites...
+                Checking authentication...
             </div>
         </div>
     </main>
@@ -43,7 +43,7 @@
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full shadow-2xl relative">
             <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
                 <h3 class="text-lg font-bold text-white">Create New Site</h3>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-white text-sm">✕</button>
+                <button type="button" onclick="closeModal()" class="text-slate-400 hover:text-white text-sm">✕</button>
             </div>
             
             <form id="create-site-form" onsubmit="handleCreateSite(event)" class="space-y-4">
@@ -64,7 +64,7 @@
 
                 <div class="flex justify-end gap-3 pt-2">
                     <button type="button" onclick="closeModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium px-4 py-2.5 rounded-lg transition">Cancel</button>
-                    <button type="submit" id="submit-site-btn" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium px-5 py-2.5 rounded-lg transition">Deploy Site</button>
+                    <button type="submit" id="submit-site-btn" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium px-5 py-2.5 rounded-lg transition cursor-pointer">Deploy Site</button>
                 </div>
             </form>
         </div>
@@ -78,12 +78,24 @@
     <script>
         const SUPABASE_URL = 'https://zpxqetyrzpeleimnvzgq.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_f8An8GUjq9__N2pzvfmsKg_nrPGnKKY';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        let supabaseClient = null;
         let currentUserId = null;
+
+        function getSupabase() {
+            if (!supabaseClient) {
+                if (window.supabase && window.supabase.createClient) {
+                    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                } else {
+                    throw new Error('Supabase library loading...');
+                }
+            }
+            return supabaseClient;
+        }
 
         async function initDashboard() {
             try {
-                const { data: { session }, error } = await supabase.auth.getSession();
+                const client = getSupabase();
+                const { data: { session }, error } = await client.auth.getSession();
                 
                 if (error || !session) {
                     window.location.href = 'auth.html';
@@ -96,7 +108,11 @@
                 await loadSites();
             } catch (err) {
                 console.error(err);
-                showEmptyState();
+                document.getElementById('sites-container').innerHTML = `
+                    <div class="col-span-full text-center py-12 bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
+                        <p class="text-slate-300 text-xs mb-4">Session verification pending...</p>
+                        <a href="auth.html" class="bg-blue-600 text-white text-xs font-medium px-4 py-2 rounded-lg inline-block">Re-authenticate</a>
+                    </div>`;
             }
         }
 
@@ -104,13 +120,11 @@
             const container = document.getElementById('sites-container');
             
             try {
-                let { data: sites, error } = await supabase
-                    .from('projects')
-                    .select('*')
-                    .eq('user_id', currentUserId);
+                const client = getSupabase();
+                let { data: sites, error } = await client.from('projects').select('*').eq('user_id', currentUserId);
 
                 if (error) {
-                    const res = await supabase.from('sites').select('*').eq('user_id', currentUserId);
+                    const res = await client.from('sites').select('*').eq('user_id', currentUserId);
                     sites = res.data;
                 }
 
@@ -145,7 +159,7 @@
                 <div class="col-span-full text-center py-16 bg-slate-900/50 border border-slate-800 rounded-2xl p-8">
                     <p class="text-slate-300 text-sm font-medium mb-1">Welcome to your dashboard!</p>
                     <p class="text-slate-500 text-xs mb-6">You haven't created any websites yet.</p>
-                    <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium px-4 py-2.5 rounded-lg transition">+ Create Your First Site</button>
+                    <button type="button" onclick="openModal()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium px-4 py-2.5 rounded-lg transition cursor-pointer">+ Create Your First Site</button>
                 </div>`;
         }
 
@@ -172,12 +186,13 @@
             msg.innerText = 'Creating site...';
 
             try {
-                let { error } = await supabase.from('projects').insert([
+                const client = getSupabase();
+                let { error } = await client.from('projects').insert([
                     { user_id: currentUserId, name: name, subdomain: subdomain }
                 ]);
 
                 if (error) {
-                    const res = await supabase.from('sites').insert([
+                    const res = await client.from('sites').insert([
                         { user_id: currentUserId, name: name, subdomain: subdomain }
                     ]);
                     if (res.error) throw res.error;
@@ -202,7 +217,10 @@
         }
 
         async function handleLogout() {
-            await supabase.auth.signOut();
+            try {
+                const client = getSupabase();
+                await client.auth.signOut();
+            } catch (e) {}
             window.location.href = 'auth.html';
         }
 
