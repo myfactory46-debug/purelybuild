@@ -100,5 +100,77 @@
         });
     </script>
     <script src="store-engine.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  const SUPABASE_URL = 'https://zpxqetyrpeleimnvzgq.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpweHFldHlyenBlbGVpbW52emdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc1OTMxNTMsImV4cCI6MjEwMzE2OTE1M30.2zkNQwBPY99wJhKQwbSXCo9bq640EXlm3E4j32sDmbU';
+  
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  async function loadDynamicStore() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const storeSlug = urlParams.get('store');
+
+    if (!storeSlug) return;
+
+    try {
+      const { data: storeData, error: storeError } = await supabaseClient
+        .from('stores')
+        .select('*')
+        .eq('slug', storeSlug)
+        .single();
+
+      if (storeError || !storeData) {
+        console.error('Store not found');
+        return;
+      }
+
+      document.title = storeData.store_name;
+      const logoEl = document.querySelector('.logo, h1, .brand-name');
+      if (logoEl) logoEl.textContent = storeData.store_name;
+
+      const { data: productsData, error: productsError } = await supabaseClient
+        .from('products')
+        .select('*')
+        .eq('store_id', storeData.id);
+
+      if (productsError) {
+        console.error('Error fetching products');
+        return;
+      }
+
+      let container = document.getElementById('products-container');
+      if (!container) {
+        container = document.createElement('section');
+        container.id = 'products-container';
+        container.style.cssText = 'padding: 40px; text-align: center; background: #111; color: #fff; min-height: 50vh;';
+        document.body.prepend(container);
+      }
+
+      container.innerHTML = `<h2 style="font-size: 2rem; margin-bottom: 20px;">Store Products: ${storeData.store_name}</h2>`;
+      
+      const grid = document.createElement('div');
+      grid.style.cssText = 'display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;';
+
+      productsData.forEach(product => {
+        const card = document.createElement('div');
+        card.style.cssText = 'border: 1px solid #333; padding: 20px; border-radius: 8px; width: 220px; background: #222; color: #fff;';
+        card.innerHTML = `
+          <h3 style="font-size: 1.2rem; margin-bottom: 10px;">${product.name}</h3>
+          <p style="color: #4ade80; font-weight: bold; font-size: 1.1rem;">$${product.price}</p>
+        `;
+        grid.appendChild(card);
+      });
+
+      container.appendChild(grid);
+
+    } catch (err) {
+      console.error('Unexpected error:', err);
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', loadDynamicStore);
+</script>
 </body>
 </html>
