@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PurelyBuild | Authentication</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col justify-between">
+    
+    <!-- Header -->
+    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="index.html" class="text-xl font-bold bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">PurelyBuild</a>
+            <a href="index.html" class="text-slate-400 hover:text-white text-sm transition">← Back to Home</a>
+        </div>
+    </header>
+
+    <!-- Auth Form Box -->
+    <main class="max-w-md mx-auto px-6 py-12 w-full flex-grow flex flex-col justify-center">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-xl">
+            
+            <!-- Tabs -->
+            <div class="flex border-b border-slate-800 mb-6">
+                <button id="tab-login" class="flex-1 py-3 text-center text-sm font-semibold border-b-2 border-blue-500 text-blue-400 focus:outline-none">Sign In</button>
+                <button id="tab-signup" class="flex-1 py-3 text-center text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 focus:outline-none">Create Account</button>
+            </div>
+
+            <!-- Header Text -->
+            <div class="text-center mb-6">
+                <h2 id="form-title" class="text-2xl font-bold text-white">Welcome Back</h2>
+                <p id="form-subtitle" class="text-xs text-slate-400 mt-1">Enter your credentials to access your dashboard</p>
+            </div>
+
+            <!-- Form -->
+            <form id="auth-form" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Email Address</label>
+                    <input id="auth-email" type="email" required placeholder="name@company.com" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-sm rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Password</label>
+                    <input id="auth-password" type="password" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-sm rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500">
+                </div>
+
+                <button type="submit" id="auth-submit-btn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-3 rounded-lg text-sm transition mt-2">Sign In</button>
+            </form>
+
+            <!-- Status Message -->
+            <div id="auth-msg" class="text-center text-xs font-medium mt-4 h-5"></div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-900 py-6 text-center text-xs text-slate-600">
+        <p>&copy; 2026 PurelyBuild. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const SUPABASE_URL = 'https://zpxqetyrzpeleimnvzgq.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_f8An8GUjq9__N2pzvfmsKg_nrPGnKKY';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let currentMode = 'login';
+
+        const tabLogin = document.getElementById('tab-login');
+        const tabSignup = document.getElementById('tab-signup');
+        const formTitle = document.getElementById('form-title');
+        const formSubtitle = document.getElementById('form-subtitle');
+        const submitBtn = document.getElementById('auth-submit-btn');
+        const authForm = document.getElementById('auth-form');
+        const emailInput = document.getElementById('auth-email');
+        const passwordInput = document.getElementById('auth-password');
+        const msg = document.getElementById('auth-msg');
+
+        async function checkSession() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                window.location.href = 'dashboard.html';
+            }
+        }
+        checkSession();
+
+        tabLogin.addEventListener('click', () => {
+            currentMode = 'login';
+            tabLogin.className = 'flex-1 py-3 text-center text-sm font-semibold border-b-2 border-blue-500 text-blue-400 focus:outline-none';
+            tabSignup.className = 'flex-1 py-3 text-center text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 focus:outline-none';
+            formTitle.innerText = 'Welcome Back';
+            formSubtitle.innerText = 'Enter your credentials to access your dashboard';
+            submitBtn.innerText = 'Sign In';
+            msg.innerText = '';
+        });
+
+        tabSignup.addEventListener('click', () => {
+            currentMode = 'signup';
+            tabSignup.className = 'flex-1 py-3 text-center text-sm font-semibold border-b-2 border-blue-500 text-blue-400 focus:outline-none';
+            tabLogin.className = 'flex-1 py-3 text-center text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 focus:outline-none';
+            formTitle.innerText = 'Create your account';
+            formSubtitle.innerText = 'Get started with PurelyBuild in seconds';
+            submitBtn.innerText = 'Create Account';
+            msg.innerText = '';
+        });
+
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            msg.className = 'text-center text-xs font-medium text-slate-400 mt-4 h-5';
+            msg.innerText = 'Processing...';
+
+            if (currentMode === 'login') {
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                if (error) {
+                    msg.className = 'text-center text-xs font-medium text-red-400 mt-4 h-5';
+                    msg.innerText = '❌ ' + error.message;
+                } else {
+                    msg.className = 'text-center text-xs font-medium text-emerald-400 mt-4 h-5';
+                    msg.innerText = '🎉 Logged in successfully! Redirecting...';
+                    setTimeout(() => window.location.href = 'dashboard.html', 1000);
+                }
+            } else {
+                const { data, error } = await supabase.auth.signUp({ email, password });
+                if (error) {
+                    msg.className = 'text-center text-xs font-medium text-red-400 mt-4 h-5';
+                    msg.innerText = '❌ ' + error.message;
+                } else {
+                    msg.className = 'text-center text-xs font-medium text-emerald-400 mt-4 h-5';
+                    msg.innerText = '🎉 Account created! Redirecting...';
+                    setTimeout(() => window.location.href = 'dashboard.html', 1200);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
