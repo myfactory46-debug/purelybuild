@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <meta
+    name="description"
+    content="Quality Service with a 4.7 Star Rating from Over 100 Reviews"
+  />
+
+  <title>Mobile Kangaroo - Apple Authorized Service Provider | Demo</title>
+
+  <style>
+    :root {
+      --bg: #070b14;
+      --surface: #0d1321;
+      --surface-2: #111827;
+      --card: rgba(255,255,255,0.065);
+      --line: rgba(255,255,255,0.1);
+
+      --text: #f8fafc;
+      --muted: #94a3b8;
+
+      --accent: #7c3aed;
+      --accent-2: #22d3ee;
+      --accent-3: #38bdf8;
+
+      --light-bg: #f8fafc;
+      --light-text: #0f172a;
+      --light-muted: #64748b;
+
+      --radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+      color: var(--text);
+      background: var(--bg);
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .container {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .nav-wrap {
+      position: fixed;
+      top: 18px;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    .nav {
+      min-height: 68px;
+      padding: 10px 12px 10px 20px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+
+      background: rgba(8,12,22,.72);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 18px;
+
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+
+      box-shadow:
+        0 18px 60px rgba(0,0,0,.22);
+
+      pointer-events: auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+
+      display: grid;
+      place-items: center;
+
+      font-weight: 900;
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--accent),
+          var(--accent-2)
+        );
+
+      box-shadow:
+        0 8px 30px rgba(124,58,237,.3);
+    }
+
+    .brand-text {
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 430px;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-link {
+      color: #cbd5e1;
+      font-size: .92rem;
+      padding: 10px 14px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+
+      border-radius: 14px;
+      padding: 14px 20px;
+
+      font-weight: 800;
+      transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        background .25s ease,
+        border-color .25s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+    }
+
+    .btn-primary {
+      color: white;
+      border: 1px solid rgba(255,255,255,.18);
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--accent),
+          #4f46e5
+        );
+
+      box-shadow:
+        0 16px 40px rgba(124,58,237,.3);
+    }
+
+    .btn-primary:hover {
+      box-shadow:
+        0 22px 55px rgba(124,58,237,.42);
+    }
+
+    .btn-secondary {
+      color: #e2e8f0;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.14);
+    }
+
+    .hero {
+      min-height: 100vh;
+      position: relative;
+      overflow: hidden;
+
+      display: flex;
+      align-items: center;
+
+      padding: 145px 0 100px;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      width: 620px;
+      height: 620px;
+      border-radius: 50%;
+
+      top: -170px;
+      right: -160px;
+
+      background:
+        radial-gradient(
+          circle,
+          rgba(124,58,237,.35),
+          transparent 67%
+        );
+
+      filter: blur(10px);
+      animation: floatGlow 8s ease-in-out infinite alternate;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 520px;
+      height: 520px;
+      border-radius: 50%;
+
+      bottom: -260px;
+      left: -180px;
+
+      background:
+        radial-gradient(
+          circle,
+          rgba(34,211,238,.22),
+          transparent 70%
+        );
+    }
+
+    @keyframes floatGlow {
+      from {
+        transform: translate3d(0,0,0) scale(1);
+      }
+
+      to {
+        transform: translate3d(-80px,70px,0) scale(1.12);
+      }
+    }
+
+    .grid-bg {
+      position: absolute;
+      inset: 0;
+
+      background-image:
+        linear-gradient(
+          rgba(255,255,255,.025) 1px,
+          transparent 1px
+        ),
+        linear-gradient(
+          90deg,
+          rgba(255,255,255,.025) 1px,
+          transparent 1px
+        );
+
+      background-size: 50px 50px;
+      mask-image:
+        linear-gradient(
+          to bottom,
+          rgba(0,0,0,.9),
+          transparent
+        );
+    }
+
+    .hero-layout {
+      position: relative;
+      z-index: 2;
+
+      display: grid;
+      grid-template-columns: 1.08fr .92fr;
+      gap: 70px;
+      align-items: center;
+    }
+
+    .hero-badge {
+      width: fit-content;
+
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+
+      padding: 9px 13px;
+      margin-bottom: 22px;
+
+      font-size: .86rem;
+      font-weight: 700;
+
+      color: #dbeafe;
+
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 999px;
+
+      background: rgba(255,255,255,.055);
+      backdrop-filter: blur(10px);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 16px #22c55e;
+    }
+
+    h1 {
+      font-size: clamp(3.4rem, 7vw, 6.9rem);
+      line-height: .93;
+      letter-spacing: -.065em;
+      max-width: 850px;
+    }
+
+    .gradient-text {
+      background:
+        linear-gradient(
+          90deg,
+          #ffffff,
+          #c4b5fd 38%,
+          #67e8f9
+        );
+
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero-copy {
+      max-width: 690px;
+
+      margin-top: 26px;
+
+      font-size: clamp(1.05rem, 1.8vw, 1.28rem);
+      line-height: 1.75;
+
+      color: var(--muted);
+    }
+
+    .hero-actions {
+      margin-top: 34px;
+
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .mini-proof {
+      margin-top: 35px;
+
+      display: flex;
+      align-items: center;
+      gap: 14px;
+
+      color: #cbd5e1;
+      font-size: .92rem;
+    }
+
+    .avatars {
+      display: flex;
+    }
+
+    .avatar {
+      width: 35px;
+      height: 35px;
+
+      margin-left: -8px;
+
+      border-radius: 50%;
+      border: 2px solid var(--bg);
+
+      display: grid;
+      place-items: center;
+
+      font-size: .72rem;
+      font-weight: 800;
+
+      background:
+        linear-gradient(
+          135deg,
+          #334155,
+          #0f172a
+        );
+    }
+
+    .avatar:first-child {
+      margin-left: 0;
+    }
+
+    .visual-wrap {
+      position: relative;
+      perspective: 1200px;
+    }
+
+    .visual-card {
+      position: relative;
+      overflow: hidden;
+
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 30px;
+
+      background:
+        linear-gradient(
+          160deg,
+          rgba(255,255,255,.105),
+          rgba(255,255,255,.035)
+        );
+
+      backdrop-filter: blur(20px);
+
+      padding: 24px;
+
+      box-shadow:
+        0 45px 100px rgba(0,0,0,.35);
+
+      transform:
+        rotateY(-6deg)
+        rotateX(3deg);
+
+      transition:
+        transform .35s ease;
+    }
+
+    .visual-card:hover {
+      transform:
+        rotateY(0deg)
+        rotateX(0deg)
+        translateY(-5px);
+    }
+
+    .window-bar {
+      display: flex;
+      gap: 7px;
+      margin-bottom: 26px;
+    }
+
+    .window-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.2);
+    }
+
+    .window-dot:nth-child(1) {
+      background: #fb7185;
+    }
+
+    .window-dot:nth-child(2) {
+      background: #facc15;
+    }
+
+    .window-dot:nth-child(3) {
+      background: #4ade80;
+    }
+
+    .preview-hero {
+      border-radius: 22px;
+      padding: 34px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #111827,
+          #1e1b4b
+        );
+
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preview-hero::after {
+      content: "";
+      position: absolute;
+
+      width: 170px;
+      height: 170px;
+
+      right: -50px;
+      top: -60px;
+
+      border-radius: 50%;
+
+      background:
+        radial-gradient(
+          circle,
+          rgba(34,211,238,.45),
+          transparent 68%
+        );
+    }
+
+    .preview-label {
+      color: #a5b4fc;
+      font-size: .8rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .preview-title {
+      font-size: 1.8rem;
+      line-height: 1.05;
+      font-weight: 900;
+      max-width: 330px;
+    }
+
+    .preview-sub {
+      margin-top: 12px;
+      color: #94a3b8;
+      font-size: .88rem;
+      max-width: 330px;
+    }
+
+    .preview-button {
+      margin-top: 20px;
+      width: fit-content;
+
+      padding: 10px 14px;
+
+      border-radius: 10px;
+
+      color: white;
+      font-size: .8rem;
+      font-weight: 800;
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--accent),
+          #4f46e5
+        );
+    }
+
+    .preview-stats {
+      margin-top: 18px;
+
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 12px;
+    }
+
+    .preview-stat {
+      padding: 16px;
+
+      border-radius: 16px;
+
+      background:
+        rgba(255,255,255,.055);
+
+      border:
+        1px solid rgba(255,255,255,.08);
+    }
+
+    .preview-stat strong {
+      display: block;
+      font-size: 1.2rem;
+    }
+
+    .preview-stat span {
+      color: #94a3b8;
+      font-size: .72rem;
+    }
+
+    .floating-card {
+      position: absolute;
+      right: -35px;
+      bottom: -35px;
+
+      width: 190px;
+
+      padding: 18px;
+
+      border-radius: 18px;
+
+      border: 1px solid rgba(255,255,255,.14);
+
+      background:
+        rgba(15,23,42,.88);
+
+      box-shadow:
+        0 25px 60px rgba(0,0,0,.35);
+
+      animation:
+        floatCard 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatCard {
+      from {
+        transform: translateY(0);
+      }
+
+      to {
+        transform: translateY(-14px);
+      }
+    }
+
+    .floating-card strong {
+      display: block;
+      margin-bottom: 7px;
+    }
+
+    .floating-card span {
+      color: #94a3b8;
+      font-size: .82rem;
+      line-height: 1.5;
+    }
+
+    .light-section {
+      background: var(--light-bg);
+      color: var(--light-text);
+
+      position: relative;
+      overflow: hidden;
+    }
+
+    .section {
+      padding: 110px 0;
+    }
+
+    .section-heading {
+      display: grid;
+      grid-template-columns: .8fr 1.2fr;
+      gap: 50px;
+
+      align-items: end;
+      margin-bottom: 55px;
+    }
+
+    .eyebrow {
+      color: #7c3aed;
+      font-size: .85rem;
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      font-size: clamp(2.5rem, 5vw, 4.6rem);
+      line-height: 1;
+      letter-spacing: -.045em;
+    }
+
+    .section-description {
+      color: var(--light-muted);
+      font-size: 1.08rem;
+      line-height: 1.75;
+      max-width: 620px;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(245px,1fr)
+        );
+
+      gap: 18px;
+    }
+
+    .service-card {
+      min-height: 270px;
+
+      padding: 28px;
+
+      position: relative;
+      overflow: hidden;
+
+      border-radius: 22px;
+
+      background: white;
+      border: 1px solid #e2e8f0;
+
+      box-shadow:
+        0 12px 35px rgba(15,23,42,.055);
+
+      transition:
+        transform .3s ease,
+        box-shadow .3s ease,
+        border-color .3s ease;
+    }
+
+    .service-card:hover {
+      transform: translateY(-10px);
+
+      border-color:
+        rgba(124,58,237,.3);
+
+      box-shadow:
+        0 28px 60px rgba(15,23,42,.12);
+    }
+
+    .service-number {
+      position: absolute;
+      right: 22px;
+      top: 20px;
+
+      color: #e2e8f0;
+      font-size: 2.3rem;
+      font-weight: 900;
+    }
+
+    .service-icon {
+      width: 48px;
+      height: 48px;
+
+      border-radius: 14px;
+
+      display: grid;
+      place-items: center;
+
+      margin-bottom: 40px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #ede9fe,
+          #cffafe
+        );
+    }
+
+    .service-icon svg {
+      width: 23px;
+      fill: #6d28d9;
+    }
+
+    .service-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 12px;
+    }
+
+    .service-card p {
+      color: #64748b;
+      line-height: 1.7;
+    }
+
+    .why-section {
+      background:
+        linear-gradient(
+          180deg,
+          #f8fafc,
+          #eef2ff
+        );
+
+      color: var(--light-text);
+    }
+
+    .why-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 70px;
+      align-items: center;
+    }
+
+    .why-copy p {
+      margin-top: 22px;
+
+      color: #64748b;
+      line-height: 1.85;
+      font-size: 1.07rem;
+    }
+
+    .trust-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .trust-item {
+      min-height: 74px;
+
+      display: flex;
+      align-items: center;
+      gap: 15px;
+
+      padding: 18px 20px;
+
+      background: rgba(255,255,255,.9);
+
+      border:
+        1px solid rgba(148,163,184,.28);
+
+      border-radius: 18px;
+
+      box-shadow:
+        0 12px 30px rgba(15,23,42,.045);
+
+      transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+    }
+
+    .trust-item:hover {
+      transform: translateX(7px);
+
+      box-shadow:
+        0 18px 40px rgba(15,23,42,.08);
+    }
+
+    .check {
+      width: 35px;
+      height: 35px;
+
+      min-width: 35px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 10px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #ede9fe,
+          #cffafe
+        );
+    }
+
+    .check svg {
+      width: 20px;
+      fill: none;
+      stroke: #6d28d9;
+      stroke-width: 2.5;
+    }
+
+    .cta-section {
+      padding: 120px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-section::before {
+      content: "";
+
+      position: absolute;
+
+      width: 500px;
+      height: 500px;
+
+      right: -180px;
+      top: -200px;
+
+      border-radius: 50%;
+
+      background:
+        radial-gradient(
+          circle,
+          rgba(124,58,237,.28),
+          transparent 68%
+        );
+    }
+
+    .cta-card {
+      position: relative;
+      z-index: 1;
+
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 40px;
+      align-items: center;
+
+      padding: clamp(35px,6vw,70px);
+
+      border-radius: 30px;
+
+      border:
+        1px solid rgba(255,255,255,.1);
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(255,255,255,.09),
+          rgba(255,255,255,.035)
+        );
+
+      box-shadow:
+        0 35px 90px rgba(0,0,0,.28);
+    }
+
+    .cta-card h2 {
+      max-width: 720px;
+    }
+
+    .cta-card p {
+      margin-top: 18px;
+
+      max-width: 650px;
+
+      color: #94a3b8;
+      line-height: 1.75;
+    }
+
+    .cta-actions {
+      min-width: 190px;
+    }
+
+    .cta-actions .btn {
+      width: 100%;
+    }
+
+    .demo-disclaimer {
+      margin-top: 22px;
+
+      color: #64748b;
+      font-size: .82rem;
+      line-height: 1.6;
+    }
+
+    footer {
+      padding: 38px 0 48px;
+
+      border-top:
+        1px solid rgba(255,255,255,.08);
+
+      color: #64748b;
+    }
+
+    .footer-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .floating-call {
+      position: fixed;
+
+      right: 22px;
+      bottom: 22px;
+
+      z-index: 999;
+
+      width: 56px;
+      height: 56px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 50%;
+
+      color: white;
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--accent),
+          #4f46e5
+        );
+
+      box-shadow:
+        0 18px 40px rgba(124,58,237,.38);
+
+      transition:
+        transform .25s ease;
+    }
+
+    .floating-call:hover {
+      transform:
+        translateY(-5px)
+        scale(1.04);
+    }
+
+    .floating-call svg {
+      width: 23px;
+      fill: currentColor;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+
+      transition:
+        opacity .75s ease,
+        transform .75s cubic-bezier(.2,.7,.2,1);
+
+      transition-delay: var(--delay, 0ms);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 980px) {
+      .hero-layout,
+      .why-layout,
+      .section-heading,
+      .cta-card {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-layout {
+        gap: 55px;
+      }
+
+      .visual-card {
+        transform: none;
+      }
+
+      .floating-card {
+        right: 15px;
+      }
+
+      .section-heading {
+        gap: 20px;
+      }
+
+      .cta-actions {
+        min-width: 0;
+      }
+
+      .cta-actions .btn {
+        width: fit-content;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .container {
+        width: min(100% - 26px, 1180px);
+      }
+
+      .nav-wrap {
+        top: 10px;
+      }
+
+      .nav {
+        min-height: 60px;
+        padding: 8px 9px 8px 13px;
+      }
+
+      .brand-mark {
+        width: 38px;
+        height: 38px;
+      }
+
+      .brand-text {
+        max-width: 180px;
+        font-size: .86rem;
+      }
+
+      .nav-link {
+        display: none;
+      }
+
+      .nav-actions .btn {
+        padding: 11px 13px;
+        font-size: .82rem;
+      }
+
+      .hero {
+        min-height: auto;
+        padding:
+          120px 0
+          80px;
+      }
+
+      h1 {
+        font-size:
+          clamp(
+            3rem,
+            17vw,
+            5rem
+          );
+      }
+
+      .hero-copy {
+        font-size: 1rem;
+      }
+
+      .hero-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .hero-actions .btn {
+        width: 100%;
+      }
+
+      .visual-card {
+        padding: 15px;
+        border-radius: 22px;
+      }
+
+      .preview-hero {
+        padding: 24px;
+      }
+
+      .preview-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .floating-card {
+        position: relative;
+        right: auto;
+        bottom: auto;
+        margin-top: 14px;
+        width: 100%;
+      }
+
+      .section {
+        padding: 80px 0;
+      }
+
+      .cta-section {
+        padding: 80px 0;
+      }
+
+      .cta-card {
+        padding: 30px 22px;
+        border-radius: 24px;
+      }
+
+      .floating-call {
+        right: 15px;
+        bottom: 15px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="nav-wrap">
+    <div class="container">
+      <nav class="nav">
+
+        <div class="brand">
+          <div class="brand-mark">
+            M
+          </div>
+
+          <div class="brand-text">
+            Mobile Kangaroo - Apple Authorized…
+          </div>
+        </div>
+
+        <div class="nav-actions">
+          <a
+            class="nav-link"
+            href="#services"
+          >
+            Services
+          </a>
+
+          <a
+            class="btn btn-primary"
+            href="#contact"
+          >
+            Call Now
+          </a>
+        </div>
+
+      </nav>
+    </div>
+  </div>
+
+
+  <main>
+
+    <section class="hero">
+
+      <div class="grid-bg"></div>
+
+      <div class="container hero-layout">
+
+        <div>
+
+          <div class="hero-badge reveal">
+            <span class="dot"></span>
+
+            Waco, TX, US
+          </div>
+
+          <h1 class="reveal">
+            <span class="gradient-text">
+              Trusted Service Provider in Waco
+            </span>
+          </h1>
+
+          <p
+            class="hero-copy reveal"
+            style="--delay:100ms"
+          >
+            Quality Service with a 4.7 Star Rating from Over 100 Reviews
+          </p>
+
+          <div
+            class="hero-actions reveal"
+            style="--delay:180ms"
+          >
+
+            <a
+              class="btn btn-primary"
+              href="#contact"
+            >
+              Call Now
+              <span>→</span>
+            </a>
+
+            <a
+              class="btn btn-secondary"
+              href="#contact"
+            >
+              Contact Us
+            </a>
+
+          </div>
+
+          <div
+            class="mini-proof reveal"
+            style="--delay:260ms"
+          >
+
+            <div class="avatars">
+              <div class="avatar">★</div>
+              <div class="avatar">★</div>
+              <div class="avatar">★</div>
+            </div>
+
+            <span>
+              Trusted local service experience
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="visual-wrap reveal">
+
+          <div class="visual-card">
+
+            <div class="window-bar">
+              <span class="window-dot"></span>
+              <span class="window-dot"></span>
+              <span class="window-dot"></span>
+            </div>
+
+            <div class="preview-hero">
+
+              <div class="preview-label">
+                Waco, TX, US
+              </div>
+
+              <div class="preview-title">
+                Trusted Service Provider in Waco
+              </div>
+
+              <div class="preview-sub">
+                Quality Service with a 4.7 Star Rating from Over 100 Reviews
+              </div>
+
+              <div class="preview-button">
+                Call Now
+              </div>
+
+            </div>
+
+            <div class="preview-stats">
+
+              <div class="preview-stat">
+                <strong>Fast</strong>
+                <span>Customer contact</span>
+              </div>
+
+              <div class="preview-stat">
+                <strong>Local</strong>
+                <span>Waco, TX, US</span>
+              </div>
+
+              <div class="preview-stat">
+                <strong>Easy</strong>
+                <span>Mobile experience</span>
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="floating-card">
+
+            <strong>
+              Customer Focused
+            </strong>
+
+            <span>
+              Clear calls-to-action and an easier path to contact.
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <section
+      id="services"
+      class="light-section section"
+    >
+
+      <div class="container">
+
+        <div class="section-heading">
+
+          <div>
+
+            <div class="eyebrow">
+              What We Do
+            </div>
+
+            <h2>
+              Our Services
+            </h2>
+
+          </div>
+
+          <p class="section-description">
+            Explore the services available from
+            Mobile Kangaroo - Apple Authorized Service Provider.
+            Designed around clear communication,
+            convenience, and a better customer experience.
+          </p>
+
+        </div>
+
+        <div class="services-grid">
+          
+              <article class="service-card reveal" style="--delay:0ms">
+                <div class="service-number">
+                  01
+                </div>
+
+                <div class="service-icon">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 3l2.2 4.4L19 8.1l-3.5 3.4.8 4.8L12 14l-4.3 2.3.8-4.8L5 8.1l4.8-.7L12 3z"/>
+                  </svg>
+                </div>
+
+                <h3>Professional Service</h3>
+
+                <p>
+                  Contact the business to learn more about available services.
+                </p>
+              </article>
+            
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <section class="why-section section">
+
+      <div class="container why-layout">
+
+        <div class="why-copy reveal">
+
+          <div class="eyebrow">
+            Why Customers Choose Us
+          </div>
+
+          <h2>
+            Why Choose Mobile Kangaroo
+          </h2>
+
+          <p>
+            High customer ratings and a large number of positive reviews demonstrate our commitment to quality service in Waco.
+          </p>
+
+        </div>
+
+        <div class="trust-list">
+          
+              <div class="trust-item reveal" style="--delay:0ms">
+                <div class="check">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M20 6L9 17l-5-5"/>
+                  </svg>
+                </div>
+
+                <span>Rated 4.7 stars based on 102 reviews</span>
+              </div>
+            
+              <div class="trust-item reveal" style="--delay:70ms">
+                <div class="check">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M20 6L9 17l-5-5"/>
+                  </svg>
+                </div>
+
+                <span>Located in Waco, TX</span>
+              </div>
+            
+              <div class="trust-item reveal" style="--delay:140ms">
+                <div class="check">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M20 6L9 17l-5-5"/>
+                  </svg>
+                </div>
+
+                <span>Phone support available: (254) 227-5748</span>
+              </div>
+            
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <section
+      id="contact"
+      class="cta-section"
+    >
+
+      <div class="container">
+
+        <div class="cta-card reveal">
+
+          <div>
+
+            <div class="eyebrow">
+              Let's Talk
+            </div>
+
+            <h2>
+              Get in Touch
+            </h2>
+
+            <p>
+              Call us today at (254) 227-5748 to discuss your service needs or to get more information.
+            </p>
+
+            <div class="demo-disclaimer">
+              PurelyBuild demonstration concept created
+              from publicly available business information.
+              This is not the business's official website.
+            </div>
+
+          </div>
+
+          <div class="cta-actions">
+
+            <a
+              class="btn btn-primary"
+              href="#contact"
+            >
+              Call Now
+              <span>→</span>
+            </a>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <footer>
+
+    <div class="container footer-row">
+
+      <span>
+        Mobile Kangaroo - Apple Authorized Service Provider
+      </span>
+
+      <span>
+        Demo concept prepared by PurelyBuild.
+      </span>
+
+    </div>
+
+  </footer>
+
+
+  
+
+
+  <script>
+    const observer =
+      new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        {
+          threshold: 0.12
+        }
+      );
+
+    document
+      .querySelectorAll('.reveal')
+      .forEach((el) => {
+        observer.observe(el);
+      });
+
+
+    const visual =
+      document.querySelector('.visual-card');
+
+    if (visual && window.innerWidth > 980) {
+
+      visual.addEventListener(
+        'mousemove',
+        (event) => {
+
+          const rect =
+            visual.getBoundingClientRect();
+
+          const x =
+            event.clientX - rect.left;
+
+          const y =
+            event.clientY - rect.top;
+
+          const rotateY =
+            ((x / rect.width) - 0.5) * 8;
+
+          const rotateX =
+            ((y / rect.height) - 0.5) * -8;
+
+          visual.style.transform =
+            'rotateX(' +
+            rotateX +
+            'deg) rotateY(' +
+            rotateY +
+            'deg) translateY(-4px)';
+        }
+      );
+
+      visual.addEventListener(
+        'mouseleave',
+        () => {
+          visual.style.transform =
+            'rotateY(-6deg) rotateX(3deg)';
+        }
+      );
+
+    }
+  </script>
+
+</body>
+</html>
