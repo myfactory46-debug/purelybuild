@@ -15,26 +15,42 @@
 
   <title>Mobile Kangaroo - Apple Authorized Service Provider | Demo</title>
 
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+  />
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
   <style>
     :root {
-      --bg: #070b14;
-      --surface: #0d1321;
-      --surface-2: #111827;
-      --card: rgba(255,255,255,0.065);
-      --line: rgba(255,255,255,0.1);
+      --ink: #111214;
+      --muted: #666b73;
+      --soft: #f4f4f1;
+      --paper: #fbfbf8;
+      --white: #ffffff;
 
-      --text: #f8fafc;
-      --muted: #94a3b8;
+      --accent: #2457e6;
+      --accent-dark: #173ca6;
+      --accent-soft: #e9efff;
 
-      --accent: #7c3aed;
-      --accent-2: #22d3ee;
-      --accent-3: #38bdf8;
+      --line: rgba(17,18,20,.12);
 
-      --light-bg: #f8fafc;
-      --light-text: #0f172a;
-      --light-muted: #64748b;
+      --radius-sm: 14px;
+      --radius-md: 22px;
+      --radius-lg: 32px;
 
-      --radius: 24px;
+      --shadow:
+        0 30px 80px rgba(16,20,30,.09);
     }
 
     * {
@@ -49,17 +65,27 @@
 
     body {
       font-family:
-        Inter,
-        ui-sans-serif,
+        "DM Sans",
         system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
         sans-serif;
 
-      color: var(--text);
-      background: var(--bg);
+      background: var(--paper);
+      color: var(--ink);
+
       overflow-x: hidden;
+    }
+
+    h1,
+    h2,
+    h3,
+    .brand-name,
+    .stat-value,
+    .nav-cta,
+    .btn {
+      font-family:
+        "Manrope",
+        system-ui,
+        sans-serif;
     }
 
     a {
@@ -73,627 +99,994 @@
     }
 
     .container {
-      width: min(1180px, calc(100% - 40px));
+      width: min(1180px, calc(100% - 44px));
       margin: 0 auto;
     }
 
-    .nav-wrap {
+    .progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+
+      width: 0%;
+      height: 3px;
+
+      background: var(--accent);
+
+      z-index: 2000;
+    }
+
+    .site-header {
       position: fixed;
       top: 18px;
       left: 0;
+
       width: 100%;
+
       z-index: 1000;
-      pointer-events: none;
     }
 
     .nav {
       min-height: 68px;
-      padding: 10px 12px 10px 20px;
 
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 18px;
 
-      background: rgba(8,12,22,.72);
-      border: 1px solid rgba(255,255,255,.1);
+      gap: 24px;
+
+      padding:
+        10px 12px
+        10px 16px;
+
+      border:
+        1px solid
+        rgba(17,18,20,.08);
+
       border-radius: 18px;
 
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
+      background:
+        rgba(251,251,248,.88);
+
+      backdrop-filter:
+        blur(16px);
+
+      -webkit-backdrop-filter:
+        blur(16px);
 
       box-shadow:
-        0 18px 60px rgba(0,0,0,.22);
+        0 18px 45px
+        rgba(16,20,30,.06);
 
-      pointer-events: auto;
+      transition:
+        box-shadow .3s ease,
+        background .3s ease;
+    }
+
+    .nav.scrolled {
+      background:
+        rgba(255,255,255,.96);
+
+      box-shadow:
+        0 20px 55px
+        rgba(16,20,30,.1);
     }
 
     .brand {
+      min-width: 0;
+
       display: flex;
       align-items: center;
+
       gap: 12px;
-      min-width: 0;
     }
 
     .brand-mark {
       width: 42px;
       height: 42px;
-      border-radius: 12px;
 
       display: grid;
       place-items: center;
 
-      font-weight: 900;
+      flex: 0 0 auto;
+
+      border-radius: 12px;
+
+      color: white;
+
+      font-family:
+        "Manrope",
+        sans-serif;
+
+      font-weight: 800;
 
       background:
-        linear-gradient(
-          135deg,
-          var(--accent),
-          var(--accent-2)
-        );
-
-      box-shadow:
-        0 8px 30px rgba(124,58,237,.3);
+        var(--ink);
     }
 
-    .brand-text {
-      font-weight: 800;
-      white-space: nowrap;
+    .brand-name {
+      font-size: .95rem;
+      font-weight: 700;
+
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 430px;
+      white-space: nowrap;
+
+      max-width: 460px;
     }
 
     .nav-actions {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .nav-link {
-      color: #cbd5e1;
-      font-size: .92rem;
-      padding: 10px 14px;
-    }
+      padding: 11px 13px;
 
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
+      font-size: .9rem;
+      font-weight: 600;
 
-      border-radius: 14px;
-      padding: 14px 20px;
+      color: #4f535a;
 
-      font-weight: 800;
       transition:
-        transform .25s ease,
-        box-shadow .25s ease,
-        background .25s ease,
-        border-color .25s ease;
+        color .2s ease;
     }
 
-    .btn:hover {
-      transform: translateY(-3px);
+    .nav-link:hover {
+      color: var(--ink);
     }
 
-    .btn-primary {
+    .nav-cta {
+      padding:
+        12px 18px;
+
+      border-radius:
+        12px;
+
       color: white;
-      border: 1px solid rgba(255,255,255,.18);
+
+      font-size:
+        .88rem;
+
+      font-weight: 700;
 
       background:
-        linear-gradient(
-          135deg,
-          var(--accent),
-          #4f46e5
-        );
+        var(--ink);
 
-      box-shadow:
-        0 16px 40px rgba(124,58,237,.3);
+      transition:
+        transform .25s ease,
+        background .25s ease;
     }
 
-    .btn-primary:hover {
-      box-shadow:
-        0 22px 55px rgba(124,58,237,.42);
-    }
+    .nav-cta:hover {
+      transform:
+        translateY(-2px);
 
-    .btn-secondary {
-      color: #e2e8f0;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.14);
+      background:
+        var(--accent);
     }
 
     .hero {
-      min-height: 100vh;
-      position: relative;
-      overflow: hidden;
+      padding:
+        150px 0
+        92px;
 
-      display: flex;
-      align-items: center;
+      min-height:
+        92vh;
 
-      padding: 145px 0 100px;
-    }
+      display:
+        flex;
 
-    .hero::before {
-      content: "";
-      position: absolute;
-      width: 620px;
-      height: 620px;
-      border-radius: 50%;
-
-      top: -170px;
-      right: -160px;
-
-      background:
-        radial-gradient(
-          circle,
-          rgba(124,58,237,.35),
-          transparent 67%
-        );
-
-      filter: blur(10px);
-      animation: floatGlow 8s ease-in-out infinite alternate;
-    }
-
-    .hero::after {
-      content: "";
-      position: absolute;
-      width: 520px;
-      height: 520px;
-      border-radius: 50%;
-
-      bottom: -260px;
-      left: -180px;
-
-      background:
-        radial-gradient(
-          circle,
-          rgba(34,211,238,.22),
-          transparent 70%
-        );
-    }
-
-    @keyframes floatGlow {
-      from {
-        transform: translate3d(0,0,0) scale(1);
-      }
-
-      to {
-        transform: translate3d(-80px,70px,0) scale(1.12);
-      }
-    }
-
-    .grid-bg {
-      position: absolute;
-      inset: 0;
-
-      background-image:
-        linear-gradient(
-          rgba(255,255,255,.025) 1px,
-          transparent 1px
-        ),
-        linear-gradient(
-          90deg,
-          rgba(255,255,255,.025) 1px,
-          transparent 1px
-        );
-
-      background-size: 50px 50px;
-      mask-image:
-        linear-gradient(
-          to bottom,
-          rgba(0,0,0,.9),
-          transparent
-        );
+      align-items:
+        center;
     }
 
     .hero-layout {
-      position: relative;
-      z-index: 2;
+      display:
+        grid;
 
-      display: grid;
-      grid-template-columns: 1.08fr .92fr;
-      gap: 70px;
-      align-items: center;
+      grid-template-columns:
+        minmax(0,1.05fr)
+        minmax(420px,.95fr);
+
+      gap:
+        80px;
+
+      align-items:
+        center;
     }
 
-    .hero-badge {
-      width: fit-content;
+    .kicker {
+      display:
+        inline-flex;
 
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
+      align-items:
+        center;
 
-      padding: 9px 13px;
-      margin-bottom: 22px;
+      gap:
+        9px;
 
-      font-size: .86rem;
-      font-weight: 700;
+      margin-bottom:
+        26px;
 
-      color: #dbeafe;
+      font-size:
+        .86rem;
 
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 999px;
+      font-weight:
+        700;
 
-      background: rgba(255,255,255,.055);
-      backdrop-filter: blur(10px);
+      color:
+        #45494f;
     }
 
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #22c55e;
-      box-shadow: 0 0 16px #22c55e;
-    }
+    .kicker-dot {
+      width:
+        8px;
 
-    h1 {
-      font-size: clamp(3.4rem, 7vw, 6.9rem);
-      line-height: .93;
-      letter-spacing: -.065em;
-      max-width: 850px;
-    }
+      height:
+        8px;
 
-    .gradient-text {
+      border-radius:
+        50%;
+
       background:
-        linear-gradient(
-          90deg,
-          #ffffff,
-          #c4b5fd 38%,
-          #67e8f9
+        #2c9b61;
+    }
+
+    .hero h1 {
+      max-width:
+        760px;
+
+      font-size:
+        clamp(
+          3.45rem,
+          6.5vw,
+          6.8rem
         );
 
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
+      line-height:
+        .97;
+
+      letter-spacing:
+        -.058em;
+
+      font-weight:
+        700;
     }
 
     .hero-copy {
-      max-width: 690px;
+      max-width:
+        660px;
 
-      margin-top: 26px;
+      margin-top:
+        26px;
 
-      font-size: clamp(1.05rem, 1.8vw, 1.28rem);
-      line-height: 1.75;
+      color:
+        var(--muted);
 
-      color: var(--muted);
+      font-size:
+        clamp(
+          1.06rem,
+          1.5vw,
+          1.2rem
+        );
+
+      line-height:
+        1.72;
     }
 
     .hero-actions {
-      margin-top: 34px;
+      display:
+        flex;
 
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
+      flex-wrap:
+        wrap;
+
+      gap:
+        12px;
+
+      margin-top:
+        34px;
     }
 
-    .mini-proof {
-      margin-top: 35px;
+    .btn {
+      min-height:
+        54px;
 
-      display: flex;
-      align-items: center;
-      gap: 14px;
+      display:
+        inline-flex;
 
-      color: #cbd5e1;
-      font-size: .92rem;
-    }
+      align-items:
+        center;
 
-    .avatars {
-      display: flex;
-    }
+      justify-content:
+        center;
 
-    .avatar {
-      width: 35px;
-      height: 35px;
+      gap:
+        12px;
 
-      margin-left: -8px;
+      padding:
+        14px 22px;
 
-      border-radius: 50%;
-      border: 2px solid var(--bg);
+      border-radius:
+        13px;
 
-      display: grid;
-      place-items: center;
+      font-size:
+        .95rem;
 
-      font-size: .72rem;
-      font-weight: 800;
-
-      background:
-        linear-gradient(
-          135deg,
-          #334155,
-          #0f172a
-        );
-    }
-
-    .avatar:first-child {
-      margin-left: 0;
-    }
-
-    .visual-wrap {
-      position: relative;
-      perspective: 1200px;
-    }
-
-    .visual-card {
-      position: relative;
-      overflow: hidden;
-
-      border: 1px solid rgba(255,255,255,.13);
-      border-radius: 30px;
-
-      background:
-        linear-gradient(
-          160deg,
-          rgba(255,255,255,.105),
-          rgba(255,255,255,.035)
-        );
-
-      backdrop-filter: blur(20px);
-
-      padding: 24px;
-
-      box-shadow:
-        0 45px 100px rgba(0,0,0,.35);
-
-      transform:
-        rotateY(-6deg)
-        rotateX(3deg);
+      font-weight:
+        700;
 
       transition:
-        transform .35s ease;
+        transform .25s ease,
+        box-shadow .25s ease,
+        background .25s ease;
     }
 
-    .visual-card:hover {
-      transform:
-        rotateY(0deg)
-        rotateX(0deg)
-        translateY(-5px);
-    }
-
-    .window-bar {
-      display: flex;
-      gap: 7px;
-      margin-bottom: 26px;
-    }
-
-    .window-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: rgba(255,255,255,.2);
-    }
-
-    .window-dot:nth-child(1) {
-      background: #fb7185;
-    }
-
-    .window-dot:nth-child(2) {
-      background: #facc15;
-    }
-
-    .window-dot:nth-child(3) {
-      background: #4ade80;
-    }
-
-    .preview-hero {
-      border-radius: 22px;
-      padding: 34px;
+    .btn-primary {
+      color:
+        white;
 
       background:
-        linear-gradient(
-          135deg,
-          #111827,
-          #1e1b4b
-        );
-
-      position: relative;
-      overflow: hidden;
-    }
-
-    .preview-hero::after {
-      content: "";
-      position: absolute;
-
-      width: 170px;
-      height: 170px;
-
-      right: -50px;
-      top: -60px;
-
-      border-radius: 50%;
-
-      background:
-        radial-gradient(
-          circle,
-          rgba(34,211,238,.45),
-          transparent 68%
-        );
-    }
-
-    .preview-label {
-      color: #a5b4fc;
-      font-size: .8rem;
-      font-weight: 800;
-      margin-bottom: 10px;
-    }
-
-    .preview-title {
-      font-size: 1.8rem;
-      line-height: 1.05;
-      font-weight: 900;
-      max-width: 330px;
-    }
-
-    .preview-sub {
-      margin-top: 12px;
-      color: #94a3b8;
-      font-size: .88rem;
-      max-width: 330px;
-    }
-
-    .preview-button {
-      margin-top: 20px;
-      width: fit-content;
-
-      padding: 10px 14px;
-
-      border-radius: 10px;
-
-      color: white;
-      font-size: .8rem;
-      font-weight: 800;
-
-      background:
-        linear-gradient(
-          135deg,
-          var(--accent),
-          #4f46e5
-        );
-    }
-
-    .preview-stats {
-      margin-top: 18px;
-
-      display: grid;
-      grid-template-columns: repeat(3,1fr);
-      gap: 12px;
-    }
-
-    .preview-stat {
-      padding: 16px;
-
-      border-radius: 16px;
-
-      background:
-        rgba(255,255,255,.055);
-
-      border:
-        1px solid rgba(255,255,255,.08);
-    }
-
-    .preview-stat strong {
-      display: block;
-      font-size: 1.2rem;
-    }
-
-    .preview-stat span {
-      color: #94a3b8;
-      font-size: .72rem;
-    }
-
-    .floating-card {
-      position: absolute;
-      right: -35px;
-      bottom: -35px;
-
-      width: 190px;
-
-      padding: 18px;
-
-      border-radius: 18px;
-
-      border: 1px solid rgba(255,255,255,.14);
-
-      background:
-        rgba(15,23,42,.88);
+        var(--accent);
 
       box-shadow:
-        0 25px 60px rgba(0,0,0,.35);
-
-      animation:
-        floatCard 4s ease-in-out infinite alternate;
+        0 14px 30px
+        rgba(36,87,230,.22);
     }
 
-    @keyframes floatCard {
+    .btn-primary:hover {
+      transform:
+        translateY(-3px);
+
+      background:
+        var(--accent-dark);
+
+      box-shadow:
+        0 18px 38px
+        rgba(36,87,230,.3);
+    }
+
+    .btn-primary span {
+      transition:
+        transform .25s ease;
+    }
+
+    .btn-primary:hover span {
+      transform:
+        translateX(4px);
+    }
+
+    .btn-secondary {
+      border:
+        1px solid
+        var(--line);
+
+      background:
+        rgba(255,255,255,.6);
+    }
+
+    .btn-secondary:hover {
+      transform:
+        translateY(-3px);
+
+      background:
+        white;
+    }
+
+    .hero-meta {
+      display:
+        flex;
+
+      flex-wrap:
+        wrap;
+
+      gap:
+        22px;
+
+      margin-top:
+        42px;
+
+      padding-top:
+        24px;
+
+      border-top:
+        1px solid
+        var(--line);
+    }
+
+    .meta-item {
+      display:
+        grid;
+
+      gap:
+        3px;
+    }
+
+    .meta-value {
+      font-family:
+        "Manrope",
+        sans-serif;
+
+      font-weight:
+        700;
+
+      font-size:
+        .96rem;
+    }
+
+    .meta-label {
+      color:
+        var(--muted);
+
+      font-size:
+        .78rem;
+    }
+
+    .hero-panel {
+      position:
+        relative;
+    }
+
+    .device-stage {
+      position:
+        relative;
+
+      min-height:
+        560px;
+
+      overflow:
+        hidden;
+
+      border-radius:
+        34px;
+
+      background:
+        #111214;
+
+      box-shadow:
+        var(--shadow);
+    }
+
+    .device-stage::before {
+      content:
+        "";
+
+      position:
+        absolute;
+
+      width:
+        430px;
+
+      height:
+        430px;
+
+      right:
+        -120px;
+
+      top:
+        -110px;
+
+      border-radius:
+        50%;
+
+      background:
+        #2457e6;
+
+      opacity:
+        .9;
+
+      filter:
+        blur(3px);
+    }
+
+    .device-stage::after {
+      content:
+        "";
+
+      position:
+        absolute;
+
+      width:
+        340px;
+
+      height:
+        340px;
+
+      left:
+        -150px;
+
+      bottom:
+        -160px;
+
+      border-radius:
+        50%;
+
+      background:
+        #e5e7eb;
+
+      opacity:
+        .12;
+    }
+
+    .device-shell {
+      position:
+        absolute;
+
+      z-index:
+        2;
+
+      width:
+        250px;
+
+      height:
+        430px;
+
+      left:
+        50%;
+
+      top:
+        50%;
+
+      transform:
+        translate(-50%,-48%)
+        rotate(-5deg);
+
+      padding:
+        12px;
+
+      border-radius:
+        38px;
+
+      background:
+        #050607;
+
+      box-shadow:
+        0 35px 80px
+        rgba(0,0,0,.35);
+
+      transition:
+        transform .45s
+        cubic-bezier(.2,.8,.2,1);
+    }
+
+    .device-stage:hover
+    .device-shell {
+      transform:
+        translate(-50%,-50%)
+        rotate(-1deg)
+        scale(1.02);
+    }
+
+    .device-screen {
+      height:
+        100%;
+
+      padding:
+        28px 20px;
+
+      overflow:
+        hidden;
+
+      border-radius:
+        29px;
+
+      background:
+        #f5f5f2;
+    }
+
+    .screen-pill {
+      width:
+        62px;
+
+      height:
+        16px;
+
+      margin:
+        0 auto 34px;
+
+      border-radius:
+        999px;
+
+      background:
+        #151618;
+    }
+
+    .screen-label {
+      color:
+        #676b72;
+
+      font-size:
+        .75rem;
+
+      font-weight:
+        600;
+
+      margin-bottom:
+        12px;
+    }
+
+    .screen-title {
+      font-family:
+        "Manrope",
+        sans-serif;
+
+      font-size:
+        1.65rem;
+
+      line-height:
+        1.04;
+
+      font-weight:
+        700;
+
+      letter-spacing:
+        -.04em;
+    }
+
+    .screen-copy {
+      margin-top:
+        14px;
+
+      color:
+        #6a6f76;
+
+      font-size:
+        .76rem;
+
+      line-height:
+        1.55;
+    }
+
+    .screen-btn {
+      margin-top:
+        22px;
+
+      width:
+        fit-content;
+
+      padding:
+        10px 13px;
+
+      border-radius:
+        10px;
+
+      color:
+        white;
+
+      background:
+        var(--accent);
+
+      font-family:
+        "Manrope",
+        sans-serif;
+
+      font-weight:
+        700;
+
+      font-size:
+        .72rem;
+    }
+
+    .screen-card {
+      margin-top:
+        28px;
+
+      padding:
+        18px;
+
+      border-radius:
+        17px;
+
+      background:
+        white;
+
+      border:
+        1px solid
+        rgba(17,18,20,.08);
+    }
+
+    .screen-card strong {
+      display:
+        block;
+
+      margin-bottom:
+        6px;
+
+      font-size:
+        .82rem;
+    }
+
+    .screen-card span {
+      color:
+        #6d7178;
+
+      font-size:
+        .72rem;
+
+      line-height:
+        1.5;
+    }
+
+    .floating-tag {
+      position:
+        absolute;
+
+      z-index:
+        4;
+
+      padding:
+        14px 16px;
+
+      border-radius:
+        14px;
+
+      color:
+        white;
+
+      background:
+        rgba(255,255,255,.12);
+
+      border:
+        1px solid
+        rgba(255,255,255,.14);
+
+      backdrop-filter:
+        blur(12px);
+
+      -webkit-backdrop-filter:
+        blur(12px);
+
+      font-size:
+        .82rem;
+
+      animation:
+        floatTag
+        4s ease-in-out
+        infinite alternate;
+    }
+
+    .tag-one {
+      top:
+        58px;
+
+      left:
+        34px;
+    }
+
+    .tag-two {
+      bottom:
+        52px;
+
+      right:
+        34px;
+
+      animation-delay:
+        .5s;
+    }
+
+    @keyframes floatTag {
       from {
-        transform: translateY(0);
+        transform:
+          translateY(0);
       }
 
       to {
-        transform: translateY(-14px);
+        transform:
+          translateY(-10px);
       }
     }
 
-    .floating-card strong {
-      display: block;
-      margin-bottom: 7px;
+    .trust-strip {
+      border-top:
+        1px solid
+        var(--line);
+
+      border-bottom:
+        1px solid
+        var(--line);
+
+      background:
+        white;
     }
 
-    .floating-card span {
-      color: #94a3b8;
-      font-size: .82rem;
-      line-height: 1.5;
+    .trust-strip-inner {
+      min-height:
+        92px;
+
+      display:
+        grid;
+
+      grid-template-columns:
+        repeat(4,1fr);
+
+      align-items:
+        center;
+
+      gap:
+        1px;
     }
 
-    .light-section {
-      background: var(--light-bg);
-      color: var(--light-text);
+    .strip-item {
+      min-height:
+        92px;
 
-      position: relative;
-      overflow: hidden;
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        center;
+
+      text-align:
+        center;
+
+      padding:
+        18px;
+
+      border-right:
+        1px solid
+        var(--line);
+    }
+
+    .strip-item:last-child {
+      border-right:
+        0;
+    }
+
+    .strip-item strong {
+      display:
+        block;
+
+      font-family:
+        "Manrope",
+        sans-serif;
+
+      font-size:
+        1.08rem;
+
+      font-weight:
+        700;
+    }
+
+    .strip-item span {
+      display:
+        block;
+
+      margin-top:
+        3px;
+
+      color:
+        var(--muted);
+
+      font-size:
+        .78rem;
     }
 
     .section {
-      padding: 110px 0;
+      padding:
+        120px 0;
     }
 
-    .section-heading {
-      display: grid;
-      grid-template-columns: .8fr 1.2fr;
-      gap: 50px;
+    .section-intro {
+      display:
+        grid;
 
-      align-items: end;
-      margin-bottom: 55px;
+      grid-template-columns:
+        .85fr 1.15fr;
+
+      gap:
+        70px;
+
+      align-items:
+        end;
+
+      margin-bottom:
+        60px;
     }
 
     .eyebrow {
-      color: #7c3aed;
-      font-size: .85rem;
-      font-weight: 900;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      margin-bottom: 12px;
+      margin-bottom:
+        14px;
+
+      color:
+        var(--accent);
+
+      font-size:
+        .78rem;
+
+      font-weight:
+        700;
+
+      letter-spacing:
+        .12em;
+
+      text-transform:
+        uppercase;
     }
 
-    h2 {
-      font-size: clamp(2.5rem, 5vw, 4.6rem);
-      line-height: 1;
-      letter-spacing: -.045em;
+    .section-title {
+      max-width:
+        680px;
+
+      font-size:
+        clamp(
+          2.7rem,
+          5vw,
+          5.1rem
+        );
+
+      line-height:
+        .98;
+
+      letter-spacing:
+        -.052em;
+
+      font-weight:
+        700;
     }
 
     .section-description {
-      color: var(--light-muted);
-      font-size: 1.08rem;
-      line-height: 1.75;
-      max-width: 620px;
+      max-width:
+        620px;
+
+      color:
+        var(--muted);
+
+      font-size:
+        1.05rem;
+
+      line-height:
+        1.78;
+    }
+
+    .services {
+      background:
+        var(--soft);
     }
 
     .services-grid {
-      display: grid;
+      display:
+        grid;
+
       grid-template-columns:
         repeat(
           auto-fit,
-          minmax(245px,1fr)
+          minmax(280px,1fr)
         );
 
-      gap: 18px;
+      gap:
+        16px;
     }
 
-    .service-card {
-      min-height: 270px;
+    .service-item {
+      min-height:
+        330px;
 
-      padding: 28px;
+      display:
+        flex;
 
-      position: relative;
-      overflow: hidden;
+      flex-direction:
+        column;
 
-      border-radius: 22px;
+      justify-content:
+        space-between;
 
-      background: white;
-      border: 1px solid #e2e8f0;
+      padding:
+        30px;
 
-      box-shadow:
-        0 12px 35px rgba(15,23,42,.055);
+      border:
+        1px solid
+        rgba(17,18,20,.1);
+
+      border-radius:
+        24px;
+
+      background:
+        var(--paper);
 
       transition:
         transform .3s ease,
@@ -701,449 +1094,977 @@
         border-color .3s ease;
     }
 
-    .service-card:hover {
-      transform: translateY(-10px);
+    .service-item:hover {
+      transform:
+        translateY(-7px);
 
       border-color:
-        rgba(124,58,237,.3);
+        rgba(36,87,230,.3);
 
       box-shadow:
-        0 28px 60px rgba(15,23,42,.12);
+        0 24px 50px
+        rgba(17,18,20,.07);
     }
 
-    .service-number {
-      position: absolute;
-      right: 22px;
-      top: 20px;
+    .service-top {
+      display:
+        flex;
 
-      color: #e2e8f0;
-      font-size: 2.3rem;
-      font-weight: 900;
+      justify-content:
+        space-between;
+
+      gap:
+        20px;
     }
 
     .service-icon {
-      width: 48px;
-      height: 48px;
+      width:
+        50px;
 
-      border-radius: 14px;
+      height:
+        50px;
 
-      display: grid;
-      place-items: center;
+      display:
+        grid;
 
-      margin-bottom: 40px;
+      place-items:
+        center;
+
+      border-radius:
+        14px;
+
+      color:
+        var(--accent);
 
       background:
-        linear-gradient(
-          135deg,
-          #ede9fe,
-          #cffafe
-        );
+        var(--accent-soft);
     }
 
     .service-icon svg {
-      width: 23px;
-      fill: #6d28d9;
+      width:
+        24px;
+
+      height:
+        24px;
+
+      fill:
+        none;
+
+      stroke:
+        currentColor;
+
+      stroke-width:
+        1.7;
+
+      stroke-linecap:
+        round;
+
+      stroke-linejoin:
+        round;
     }
 
-    .service-card h3 {
-      font-size: 1.25rem;
-      margin-bottom: 12px;
+    .service-index {
+      color:
+        #b8bbc1;
+
+      font-family:
+        "Manrope",
+        sans-serif;
+
+      font-weight:
+        700;
     }
 
-    .service-card p {
-      color: #64748b;
-      line-height: 1.7;
+    .service-copy {
+      margin-top:
+        60px;
     }
 
-    .why-section {
-      background:
-        linear-gradient(
-          180deg,
-          #f8fafc,
-          #eef2ff
-        );
+    .service-copy h3 {
+      font-size:
+        1.35rem;
 
-      color: var(--light-text);
+      letter-spacing:
+        -.025em;
+
+      font-weight:
+        700;
     }
 
-    .why-layout {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 70px;
-      align-items: center;
+    .service-copy p {
+      margin-top:
+        12px;
+
+      color:
+        var(--muted);
+
+      line-height:
+        1.72;
     }
 
-    .why-copy p {
-      margin-top: 22px;
+    .service-link {
+      width:
+        fit-content;
 
-      color: #64748b;
-      line-height: 1.85;
-      font-size: 1.07rem;
+      display:
+        inline-flex;
+
+      align-items:
+        center;
+
+      gap:
+        8px;
+
+      margin-top:
+        28px;
+
+      font-size:
+        .86rem;
+
+      font-weight:
+        700;
     }
 
-    .trust-list {
-      display: grid;
-      gap: 14px;
-    }
-
-    .trust-item {
-      min-height: 74px;
-
-      display: flex;
-      align-items: center;
-      gap: 15px;
-
-      padding: 18px 20px;
-
-      background: rgba(255,255,255,.9);
-
-      border:
-        1px solid rgba(148,163,184,.28);
-
-      border-radius: 18px;
-
-      box-shadow:
-        0 12px 30px rgba(15,23,42,.045);
-
+    .service-link span {
       transition:
-        transform .25s ease,
-        box-shadow .25s ease;
+        transform .25s ease;
     }
 
-    .trust-item:hover {
-      transform: translateX(7px);
-
-      box-shadow:
-        0 18px 40px rgba(15,23,42,.08);
+    .service-link:hover span {
+      transform:
+        translate(3px,-3px);
     }
 
-    .check {
-      width: 35px;
-      height: 35px;
+    .proof-section {
+      background:
+        var(--paper);
+    }
 
-      min-width: 35px;
+    .proof-layout {
+      display:
+        grid;
 
-      display: grid;
-      place-items: center;
+      grid-template-columns:
+        1fr 1fr;
 
-      border-radius: 10px;
+      gap:
+        90px;
+
+      align-items:
+        center;
+    }
+
+    .proof-copy p {
+      max-width:
+        620px;
+
+      margin-top:
+        24px;
+
+      color:
+        var(--muted);
+
+      line-height:
+        1.82;
+
+      font-size:
+        1.04rem;
+    }
+
+    .proof-list {
+      display:
+        grid;
+
+      gap:
+        12px;
+    }
+
+    .proof-row {
+      min-height:
+        72px;
+
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      gap:
+        15px;
+
+      padding:
+        18px 20px;
+
+      border-bottom:
+        1px solid
+        var(--line);
+    }
+
+    .proof-check {
+      width:
+        34px;
+
+      height:
+        34px;
+
+      display:
+        grid;
+
+      place-items:
+        center;
+
+      flex:
+        0 0 auto;
+
+      border-radius:
+        50%;
+
+      color:
+        var(--accent);
 
       background:
-        linear-gradient(
-          135deg,
-          #ede9fe,
-          #cffafe
-        );
+        var(--accent-soft);
     }
 
-    .check svg {
-      width: 20px;
-      fill: none;
-      stroke: #6d28d9;
-      stroke-width: 2.5;
+    .proof-check svg {
+      width:
+        18px;
+
+      fill:
+        none;
+
+      stroke:
+        currentColor;
+
+      stroke-width:
+        2;
     }
 
-    .cta-section {
-      padding: 120px 0;
-      position: relative;
-      overflow: hidden;
+    .rating-panel {
+      margin-top:
+        38px;
+
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      gap:
+        18px;
     }
 
-    .cta-section::before {
-      content: "";
+    .rating-number {
+      font-family:
+        "Manrope",
+        sans-serif;
 
-      position: absolute;
+      font-size:
+        3.6rem;
 
-      width: 500px;
-      height: 500px;
+      line-height:
+        1;
 
-      right: -180px;
-      top: -200px;
+      font-weight:
+        700;
 
-      border-radius: 50%;
+      letter-spacing:
+        -.05em;
+    }
 
+    .rating-stars {
+      color:
+        #f3a712;
+
+      letter-spacing:
+        .08em;
+    }
+
+    .rating-note {
+      margin-top:
+        5px;
+
+      color:
+        var(--muted);
+
+      font-size:
+        .82rem;
+    }
+
+    .faq-section {
       background:
-        radial-gradient(
-          circle,
-          rgba(124,58,237,.28),
-          transparent 68%
-        );
+        var(--soft);
     }
 
-    .cta-card {
-      position: relative;
-      z-index: 1;
+    .faq-wrap {
+      max-width:
+        900px;
 
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 40px;
-      align-items: center;
-
-      padding: clamp(35px,6vw,70px);
-
-      border-radius: 30px;
-
-      border:
-        1px solid rgba(255,255,255,.1);
-
-      background:
-        linear-gradient(
-          135deg,
-          rgba(255,255,255,.09),
-          rgba(255,255,255,.035)
-        );
-
-      box-shadow:
-        0 35px 90px rgba(0,0,0,.28);
+      margin:
+        0 auto;
     }
 
-    .cta-card h2 {
-      max-width: 720px;
+    .faq-header {
+      margin-bottom:
+        48px;
+
+      text-align:
+        center;
     }
 
-    .cta-card p {
-      margin-top: 18px;
-
-      max-width: 650px;
-
-      color: #94a3b8;
-      line-height: 1.75;
+    .faq-header .section-title {
+      margin:
+        0 auto;
     }
 
-    .cta-actions {
-      min-width: 190px;
-    }
-
-    .cta-actions .btn {
-      width: 100%;
-    }
-
-    .demo-disclaimer {
-      margin-top: 22px;
-
-      color: #64748b;
-      font-size: .82rem;
-      line-height: 1.6;
-    }
-
-    footer {
-      padding: 38px 0 48px;
-
+    .faq-item {
       border-top:
-        1px solid rgba(255,255,255,.08);
-
-      color: #64748b;
+        1px solid
+        var(--line);
     }
 
-    .footer-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-      flex-wrap: wrap;
+    .faq-item:last-child {
+      border-bottom:
+        1px solid
+        var(--line);
     }
 
-    .floating-call {
-      position: fixed;
+    .faq-item summary {
+      min-height:
+        84px;
 
-      right: 22px;
-      bottom: 22px;
+      display:
+        flex;
 
-      z-index: 999;
+      align-items:
+        center;
 
-      width: 56px;
-      height: 56px;
+      justify-content:
+        space-between;
 
-      display: grid;
-      place-items: center;
+      gap:
+        24px;
 
-      border-radius: 50%;
+      cursor:
+        pointer;
 
-      color: white;
+      list-style:
+        none;
 
-      background:
-        linear-gradient(
-          135deg,
-          var(--accent),
-          #4f46e5
-        );
+      font-family:
+        "Manrope",
+        sans-serif;
 
-      box-shadow:
-        0 18px 40px rgba(124,58,237,.38);
+      font-size:
+        1.02rem;
+
+      font-weight:
+        650;
+    }
+
+    .faq-item summary::-webkit-details-marker {
+      display:
+        none;
+    }
+
+    .faq-plus {
+      font-size:
+        1.4rem;
 
       transition:
         transform .25s ease;
     }
 
-    .floating-call:hover {
+    .faq-item[open]
+    .faq-plus {
       transform:
-        translateY(-5px)
-        scale(1.04);
+        rotate(45deg);
     }
 
-    .floating-call svg {
-      width: 23px;
-      fill: currentColor;
+    .faq-answer {
+      max-width:
+        720px;
+
+      padding:
+        0 0 26px;
+
+      color:
+        var(--muted);
+
+      line-height:
+        1.75;
+    }
+
+    .cta-section {
+      padding:
+        110px 0;
+    }
+
+    .cta-card {
+      position:
+        relative;
+
+      overflow:
+        hidden;
+
+      display:
+        grid;
+
+      grid-template-columns:
+        1fr auto;
+
+      gap:
+        50px;
+
+      align-items:
+        center;
+
+      padding:
+        clamp(
+          42px,
+          7vw,
+          78px
+        );
+
+      border-radius:
+        32px;
+
+      color:
+        white;
+
+      background:
+        var(--ink);
+    }
+
+    .cta-card::after {
+      content:
+        "";
+
+      position:
+        absolute;
+
+      width:
+        340px;
+
+      height:
+        340px;
+
+      right:
+        -120px;
+
+      bottom:
+        -160px;
+
+      border-radius:
+        50%;
+
+      background:
+        var(--accent);
+
+      opacity:
+        .7;
+    }
+
+    .cta-content {
+      position:
+        relative;
+
+      z-index:
+        2;
+    }
+
+    .cta-card .eyebrow {
+      color:
+        #9db5ff;
+    }
+
+    .cta-title {
+      max-width:
+        690px;
+
+      font-size:
+        clamp(
+          2.6rem,
+          5vw,
+          5rem
+        );
+
+      line-height:
+        .98;
+
+      letter-spacing:
+        -.05em;
+
+      font-weight:
+        700;
+    }
+
+    .cta-copy {
+      max-width:
+        650px;
+
+      margin-top:
+        20px;
+
+      color:
+        #b5bac3;
+
+      line-height:
+        1.75;
+    }
+
+    .cta-side {
+      position:
+        relative;
+
+      z-index:
+        3;
+
+      min-width:
+        200px;
+    }
+
+    .cta-side .btn {
+      width:
+        100%;
+    }
+
+    .cta-phone {
+      display:
+        block;
+
+      margin-top:
+        12px;
+
+      color:
+        #aeb4be;
+
+      text-align:
+        center;
+
+      font-size:
+        .82rem;
+    }
+
+    .disclaimer {
+      max-width:
+        720px;
+
+      margin-top:
+        26px;
+
+      color:
+        #7d838c;
+
+      font-size:
+        .76rem;
+
+      line-height:
+        1.6;
+    }
+
+    footer {
+      padding:
+        34px 0 46px;
+
+      border-top:
+        1px solid
+        var(--line);
+    }
+
+    .footer-row {
+      display:
+        flex;
+
+      justify-content:
+        space-between;
+
+      gap:
+        20px;
+
+      flex-wrap:
+        wrap;
+
+      color:
+        var(--muted);
+
+      font-size:
+        .82rem;
+    }
+
+    .mobile-bar {
+      display:
+        none;
     }
 
     .reveal {
-      opacity: 0;
-      transform: translateY(28px);
+      opacity:
+        0;
+
+      transform:
+        translateY(24px);
 
       transition:
-        opacity .75s ease,
-        transform .75s cubic-bezier(.2,.7,.2,1);
+        opacity .7s ease,
+        transform .7s
+        cubic-bezier(.2,.75,.25,1);
 
-      transition-delay: var(--delay, 0ms);
+      transition-delay:
+        var(--delay,0ms);
     }
 
     .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
+      opacity:
+        1;
+
+      transform:
+        translateY(0);
     }
 
     @media (max-width: 980px) {
       .hero-layout,
-      .why-layout,
-      .section-heading,
+      .proof-layout,
+      .section-intro,
       .cta-card {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+          1fr;
       }
 
       .hero-layout {
-        gap: 55px;
+        gap:
+          52px;
       }
 
-      .visual-card {
-        transform: none;
+      .hero {
+        min-height:
+          auto;
       }
 
-      .floating-card {
-        right: 15px;
+      .section-intro {
+        gap:
+          24px;
       }
 
-      .section-heading {
-        gap: 20px;
+      .proof-layout {
+        gap:
+          45px;
       }
 
-      .cta-actions {
-        min-width: 0;
+      .cta-side {
+        min-width:
+          0;
+
+        max-width:
+          240px;
       }
 
-      .cta-actions .btn {
-        width: fit-content;
+      .trust-strip-inner {
+        grid-template-columns:
+          repeat(2,1fr);
+      }
+
+      .strip-item:nth-child(2) {
+        border-right:
+          0;
+      }
+
+      .strip-item:nth-child(-n+2) {
+        border-bottom:
+          1px solid
+          var(--line);
       }
     }
 
     @media (max-width: 700px) {
-      .container {
-        width: min(100% - 26px, 1180px);
+      body {
+        padding-bottom:
+          82px;
       }
 
-      .nav-wrap {
-        top: 10px;
+      .container {
+        width:
+          min(
+            100% - 26px,
+            1180px
+          );
+      }
+
+      .site-header {
+        top:
+          10px;
       }
 
       .nav {
-        min-height: 60px;
-        padding: 8px 9px 8px 13px;
+        min-height:
+          58px;
+
+        padding:
+          8px 9px
+          8px 11px;
       }
 
       .brand-mark {
-        width: 38px;
-        height: 38px;
+        width:
+          38px;
+
+        height:
+          38px;
       }
 
-      .brand-text {
-        max-width: 180px;
-        font-size: .86rem;
+      .brand-name {
+        max-width:
+          180px;
+
+        font-size:
+          .82rem;
       }
 
       .nav-link {
-        display: none;
+        display:
+          none;
       }
 
-      .nav-actions .btn {
-        padding: 11px 13px;
-        font-size: .82rem;
+      .nav-cta {
+        padding:
+          11px 13px;
+
+        font-size:
+          .78rem;
       }
 
       .hero {
-        min-height: auto;
         padding:
-          120px 0
-          80px;
+          118px 0
+          70px;
       }
 
-      h1 {
+      .hero h1 {
         font-size:
           clamp(
             3rem,
-            17vw,
-            5rem
+            15vw,
+            4.8rem
           );
       }
 
       .hero-copy {
-        font-size: 1rem;
+        font-size:
+          1rem;
       }
 
       .hero-actions {
-        display: grid;
-        grid-template-columns: 1fr;
+        display:
+          grid;
+
+        grid-template-columns:
+          1fr;
       }
 
       .hero-actions .btn {
-        width: 100%;
+        width:
+          100%;
       }
 
-      .visual-card {
-        padding: 15px;
-        border-radius: 22px;
+      .hero-meta {
+        display:
+          grid;
+
+        grid-template-columns:
+          1fr 1fr;
+
+        gap:
+          18px;
       }
 
-      .preview-hero {
-        padding: 24px;
+      .device-stage {
+        min-height:
+          500px;
       }
 
-      .preview-stats {
-        grid-template-columns: 1fr;
+      .device-shell {
+        width:
+          220px;
+
+        height:
+          390px;
       }
 
-      .floating-card {
-        position: relative;
-        right: auto;
-        bottom: auto;
-        margin-top: 14px;
-        width: 100%;
+      .floating-tag {
+        font-size:
+          .72rem;
+      }
+
+      .tag-one {
+        top:
+          28px;
+
+        left:
+          18px;
+      }
+
+      .tag-two {
+        bottom:
+          30px;
+
+        right:
+          18px;
+      }
+
+      .trust-strip-inner {
+        grid-template-columns:
+          1fr 1fr;
+      }
+
+      .strip-item {
+        min-height:
+          80px;
+
+        padding:
+          14px 8px;
       }
 
       .section {
-        padding: 80px 0;
+        padding:
+          80px 0;
+      }
+
+      .section-title {
+        font-size:
+          clamp(
+            2.55rem,
+            12vw,
+            4rem
+          );
+      }
+
+      .service-item {
+        min-height:
+          300px;
       }
 
       .cta-section {
-        padding: 80px 0;
+        padding:
+          70px 0;
       }
 
       .cta-card {
-        padding: 30px 22px;
-        border-radius: 24px;
+        padding:
+          34px 24px;
+
+        border-radius:
+          24px;
       }
 
-      .floating-call {
-        right: 15px;
-        bottom: 15px;
+      .cta-side {
+        max-width:
+          none;
+      }
+
+      .mobile-bar {
+        position:
+          fixed;
+
+        left:
+          12px;
+
+        right:
+          12px;
+
+        bottom:
+          12px;
+
+        z-index:
+          1500;
+
+        display:
+          grid;
+
+        grid-template-columns:
+          1fr 1fr;
+
+        gap:
+          8px;
+
+        padding:
+          8px;
+
+        border:
+          1px solid
+          rgba(17,18,20,.1);
+
+        border-radius:
+          16px;
+
+        background:
+          rgba(255,255,255,.94);
+
+        backdrop-filter:
+          blur(14px);
+
+        -webkit-backdrop-filter:
+          blur(14px);
+
+        box-shadow:
+          0 16px 45px
+          rgba(16,20,30,.14);
+      }
+
+      .mobile-bar a {
+        min-height:
+          48px;
+
+        display:
+          grid;
+
+        place-items:
+          center;
+
+        border-radius:
+          11px;
+
+        font-family:
+          "Manrope",
+          sans-serif;
+
+        font-size:
+          .85rem;
+
+        font-weight:
+          700;
+      }
+
+      .mobile-call {
+        color:
+          white;
+
+        background:
+          var(--accent);
+      }
+
+      .mobile-services {
+        background:
+          var(--soft);
       }
     }
 
-    @media (prefers-reduced-motion: reduce) {
+    @media (
+      prefers-reduced-motion:
+      reduce
+    ) {
       *,
       *::before,
       *::after {
-        animation-duration: .01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: .01ms !important;
-        scroll-behavior: auto !important;
+        animation-duration:
+          .01ms !important;
+
+        animation-iteration-count:
+          1 !important;
+
+        transition-duration:
+          .01ms !important;
+
+        scroll-behavior:
+          auto !important;
       }
     }
   </style>
@@ -1151,17 +2072,19 @@
 
 <body>
 
-  <div class="nav-wrap">
+  <div class="progress" id="progress"></div>
+
+  <header class="site-header">
     <div class="container">
-      <nav class="nav">
+      <nav class="nav" id="nav">
 
         <div class="brand">
           <div class="brand-mark">
             M
           </div>
 
-          <div class="brand-text">
-            Mobile Kangaroo - Apple Authorized…
+          <div class="brand-name">
+            Mobile Kangaroo - Apple Authorized Service…
           </div>
         </div>
 
@@ -1174,7 +2097,14 @@
           </a>
 
           <a
-            class="btn btn-primary"
+            class="nav-link"
+            href="#why"
+          >
+            Why Us
+          </a>
+
+          <a
+            class="nav-cta"
             href="#contact"
           >
             Call Now
@@ -1183,143 +2113,200 @@
 
       </nav>
     </div>
-  </div>
+  </header>
 
 
   <main>
 
     <section class="hero">
 
-      <div class="grid-bg"></div>
-
       <div class="container hero-layout">
 
         <div>
 
-          <div class="hero-badge reveal">
-            <span class="dot"></span>
-
+          <div class="kicker reveal">
+            <span class="kicker-dot"></span>
             Waco, TX, US
           </div>
 
           <h1 class="reveal">
-            <span class="gradient-text">
-              Trusted Service Provider in Waco
-            </span>
+            Trusted Service Provider in Waco
           </h1>
 
           <p
             class="hero-copy reveal"
-            style="--delay:100ms"
+            style="--delay:90ms"
           >
             Quality Service with a 4.7 Star Rating from Over 100 Reviews
           </p>
 
           <div
             class="hero-actions reveal"
-            style="--delay:180ms"
+            style="--delay:160ms"
           >
-
             <a
-              class="btn btn-primary"
               href="#contact"
+              class="btn btn-primary"
             >
               Call Now
               <span>→</span>
             </a>
 
             <a
+              href="#services"
               class="btn btn-secondary"
-              href="#contact"
             >
               Contact Us
             </a>
-
           </div>
 
           <div
-            class="mini-proof reveal"
-            style="--delay:260ms"
+            class="hero-meta reveal"
+            style="--delay:220ms"
           >
+            <div class="meta-item">
+              <span class="meta-value">
+                4.7 / 5
+              </span>
 
-            <div class="avatars">
-              <div class="avatar">★</div>
-              <div class="avatar">★</div>
-              <div class="avatar">★</div>
+              <span class="meta-label">
+                Customer rating
+              </span>
             </div>
 
-            <span>
-              Trusted local service experience
-            </span>
+            <div class="meta-item">
+              <span class="meta-value">
+                102 reviews
+              </span>
 
+              <span class="meta-label">
+                Public feedback
+              </span>
+            </div>
+
+            <div class="meta-item">
+              <span class="meta-value">
+                Waco
+              </span>
+
+              <span class="meta-label">
+                Service location
+              </span>
+            </div>
           </div>
 
         </div>
 
 
-        <div class="visual-wrap reveal">
+        <div class="hero-panel reveal">
 
-          <div class="visual-card">
+          <div class="device-stage">
 
-            <div class="window-bar">
-              <span class="window-dot"></span>
-              <span class="window-dot"></span>
-              <span class="window-dot"></span>
+            <div class="floating-tag tag-one">
+              4.7 ★ customer rating
             </div>
 
-            <div class="preview-hero">
-
-              <div class="preview-label">
-                Waco, TX, US
-              </div>
-
-              <div class="preview-title">
-                Trusted Service Provider in Waco
-              </div>
-
-              <div class="preview-sub">
-                Quality Service with a 4.7 Star Rating from Over 100 Reviews
-              </div>
-
-              <div class="preview-button">
-                Call Now
-              </div>
-
+            <div class="floating-tag tag-two">
+              Easy customer contact
             </div>
 
-            <div class="preview-stats">
+            <div class="device-shell">
 
-              <div class="preview-stat">
-                <strong>Fast</strong>
-                <span>Customer contact</span>
-              </div>
+              <div class="device-screen">
 
-              <div class="preview-stat">
-                <strong>Local</strong>
-                <span>Waco, TX, US</span>
-              </div>
+                <div class="screen-pill"></div>
 
-              <div class="preview-stat">
-                <strong>Easy</strong>
-                <span>Mobile experience</span>
+                <div class="screen-label">
+                  Waco, TX, US
+                </div>
+
+                <div class="screen-title">
+                  Trusted Service Provider in Waco
+                </div>
+
+                <div class="screen-copy">
+                  Quality Service with a 4.7 Star Rating from Over 100 Reviews
+                </div>
+
+                <div class="screen-btn">
+                  Call Now
+                </div>
+
+                <div class="screen-card">
+                  <strong>
+                    Clear. Local. Professional.
+                  </strong>
+
+                  <span>
+                    A simpler path for customers
+                    to understand the service
+                    and get in touch.
+                  </span>
+                </div>
+
               </div>
 
             </div>
 
           </div>
 
-          <div class="floating-card">
+        </div>
 
+      </div>
+
+    </section>
+
+
+    <section class="trust-strip">
+
+      <div class="container trust-strip-inner">
+
+        <div class="strip-item">
+          <div>
             <strong>
-              Customer Focused
+              4.7 / 5
             </strong>
 
             <span>
-              Clear calls-to-action and an easier path to contact.
+              Rating
             </span>
-
           </div>
+        </div>
 
+        <div class="strip-item">
+          <div>
+            <strong>
+              102 reviews
+            </strong>
+
+            <span>
+              Customer feedback
+            </span>
+          </div>
+        </div>
+
+        <div class="strip-item">
+          <div>
+            <strong>
+              1
+            </strong>
+
+            <span>
+              Service option
+            </span>
+          </div>
+        </div>
+
+        <div class="strip-item">
+          <div>
+            <strong>
+              Waco
+            </strong>
+
+            <span>
+              Local business
+            </span>
+          </div>
         </div>
 
       </div>
@@ -1329,52 +2316,71 @@
 
     <section
       id="services"
-      class="light-section section"
+      class="services section"
     >
 
       <div class="container">
 
-        <div class="section-heading">
+        <div class="section-intro">
 
           <div>
-
             <div class="eyebrow">
               What We Do
             </div>
 
-            <h2>
+            <h2 class="section-title">
               Our Services
             </h2>
-
           </div>
 
           <p class="section-description">
-            Explore the services available from
-            Mobile Kangaroo - Apple Authorized Service Provider.
-            Designed around clear communication,
-            convenience, and a better customer experience.
+            Explore the service options available
+            from Mobile Kangaroo - Apple Authorized Service Provider.
+            Clear information and direct contact
+            help customers move from interest
+            to action without unnecessary friction.
           </p>
 
         </div>
 
         <div class="services-grid">
           
-              <article class="service-card reveal" style="--delay:0ms">
-                <div class="service-number">
-                  01
+              <article
+                class="service-item reveal"
+                style="--delay:0ms"
+              >
+                <div class="service-top">
+                  <div class="service-icon">
+                    
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20.7 13.1a7.8 7.8 0 0 1-9.8-9.8 7 7 0 1 0 9.8 9.8Z"/>
+        <path d="M16.5 3.8l.8 1.7 1.9.3-1.4 1.3.3 1.9-1.6-.9-1.7.9.4-1.9-1.4-1.3 1.9-.3.8-1.7Z"/>
+      </svg>
+    
+                  </div>
+
+                  <span class="service-index">
+                    01
+                  </span>
                 </div>
 
-                <div class="service-icon">
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M12 3l2.2 4.4L19 8.1l-3.5 3.4.8 4.8L12 14l-4.3 2.3.8-4.8L5 8.1l4.8-.7L12 3z"/>
-                  </svg>
+                <div class="service-copy">
+                  <h3>
+                    Professional Service
+                  </h3>
+
+                  <p>
+                    Contact the business to learn more about available services.
+                  </p>
                 </div>
 
-                <h3>Professional Service</h3>
-
-                <p>
-                  Contact the business to learn more about available services.
-                </p>
+                <a
+                  href="#contact"
+                  class="service-link"
+                >
+                  Ask about this service
+                  <span>↗</span>
+                </a>
               </article>
             
         </div>
@@ -1384,17 +2390,20 @@
     </section>
 
 
-    <section class="why-section section">
+    <section
+      id="why"
+      class="proof-section section"
+    >
 
-      <div class="container why-layout">
+      <div class="container proof-layout">
 
-        <div class="why-copy reveal">
+        <div class="proof-copy reveal">
 
           <div class="eyebrow">
             Why Customers Choose Us
           </div>
 
-          <h2>
+          <h2 class="section-title">
             Why Choose Mobile Kangaroo
           </h2>
 
@@ -1402,41 +2411,132 @@
             High customer ratings and a large number of positive reviews demonstrate our commitment to quality service in Waco.
           </p>
 
+          <div class="rating-panel">
+
+            <div class="rating-number">
+              4.7
+            </div>
+
+            <div>
+              
+                    <div class="rating-stars">
+                      ★★★★★
+                    </div>
+                  
+
+              <div class="rating-note">
+                102 public reviews
+              </div>
+            </div>
+
+          </div>
+
         </div>
 
-        <div class="trust-list">
+        <div class="proof-list">
           
-              <div class="trust-item reveal" style="--delay:0ms">
-                <div class="check">
-                  <svg viewBox="0 0 24 24">
-                    <path d="M20 6L9 17l-5-5"/>
+              <div
+                class="proof-row reveal"
+                style="--delay:0ms"
+              >
+                <span class="proof-check">
+                  <svg viewBox="0 0 20 20">
+                    <path d="M4 10.3 8.1 14 16 6"/>
                   </svg>
-                </div>
+                </span>
 
-                <span>Rated 4.7 stars based on 102 reviews</span>
+                <span>
+                  Rated 4.7 stars based on 102 reviews
+                </span>
               </div>
             
-              <div class="trust-item reveal" style="--delay:70ms">
-                <div class="check">
-                  <svg viewBox="0 0 24 24">
-                    <path d="M20 6L9 17l-5-5"/>
+              <div
+                class="proof-row reveal"
+                style="--delay:65ms"
+              >
+                <span class="proof-check">
+                  <svg viewBox="0 0 20 20">
+                    <path d="M4 10.3 8.1 14 16 6"/>
                   </svg>
-                </div>
+                </span>
 
-                <span>Located in Waco, TX</span>
+                <span>
+                  Located in Waco, TX
+                </span>
               </div>
             
-              <div class="trust-item reveal" style="--delay:140ms">
-                <div class="check">
-                  <svg viewBox="0 0 24 24">
-                    <path d="M20 6L9 17l-5-5"/>
+              <div
+                class="proof-row reveal"
+                style="--delay:130ms"
+              >
+                <span class="proof-check">
+                  <svg viewBox="0 0 20 20">
+                    <path d="M4 10.3 8.1 14 16 6"/>
                   </svg>
-                </div>
+                </span>
 
-                <span>Phone support available: (254) 227-5748</span>
+                <span>
+                  Phone support available: (254) 227-5748
+                </span>
               </div>
             
         </div>
+
+      </div>
+
+    </section>
+
+
+    <section class="faq-section section">
+
+      <div class="container faq-wrap">
+
+        <div class="faq-header">
+
+          <div class="eyebrow">
+            Common Questions
+          </div>
+
+          <h2 class="section-title">
+            Helpful answers before you call
+          </h2>
+
+        </div>
+
+        
+        <details class="faq-item reveal" style="--delay:0ms">
+          <summary>
+            <span>How do I contact Mobile Kangaroo - Apple Authorized Service Provider?</span>
+            <span class="faq-plus">+</span>
+          </summary>
+
+          <div class="faq-answer">
+            Use the contact options on this page to ask about availability and next steps.
+          </div>
+        </details>
+      
+        <details class="faq-item reveal" style="--delay:70ms">
+          <summary>
+            <span>Do you serve customers in Waco?</span>
+            <span class="faq-plus">+</span>
+          </summary>
+
+          <div class="faq-answer">
+            This business is listed in Waco, TX, US. Contact the business directly to confirm current service coverage and availability.
+          </div>
+        </details>
+      
+        <details class="faq-item reveal" style="--delay:140ms">
+          <summary>
+            <span>How quickly can I get service?</span>
+            <span class="faq-plus">+</span>
+          </summary>
+
+          <div class="faq-answer">
+            Availability can vary by service type and current workload. Calling directly is the quickest way to confirm timing.
+          </div>
+        </details>
+      
 
       </div>
 
@@ -1452,21 +2552,21 @@
 
         <div class="cta-card reveal">
 
-          <div>
+          <div class="cta-content">
 
             <div class="eyebrow">
-              Let's Talk
+              Get In Touch
             </div>
 
-            <h2>
+            <h2 class="cta-title">
               Get in Touch
             </h2>
 
-            <p>
+            <p class="cta-copy">
               Call us today at (254) 227-5748 to discuss your service needs or to get more information.
             </p>
 
-            <div class="demo-disclaimer">
+            <div class="disclaimer">
               PurelyBuild demonstration concept created
               from publicly available business information.
               This is not the business's official website.
@@ -1474,15 +2574,17 @@
 
           </div>
 
-          <div class="cta-actions">
+          <div class="cta-side">
 
             <a
-              class="btn btn-primary"
               href="#contact"
+              class="btn btn-primary"
             >
               Call Now
               <span>→</span>
             </a>
+
+            
 
           </div>
 
@@ -1512,74 +2614,103 @@
   </footer>
 
 
-  
+  <div class="mobile-bar">
+
+    <a
+      href="#services"
+      class="mobile-services"
+    >
+      Services
+    </a>
+
+    <a
+      href="#contact"
+      class="mobile-call"
+    >
+      Call Now
+    </a>
+
+  </div>
 
 
   <script>
+    const nav =
+      document.getElementById('nav');
+
+    const progress =
+      document.getElementById('progress');
+
+    function handleScroll() {
+      const y =
+        window.scrollY;
+
+      if (nav) {
+        nav.classList.toggle(
+          'scrolled',
+          y > 25
+        );
+      }
+
+      if (progress) {
+        const doc =
+          document.documentElement;
+
+        const total =
+          doc.scrollHeight -
+          doc.clientHeight;
+
+        const percentage =
+          total > 0
+            ? (y / total) * 100
+            : 0;
+
+        progress.style.width =
+          percentage + '%';
+      }
+    }
+
+    window.addEventListener(
+      'scroll',
+      handleScroll,
+      { passive: true }
+    );
+
+    handleScroll();
+
+
     const observer =
       new IntersectionObserver(
         (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('visible');
-              observer.unobserve(entry.target);
+          entries.forEach(
+            (entry) => {
+              if (
+                entry.isIntersecting
+              ) {
+                entry.target
+                  .classList
+                  .add('visible');
+
+                observer.unobserve(
+                  entry.target
+                );
+              }
             }
-          });
+          );
         },
         {
-          threshold: 0.12
+          threshold: .12
         }
       );
 
     document
       .querySelectorAll('.reveal')
-      .forEach((el) => {
-        observer.observe(el);
-      });
-
-
-    const visual =
-      document.querySelector('.visual-card');
-
-    if (visual && window.innerWidth > 980) {
-
-      visual.addEventListener(
-        'mousemove',
-        (event) => {
-
-          const rect =
-            visual.getBoundingClientRect();
-
-          const x =
-            event.clientX - rect.left;
-
-          const y =
-            event.clientY - rect.top;
-
-          const rotateY =
-            ((x / rect.width) - 0.5) * 8;
-
-          const rotateX =
-            ((y / rect.height) - 0.5) * -8;
-
-          visual.style.transform =
-            'rotateX(' +
-            rotateX +
-            'deg) rotateY(' +
-            rotateY +
-            'deg) translateY(-4px)';
+      .forEach(
+        (element) => {
+          observer.observe(
+            element
+          );
         }
       );
-
-      visual.addEventListener(
-        'mouseleave',
-        () => {
-          visual.style.transform =
-            'rotateY(-6deg) rotateX(3deg)';
-        }
-      );
-
-    }
   </script>
 
 </body>
