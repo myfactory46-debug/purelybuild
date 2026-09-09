@@ -1,0 +1,1933 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8" />
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+/>
+
+<meta
+  name="description"
+  content="Mobile Kangaroo is your neighborhood shop for device repair, school and business support, and approachable local AI services."
+/>
+
+<title>Mobile Kangaroo - Apple Authorized Service Provider</title>
+
+<link
+  rel="preconnect"
+  href="https://fonts.googleapis.com"
+/>
+
+<link
+  rel="preconnect"
+  href="https://fonts.gstatic.com"
+  crossorigin
+/>
+
+<link
+  href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700&family=IBM+Plex+Sans+Condensed:wght@500;600;700&display=swap"
+  rel="stylesheet"
+/>
+
+<style>
+
+:root {
+  --forest: #143f21;
+  --forest-2: #1d5b2f;
+  --forest-3: #267a3d;
+  --lime-soft: #e8f4e3;
+  --yellow: #f3b51b;
+  --ink: #151714;
+  --muted: #667066;
+  --paper: #f8f8f3;
+  --white: #ffffff;
+  --line: rgba(20,63,33,.14);
+  --radius-sm: 14px;
+  --radius: 24px;
+  --radius-lg: 38px;
+  --shadow: 0 30px 80px rgba(20,40,25,.12);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "IBM Plex Sans", sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+.brand-name,
+.btn,
+.metric strong {
+  font-family: "IBM Plex Sans Condensed", sans-serif;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.container {
+  width: min(1220px, calc(100% - 48px));
+  margin: 0 auto;
+}
+
+.progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 4px;
+  background: var(--yellow);
+  z-index: 5000;
+}
+
+.header {
+  position: fixed;
+  top: 16px;
+  width: 100%;
+  z-index: 1000;
+}
+
+.nav {
+  min-height: 76px;
+  padding: 11px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+  border: 1px solid rgba(20,63,33,.12);
+  border-radius: 22px;
+  background: rgba(255,255,255,.91);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 16px 45px rgba(18,45,25,.08);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 15px;
+}
+
+.brand-logo {
+  width: 148px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+.brand-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.brand-name {
+  font-weight: 700;
+  max-width: 360px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-link {
+  padding: 11px 13px;
+  color: #3f493f;
+  font-size: .88rem;
+  font-weight: 600;
+}
+
+.nav-link:hover {
+  color: var(--forest-2);
+}
+
+.nav-cta {
+  padding: 13px 20px;
+  border-radius: 12px;
+  background: var(--forest);
+  color: white;
+  font-weight: 700;
+  transition: .25s ease;
+}
+
+.nav-cta:hover {
+  transform: translateY(-2px);
+  background: var(--forest-2);
+}
+
+.hero {
+  position: relative;
+  padding: 150px 0 95px;
+  min-height: 94vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  width: 620px;
+  height: 620px;
+  right: -280px;
+  top: -220px;
+  border-radius: 50%;
+  background: var(--lime-soft);
+  z-index: -1;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: .95fr 1.05fr;
+  gap: 70px;
+  align-items: center;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
+  color: var(--forest-2);
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  font-size: .76rem;
+  font-weight: 700;
+}
+
+.eyebrow-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--yellow);
+}
+
+.hero h1 {
+  max-width: 720px;
+  font-size: clamp(4rem, 7vw, 7.1rem);
+  line-height: .9;
+  letter-spacing: -.048em;
+  font-weight: 700;
+}
+
+.hero-copy {
+  max-width: 630px;
+  margin-top: 28px;
+  color: var(--muted);
+  font-size: 1.12rem;
+  line-height: 1.72;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 34px;
+}
+
+.btn {
+  min-height: 54px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px 23px;
+  border-radius: 13px;
+  font-weight: 700;
+  transition: transform .25s ease, box-shadow .25s ease, background .25s ease;
+}
+
+.btn-primary {
+  background: var(--forest);
+  color: white;
+  box-shadow: 0 16px 36px rgba(20,63,33,.2);
+}
+
+.btn-primary:hover {
+  background: var(--forest-2);
+  transform: translateY(-3px);
+}
+
+.btn-secondary {
+  border: 1px solid var(--line);
+  background: white;
+}
+
+.btn-secondary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(20,63,33,.08);
+}
+
+.hero-proof {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  margin-top: 44px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+
+.metric {
+  display: grid;
+  gap: 3px;
+}
+
+.metric strong {
+  font-size: 1.15rem;
+}
+
+.metric span {
+  color: var(--muted);
+  font-size: .76rem;
+}
+
+.hero-media {
+  position: relative;
+  min-height: 630px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-media-bg {
+  position: absolute;
+  inset: 30px 0 30px 80px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--forest), var(--forest-2));
+  overflow: hidden;
+}
+
+.hero-media-bg::before {
+  content: "";
+  position: absolute;
+  width: 380px;
+  height: 380px;
+  right: -100px;
+  top: -80px;
+  border-radius: 50%;
+  background: rgba(243,181,27,.9);
+}
+
+.hero-media-bg::after {
+  content: "";
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  left: -130px;
+  bottom: -160px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.08);
+}
+
+.hero-image {
+  position: relative;
+  z-index: 3;
+  width: 110%;
+  max-height: 590px;
+  object-fit: contain;
+  filter: drop-shadow(0 30px 35px rgba(0,0,0,.18));
+  animation: heroFloat 5s ease-in-out infinite alternate;
+}
+
+@keyframes heroFloat {
+  from { transform: translateY(5px); }
+  to { transform: translateY(-12px); }
+}
+
+.hero-badge {
+  position: absolute;
+  z-index: 5;
+  left: 30px;
+  bottom: 28px;
+  width: 160px;
+  padding: 15px;
+  border-radius: 17px;
+  background: white;
+  box-shadow: 0 22px 50px rgba(0,0,0,.16);
+}
+
+.hero-badge img {
+  max-height: 78px;
+  margin: auto;
+  object-fit: contain;
+}
+
+.stat-strip {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: white;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+}
+
+.stat {
+  min-height: 105px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  border-right: 1px solid var(--line);
+}
+
+.stat:last-child {
+  border-right: none;
+}
+
+.stat strong {
+  display: block;
+  font-size: 1.3rem;
+}
+
+.stat span {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: .78rem;
+}
+
+.section {
+  padding: 120px 0;
+}
+
+.section-head {
+  display: grid;
+  grid-template-columns: .85fr 1.15fr;
+  gap: 70px;
+  align-items: end;
+  margin-bottom: 58px;
+}
+
+.section-kicker {
+  color: var(--forest-3);
+  font-size: .76rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+}
+
+.section-title {
+  max-width: 690px;
+  font-size: clamp(2.9rem, 5.5vw, 5.6rem);
+  line-height: .92;
+  letter-spacing: -.045em;
+}
+
+.section-description {
+  max-width: 630px;
+  color: var(--muted);
+  font-size: 1.04rem;
+  line-height: 1.8;
+}
+
+.services-section {
+  background: #eff3ec;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 18px;
+}
+
+.service-card {
+  min-height: 420px;
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  overflow: hidden;
+  border: 1px solid rgba(20,63,33,.12);
+  border-radius: var(--radius);
+  background: white;
+  transition: transform .35s ease, box-shadow .35s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-7px);
+  box-shadow: 0 25px 60px rgba(20,63,33,.11);
+}
+
+.service-visual {
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  background: var(--lime-soft);
+}
+
+.service-visual img {
+  max-width: 125px;
+  max-height: 150px;
+  object-fit: contain;
+  transition: transform .35s ease;
+}
+
+.service-card:hover .service-visual img {
+  transform: scale(1.06) rotate(-2deg);
+}
+
+.service-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--forest);
+  color: white;
+  font-size: 3.5rem;
+  font-family: "IBM Plex Sans Condensed", sans-serif;
+  font-weight: 700;
+}
+
+.service-content {
+  padding: 38px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.service-topline {
+  color: var(--forest-3);
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  font-size: .7rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.service-content h3 {
+  font-size: 2rem;
+  line-height: 1;
+  letter-spacing: -.025em;
+}
+
+.service-content p {
+  margin-top: 16px;
+  color: var(--muted);
+  line-height: 1.72;
+}
+
+.text-link {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 26px;
+  color: var(--forest);
+  font-weight: 700;
+  font-size: .88rem;
+}
+
+.text-link span {
+  transition: transform .2s ease;
+}
+
+.text-link:hover span {
+  transform: translate(3px,-3px);
+}
+
+.apple-section {
+  background: var(--forest);
+  color: white;
+}
+
+.apple-grid {
+  display: grid;
+  grid-template-columns: .9fr 1.1fr;
+  gap: 90px;
+  align-items: center;
+}
+
+.apple-photo {
+  position: relative;
+  overflow: hidden;
+  min-height: 560px;
+  border-radius: var(--radius-lg);
+  background: #0e311a;
+}
+
+.apple-photo img {
+  width: 100%;
+  height: 100%;
+  min-height: 560px;
+  object-fit: cover;
+}
+
+.apple-badge-large {
+  position: absolute;
+  left: 28px;
+  bottom: 28px;
+  width: 180px;
+  padding: 18px;
+  background: white;
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+
+.apple-copy .section-kicker {
+  color: var(--yellow);
+}
+
+.apple-copy h2 {
+  font-size: clamp(3.2rem, 5vw, 5.8rem);
+  line-height: .92;
+  letter-spacing: -.045em;
+}
+
+.apple-copy p {
+  max-width: 600px;
+  margin-top: 26px;
+  color: rgba(255,255,255,.72);
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+
+.trust-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 34px;
+}
+
+.trust-item {
+  min-height: 62px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,.12);
+}
+
+.trust-icon {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--yellow);
+  color: var(--forest);
+  font-weight: 700;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.feature-card {
+  min-height: 560px;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: white;
+  border: 1px solid var(--line);
+}
+
+.feature-image {
+  height: 320px;
+  overflow: hidden;
+}
+
+.feature-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .55s ease;
+}
+
+.feature-card:hover .feature-image img {
+  transform: scale(1.045);
+}
+
+.feature-copy {
+  padding: 36px;
+}
+
+.feature-copy h3 {
+  font-size: 2.2rem;
+  line-height: 1;
+}
+
+.feature-copy p {
+  margin-top: 16px;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.cta {
+  padding: 110px 0;
+}
+
+.cta-card {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 60px;
+  align-items: center;
+  padding: clamp(48px, 7vw, 82px);
+  border-radius: var(--radius-lg);
+  background: #10140f;
+  color: white;
+}
+
+.cta-card::after {
+  content: "";
+  position: absolute;
+  width: 410px;
+  height: 410px;
+  right: -130px;
+  bottom: -230px;
+  border-radius: 50%;
+  background: var(--forest-3);
+}
+
+.cta-content {
+  position: relative;
+  z-index: 2;
+}
+
+.cta-content h2 {
+  max-width: 760px;
+  font-size: clamp(3rem, 5.5vw, 5.7rem);
+  line-height: .91;
+  letter-spacing: -.045em;
+}
+
+.cta-content p {
+  max-width: 620px;
+  margin-top: 22px;
+  color: rgba(255,255,255,.68);
+  line-height: 1.75;
+}
+
+.cta-actions {
+  position: relative;
+  z-index: 3;
+  min-width: 210px;
+}
+
+.cta-actions .btn {
+  width: 100%;
+  background: var(--yellow);
+  color: var(--forest);
+}
+
+.cta-actions .btn:hover {
+  background: #ffd05a;
+}
+
+footer {
+  padding: 38px 0 50px;
+  border-top: 1px solid var(--line);
+}
+
+.footer-grid {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  color: var(--muted);
+  font-size: .8rem;
+}
+
+.footer-demo {
+  max-width: 620px;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity .7s ease,
+    transform .7s cubic-bezier(.2,.7,.2,1);
+  transition-delay: var(--delay,0ms);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 980px) {
+
+  .hero-grid,
+  .apple-grid,
+  .section-head,
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-media {
+    min-height: 560px;
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+
+  .container {
+    width: min(100% - 26px, 1220px);
+  }
+
+  .header {
+    top: 9px;
+  }
+
+  .nav {
+    min-height: 62px;
+    border-radius: 17px;
+  }
+
+  .brand-logo {
+    width: 105px;
+    height: 36px;
+  }
+
+  .brand-name,
+  .nav-link {
+    display: none;
+  }
+
+  .nav-cta {
+    font-size: .78rem;
+    padding: 11px 13px;
+  }
+
+  .hero {
+    padding: 112px 0 70px;
+  }
+
+  .hero h1 {
+    font-size: clamp(3.4rem, 17vw, 5.3rem);
+  }
+
+  .hero-grid {
+    gap: 40px;
+  }
+
+  .hero-media {
+    min-height: 430px;
+  }
+
+  .hero-media-bg {
+    inset: 10px 0;
+  }
+
+  .hero-image {
+    width: 108%;
+  }
+
+  .hero-badge {
+    width: 125px;
+    left: 16px;
+    bottom: 15px;
+  }
+
+  .stat-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .stat:nth-child(2) {
+    border-right: none;
+  }
+
+  .stat:nth-child(-n+2) {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .section {
+    padding: 78px 0;
+  }
+
+  .section-title {
+    font-size: clamp(2.8rem, 14vw, 4.2rem);
+  }
+
+  .service-card {
+    min-height: auto;
+    grid-template-columns: 1fr;
+  }
+
+  .service-visual {
+    min-height: 210px;
+  }
+
+  .service-content {
+    padding: 28px;
+  }
+
+  .apple-photo {
+    min-height: 390px;
+  }
+
+  .apple-photo img {
+    min-height: 390px;
+  }
+
+  .cta-card {
+    grid-template-columns: 1fr;
+    padding: 38px 25px;
+  }
+
+  .cta-actions {
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div
+  class="progress"
+  id="progress"
+></div>
+
+<header class="header">
+
+  <div class="container">
+
+    <nav class="nav">
+
+      <a
+        href="#top"
+        class="brand"
+      >
+
+        
+              <div class="brand-logo">
+                <img
+                  src="https://mobilekangaroo.com/assets/mobileKangaroo-logo.svg"
+                  alt="Mobile Kangaroo - Apple Authorized Service Provider logo"
+                />
+              </div>
+            
+
+        <span class="brand-name">
+          Mobile Kangaroo - Apple Authorized Service Provider
+        </span>
+
+      </a>
+
+      <div class="nav-links">
+
+        <a href="#services" class="nav-link">
+          Repairs
+        </a>
+
+        <a href="#authorized" class="nav-link">
+          Apple Service
+        </a>
+
+        <a href="#business" class="nav-link">
+          Schools & Business
+        </a>
+
+        <a
+          href="https://repairkangaroo.com/welcome"
+          class="nav-cta"
+        >
+          Start a Repair
+        </a>
+
+      </div>
+
+    </nav>
+
+  </div>
+
+</header>
+
+<main id="top">
+
+<section class="hero">
+
+  <div class="container hero-grid">
+
+    <div>
+
+      <div class="eyebrow reveal">
+
+        <span class="eyebrow-dot"></span>
+
+        Waco, TX, US
+
+      </div>
+
+      <h1 class="reveal">
+        Device repair and practical AI help
+      </h1>
+
+      <p
+        class="hero-copy reveal"
+        style="--delay:90ms"
+      >
+        Mobile Kangaroo is your neighborhood shop for device repair, school and business support, and approachable local AI services.
+      </p>
+
+      <div
+        class="hero-actions reveal"
+        style="--delay:150ms"
+      >
+
+        <a
+          href="https://repairkangaroo.com/welcome"
+          class="btn btn-primary"
+        >
+          Start a Repair
+          <span>→</span>
+        </a>
+
+        <a
+          href="#services"
+          class="btn btn-secondary"
+        >
+          Explore Services
+        </a>
+
+      </div>
+
+      <div
+        class="hero-proof reveal"
+        style="--delay:220ms"
+      >
+
+        <div class="metric">
+
+          <strong>
+            4.7
+            / 5
+          </strong>
+
+          <span>
+            Customer rating
+          </span>
+
+        </div>
+
+        <div class="metric">
+
+          <strong>
+            102
+          </strong>
+
+          <span>
+            Public reviews
+          </span>
+
+        </div>
+
+        <div class="metric">
+
+          <strong>
+            Waco
+          </strong>
+
+          <span>
+            Local service
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="hero-media reveal">
+
+      <div class="hero-media-bg"></div>
+
+      
+            <img
+              class="hero-image"
+              src="https://www.mobilekangaroo.com/assets/mobilekangaroo-hero-no-sign.svg?v=single-clean-hero"
+              alt="Mobile Kangaroo - Apple Authorized Service Provider"
+            />
+          
+
+      
+            <div class="hero-badge">
+
+              <img
+                src="https://www.mobilekangaroo.com/assets/apple-authorized-service-provider-badge.png"
+                alt="Apple Authorized Service Provider"
+              />
+
+            </div>
+          
+
+    </div>
+
+  </div>
+
+</section>
+
+<section class="stat-strip">
+
+  <div class="container stat-grid">
+
+    <div class="stat">
+      <div>
+        <strong>
+          4.7
+          /5
+        </strong>
+        <span>Customer rating</span>
+      </div>
+    </div>
+
+    <div class="stat">
+      <div>
+        <strong>
+          102
+        </strong>
+        <span>Customer feedback</span>
+      </div>
+    </div>
+
+    <div class="stat">
+      <div>
+        <strong>Since 2003</strong>
+        <span>Device problem solving</span>
+      </div>
+    </div>
+
+    <div class="stat">
+      <div>
+        <strong>90 days</strong>
+        <span>Repair warranty</span>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<section
+  id="services"
+  class="section services-section"
+>
+
+  <div class="container">
+
+    <div class="section-head">
+
+      <div>
+
+        <div class="section-kicker">
+          Repair & Technology
+        </div>
+
+        <h2 class="section-title">
+          Keep the devices you depend on working.
+        </h2>
+
+      </div>
+
+      <p class="section-description">
+
+        From phones and tablets to computers,
+        game consoles, custom PCs and practical
+        AI support, explore real services available
+        from Mobile Kangaroo - Apple Authorized Service Provider.
+
+      </p>
+
+    </div>
+
+    <div class="services-grid">
+      
+        <article
+          class="service-card reveal"
+          style="--delay:0ms"
+        >
+
+          
+                <div class="service-visual">
+                  <img
+                    src="https://www.mobilekangaroo.com/assets/icon-device-phones.png"
+                    alt="Phones"
+                    loading="lazy"
+                  />
+                </div>
+              
+
+          <div class="service-content">
+
+            <div class="service-topline">
+              Service 01
+            </div>
+
+            <h3>
+              Phones
+            </h3>
+
+            <p>
+              Screen issues, batteries, charging problems, camera trouble, and everyday damage.
+            </p>
+
+            <a
+              href="tel:8553498428"
+              class="text-link"
+            >
+              Ask about this service
+              <span>↗</span>
+            </a>
+
+          </div>
+
+        </article>
+      
+        <article
+          class="service-card reveal"
+          style="--delay:65ms"
+        >
+
+          
+                <div class="service-visual">
+                  <img
+                    src="https://www.mobilekangaroo.com/assets/icon-device-tablets.png"
+                    alt="Tablets"
+                    loading="lazy"
+                  />
+                </div>
+              
+
+          <div class="service-content">
+
+            <div class="service-topline">
+              Service 02
+            </div>
+
+            <h3>
+              Tablets
+            </h3>
+
+            <p>
+              Reliable tablet and iPad repair service for individuals, families, students, schools, and teams.
+            </p>
+
+            <a
+              href="tel:8553498428"
+              class="text-link"
+            >
+              Ask about this service
+              <span>↗</span>
+            </a>
+
+          </div>
+
+        </article>
+      
+        <article
+          class="service-card reveal"
+          style="--delay:130ms"
+        >
+
+          
+                <div class="service-visual">
+                  <img
+                    src="https://www.mobilekangaroo.com/assets/icon-device-computers.png"
+                    alt="Computers"
+                    loading="lazy"
+                  />
+                </div>
+              
+
+          <div class="service-content">
+
+            <div class="service-topline">
+              Service 03
+            </div>
+
+            <h3>
+              Computers
+            </h3>
+
+            <p>
+              Hardware diagnostics, software fixes, data help, tune-ups, and setup support.
+            </p>
+
+            <a
+              href="tel:8553498428"
+              class="text-link"
+            >
+              Ask about this service
+              <span>↗</span>
+            </a>
+
+          </div>
+
+        </article>
+      
+        <article
+          class="service-card reveal"
+          style="--delay:195ms"
+        >
+
+          
+                <div class="service-visual">
+                  <img
+                    src="https://www.mobilekangaroo.com/assets/icon-device-gameconsoles.png"
+                    alt="Game Consoles"
+                    loading="lazy"
+                  />
+                </div>
+              
+
+          <div class="service-content">
+
+            <div class="service-topline">
+              Service 04
+            </div>
+
+            <h3>
+              Game Consoles
+            </h3>
+
+            <p>
+              Repairs that help get your system back to the adventures waiting for you.
+            </p>
+
+            <a
+              href="tel:8553498428"
+              class="text-link"
+            >
+              Ask about this service
+              <span>↗</span>
+            </a>
+
+          </div>
+
+        </article>
+      
+        <article
+          class="service-card reveal"
+          style="--delay:260ms"
+        >
+
+          
+                <div class="service-number">
+                  05
+                </div>
+              
+
+          <div class="service-content">
+
+            <div class="service-topline">
+              Service 05
+            </div>
+
+            <h3>
+              Gaming PCs
+            </h3>
+
+            <p>
+              Balanced builds for smooth gameplay, streaming, upgrades, and long-term performance.
+            </p>
+
+            <a
+              href="tel:8553498428"
+              class="text-link"
+            >
+              Ask about this service
+              <span>↗</span>
+            </a>
+
+          </div>
+
+        </article>
+      
+        <article
+          class="service-card reveal"
+          style="--delay:325ms"
+        >
+
+          
+                <div class="service-number">
+                  06
+                </div>
+              
+
+          <div class="service-content">
+
+            <div class="service-topline">
+              Service 06
+            </div>
+
+            <h3>
+              AI workstations
+            </h3>
+
+            <p>
+              Custom systems planned around local models, GPU needs, privacy goals, and realistic budgets.
+            </p>
+
+            <a
+              href="tel:8553498428"
+              class="text-link"
+            >
+              Ask about this service
+              <span>↗</span>
+            </a>
+
+          </div>
+
+        </article>
+      
+        <article
+          class="service-card reveal"
+          style="--delay:390ms"
+        >
+
+          
+                <div class="service-number">
+                  07
+                </div>
+              
+
+          <div class="service-content">
+
+            <div class="service-topline">
+              Service 07
+            </div>
+
+            <h3>
+              Setup and support
+            </h3>
+
+            <p>
+              Help with parts, assembly, configuration, software setup, and future service.
+            </p>
+
+            <a
+              href="tel:8553498428"
+              class="text-link"
+            >
+              Ask about this service
+              <span>↗</span>
+            </a>
+
+          </div>
+
+        </article>
+      
+        <article
+          class="service-card reveal"
+          style="--delay:455ms"
+        >
+
+          
+                <div class="service-number">
+                  08
+                </div>
+              
+
+          <div class="service-content">
+
+            <div class="service-topline">
+              Service 08
+            </div>
+
+            <h3>
+              AI Coaching Classes
+            </h3>
+
+            <p>
+              Friendly, hands-on sessions for individuals who want to understand AI, ask better questions, and use tools confidently at home or work.
+            </p>
+
+            <a
+              href="tel:8553498428"
+              class="text-link"
+            >
+              Ask about this service
+              <span>↗</span>
+            </a>
+
+          </div>
+
+        </article>
+      
+    </div>
+
+  </div>
+
+</section>
+
+<section
+  id="authorized"
+  class="section apple-section"
+>
+
+  <div class="container apple-grid">
+
+    <div class="apple-photo reveal">
+
+      
+            <img
+              src="https://www.mobilekangaroo.com/assets/apple-service-provider.png"
+              alt="Apple Authorized Service Provider"
+              loading="lazy"
+            />
+          
+
+      
+            <div class="apple-badge-large">
+
+              <img
+                src="https://www.mobilekangaroo.com/assets/apple-authorized-service-provider-badge.png"
+                alt="Apple Authorized Service Provider"
+              />
+
+            </div>
+          
+
+    </div>
+
+    <div class="apple-copy reveal">
+
+      <div class="section-kicker">
+        Authorized Repair
+      </div>
+
+      <h2>
+        Apple service backed by real authorization.
+      </h2>
+
+      <p>
+
+        Professional device support becomes more convincing
+        when customers can immediately see the credentials,
+        service capabilities, warranty information and
+        straightforward path to start a repair.
+
+      </p>
+
+      <div class="trust-list">
+        
+        <div
+          class="trust-item reveal"
+          style="--delay:0ms"
+        >
+          <span class="trust-icon">✓</span>
+          <span>Apple Authorized Service Provider</span>
+        </div>
+      
+        <div
+          class="trust-item reveal"
+          style="--delay:65ms"
+        >
+          <span class="trust-icon">✓</span>
+          <span>Solving device problems since 2003</span>
+        </div>
+      
+        <div
+          class="trust-item reveal"
+          style="--delay:130ms"
+        >
+          <span class="trust-icon">✓</span>
+          <span>90-day repair warranty</span>
+        </div>
+      
+        <div
+          class="trust-item reveal"
+          style="--delay:195ms"
+        >
+          <span class="trust-icon">✓</span>
+          <span>Pickup and drop-off</span>
+        </div>
+      
+        <div
+          class="trust-item reveal"
+          style="--delay:260ms"
+        >
+          <span class="trust-icon">✓</span>
+          <span>Authorized repairs</span>
+        </div>
+      
+      </div>
+
+      <div
+        style="
+          margin-top:34px;
+          display:flex;
+          gap:12px;
+          flex-wrap:wrap;
+        "
+      >
+
+        <a
+          href="https://repairkangaroo.com/welcome"
+          class="btn"
+          style="
+            background:var(--yellow);
+            color:var(--forest);
+          "
+        >
+          Start a Repair →
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<section
+  id="business"
+  class="section"
+>
+
+  <div class="container">
+
+    <div class="section-head">
+
+      <div>
+
+        <div class="section-kicker">
+          Beyond Individual Repairs
+        </div>
+
+        <h2 class="section-title">
+          Technology support built for real organizations.
+        </h2>
+
+      </div>
+
+      <p class="section-description">
+
+        Schools and businesses need predictable communication,
+        repair tracking and technology support without unnecessary
+        friction.
+
+      </p>
+
+    </div>
+
+    <div class="feature-grid">
+
+      <a
+        href="https://www.mobilekangaroo.com/education/"
+        class="feature-card reveal"
+      >
+
+        <div class="feature-image">
+
+          
+                <img
+                  src="https://www.mobilekangaroo.com/assets/education-landing-highres-web.jpeg"
+                  alt="Education technology support"
+                  loading="lazy"
+                />
+              
+
+        </div>
+
+        <div class="feature-copy">
+
+          <div class="section-kicker">
+            Schools & Universities
+          </div>
+
+          <h3>
+            Device repair support for education teams.
+          </h3>
+
+          <p>
+
+            Fast diagnostics, batch repairs,
+            pickup and drop-off, purchase orders
+            and authorized repair workflows.
+
+          </p>
+
+        </div>
+
+      </a>
+
+      <a
+        href="https://www.mobilekangaroo.com/business/"
+        class="feature-card reveal"
+        style="--delay:80ms"
+      >
+
+        <div class="feature-image">
+
+          
+                <img
+                  src="https://www.mobilekangaroo.com/assets/woman-with-laptop.png"
+                  alt="Business technology support"
+                  loading="lazy"
+                />
+              
+
+        </div>
+
+        <div class="feature-copy">
+
+          <div class="section-kicker">
+            Businesses
+          </div>
+
+          <h3>
+            Keep your team’s technology working.
+          </h3>
+
+          <p>
+
+            A clearer path for repairs,
+            workstation support,
+            practical AI implementation
+            and ongoing technology help.
+
+          </p>
+
+        </div>
+
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
+
+<section
+  id="contact"
+  class="cta"
+>
+
+  <div class="container">
+
+    <div class="cta-card reveal">
+
+      <div class="cta-content">
+
+        <div
+          class="section-kicker"
+          style="color:var(--yellow)"
+        >
+          Ready When You Are
+        </div>
+
+        <h2>
+          Get your device back to doing what you need it to do.
+        </h2>
+
+        <p>
+
+          Start a repair, ask about service availability
+          or speak directly with the team.
+
+          Call (855-349-8428 for current service information.
+
+        </p>
+
+        <div class="footer-demo">
+
+          <p
+            style="
+              margin-top:30px;
+              color:rgba(255,255,255,.42);
+              font-size:.74rem;
+            "
+          >
+
+            PurelyBuild demonstration concept created
+            from publicly available business information.
+            This is not the business's official website.
+
+          </p>
+
+        </div>
+
+      </div>
+
+      <div class="cta-actions">
+
+        <a
+          href="https://repairkangaroo.com/welcome"
+          class="btn"
+        >
+          Start a Repair →
+        </a>
+
+        
+              <a
+                href="tel:8553498428"
+                style="
+                  display:block;
+                  margin-top:14px;
+                  text-align:center;
+                  color:rgba(255,255,255,.68);
+                  font-size:.82rem;
+                "
+              >
+                (855-349-8428
+              </a>
+            
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+</main>
+
+<footer>
+
+  <div class="container footer-grid">
+
+    <div>
+      Demo concept prepared by
+      <strong>PurelyBuild</strong>.
+    </div>
+
+    
+          <a
+            href="https://www.mobilekangaroo.com/"
+            target="_blank"
+            rel="noopener"
+          >
+            View current business website ↗
+          </a>
+        
+
+  </div>
+
+</footer>
+
+<script>
+
+const progress =
+  document.getElementById('progress');
+
+function updateProgress() {
+
+  const documentElement =
+    document.documentElement;
+
+  const scrollTop =
+    window.scrollY ||
+    documentElement.scrollTop;
+
+  const total =
+    documentElement.scrollHeight -
+    documentElement.clientHeight;
+
+  const percentage =
+    total > 0
+      ? (scrollTop / total) * 100
+      : 0;
+
+  progress.style.width =
+    percentage + '%';
+
+}
+
+window.addEventListener(
+  'scroll',
+  updateProgress,
+  { passive: true }
+);
+
+updateProgress();
+
+const observer =
+  new IntersectionObserver(
+    (entries) => {
+
+      entries.forEach(
+        (entry) => {
+
+          if (entry.isIntersecting) {
+
+            entry.target
+              .classList
+              .add('visible');
+
+            observer.unobserve(
+              entry.target
+            );
+
+          }
+
+        }
+      );
+
+    },
+    {
+      threshold: .12
+    }
+  );
+
+document
+  .querySelectorAll('.reveal')
+  .forEach(
+    (element) => {
+      observer.observe(element);
+    }
+  );
+
+</script>
+
+</body>
+</html>
