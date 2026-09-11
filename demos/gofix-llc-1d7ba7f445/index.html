@@ -375,9 +375,7 @@ img { max-width: 100%; height: auto; display: block; }
 .footer-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); }
 /* ACCESSIBILITY: REDUCED MOTION */
 @media (prefers-reduced-motion: reduce) {
-  .reveal-up, .reveal-left, .reveal-right, .reveal-scale, .stat-card, .stat-val, .stat-card-inner,
-  .why-title-line, .why-copy-animated, .trust-editorial-item, .trust-bullet, .rating-editorial-block,
-  .stars-accent.why-stars span, .why-btn-animated {
+  .reveal-up, .reveal-left, .reveal-right, .reveal-scale, .stat-card, .stat-val, .stat-card-inner {
     opacity: 1 !important;
     transform: none !important;
     animation: none !important;
@@ -714,11 +712,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const targetVal = parseFloat(el.getAttribute('data-rating'));
     if (isNaN(targetVal)) return;
 
-    if (prefersReducedMotion) {
-      el.textContent = targetVal.toFixed(1);
-      return;
-    }
-
     const duration = 1000;
     let startTime = null;
 
@@ -736,7 +729,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.requestAnimationFrame(step);
   };
 
-  if (prefersReducedMotion || !('IntersectionObserver' in window)) {
+  if (!('IntersectionObserver' in window)) {
     elements.forEach(el => {
       el.classList.add('is-visible');
       if (el.classList.contains('why-animate')) {
@@ -760,7 +753,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }, { threshold: 0.15, rootMargin: "0px 0px -8% 0px" });
   
-  elements.forEach(el => observer.observe(el));
+  elements.forEach(el => {
+    if (prefersReducedMotion && !el.classList.contains('why-animate')) {
+      el.classList.add('is-visible');
+    } else {
+      observer.observe(el);
+    }
+  });
 });
 </script>
 </body>
