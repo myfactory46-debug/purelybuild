@@ -19,6 +19,7 @@
   --c-light-surface: #F4F5F7;
   --c-white: #FFFFFF;
   --c-accent: #C7362F;
+  --c-accent-glow: rgba(199, 54, 47, 0.25);
   --font-display: 'Barlow Condensed', -apple-system, sans-serif;
   --font-sans: 'Manrope', -apple-system, sans-serif;
 }
@@ -26,7 +27,7 @@
 html { scroll-behavior: smooth; font-size: 16px; background-color: var(--c-black); color: var(--c-black); }
 body { font-family: var(--font-sans); line-height: 1.6; -webkit-font-smoothing: antialiased; }
 /* TYPOGRAPHY UTILITIES */
-.d-heading { font-family: var(--font-display); text-transform: uppercase; letter-spacing: -0.01em; line-height: 0.95; }
+.d-heading { font-family: var(--font-display); text-transform: uppercase; letter-spacing: -0.01em; line-height: 1.02; }
 .light-text { color: var(--c-white); }
 .dark-text { color: var(--c-black); }
 a { color: inherit; text-decoration: none; }
@@ -40,7 +41,7 @@ img { max-width: 100%; height: auto; display: block; }
 /* HEADER */
 .nav-header { position: absolute; top: 0; left: 0; right: 0; z-index: 100; padding: 32px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
 .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.brand-logo-img { max-height: 48px; width: auto; filter: brightness(1); }
+.brand-logo-img { max-height: 60px; width: auto; filter: brightness(1); object-fit: contain; }
 .brand-wordmark { font-family: var(--font-display); font-size: 1.8rem; font-weight: 800; color: var(--c-white); letter-spacing: 0.02em; text-transform: uppercase; }
 .nav-menu { display: flex; align-items: center; gap: 40px; list-style: none; }
 .nav-item { font-size: 0.85rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.7); transition: color 0.2s; }
@@ -52,18 +53,42 @@ img { max-width: 100%; height: auto; display: block; }
 .btn-accent:hover { filter: brightness(1.1); transform: translateY(-2px); }
 .btn-outline-light { background: transparent; color: var(--c-white); border: 1px solid rgba(255,255,255,0.3); }
 .btn-outline-light:hover { border-color: var(--c-white); background: rgba(255,255,255,0.05); }
+
+/* RESTRAINED SITE-WIDE MOTION SYSTEM */
+.reveal-up, .reveal-left, .reveal-right, .reveal-scale {
+  opacity: 0;
+  will-change: transform, opacity;
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--stagger-delay, 0s);
+}
+.reveal-up { transform: translateY(36px); }
+.reveal-left { transform: translateX(-36px); }
+.reveal-right { transform: translateX(36px); }
+.reveal-scale { transform: scale(0.97); }
+
+.is-visible.reveal-up, .is-visible.reveal-left, .is-visible.reveal-right {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+.is-visible.reveal-scale {
+  opacity: 1;
+  transform: scale(1);
+}
+
 /* HERO - DRAMATIC EDITORIAL */
-.hero-editorial { position: relative; min-height: 90vh; background: var(--c-black); display: flex; align-items: flex-end; padding-bottom: 80px; padding-top: 160px; overflow: hidden; }
+.hero-editorial { position: relative; min-height: 88vh; background: var(--c-black); display: flex; align-items: center; padding-bottom: 90px; padding-top: 170px; overflow: hidden; }
 .hero-bg-frame { position: absolute; inset: 0; z-index: 1; }
-.hero-bg-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.38; filter: grayscale(20%); }
+.hero-bg-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.52; filter: grayscale(15%); }
 .hero-bg-fallback { width: 100%; height: 100%; background: radial-gradient(circle at center, var(--c-graphite) 0%, var(--c-black) 100%); opacity: 0.8; }
-.hero-overlay { position: absolute; inset: 0; z-index: 2; background: linear-gradient(180deg, rgba(13,14,16,0.6) 0%, rgba(13,14,16,0.2) 50%, rgba(13,14,16,0.95) 100%); }
+.hero-overlay { position: absolute; inset: 0; z-index: 2; background: linear-gradient(90deg, rgba(13,14,16,0.92) 0%, rgba(13,14,16,0.72) 50%, rgba(13,14,16,0.35) 100%); }
 .hero-content-wrap { position: relative; z-index: 10; width: 100%; }
-.hero-top-tag { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--c-accent); margin-bottom: 16px; display: block; }
-.hero-display-title { font-size: clamp(3.2rem, 7.5vw, 6.8rem); color: var(--c-white); margin-bottom: 24px; max-width: 1050px; }
-.hero-bottom-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; align-items: flex-end; }
-.hero-sub-text { font-size: 1.15rem; color: var(--c-text-muted); max-width: 540px; line-height: 1.7; }
-.hero-actions { display: flex; gap: 16px; flex-wrap: wrap; justify-content: flex-end; }
+.hero-column { max-width: 900px; }
+.hero-top-tag { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--c-accent); margin-bottom: 18px; display: block; }
+.hero-display-title { font-size: clamp(3.8rem, 6vw, 5.8rem); color: var(--c-white); margin-bottom: 24px; max-width: 880px; word-break: normal; overflow-wrap: break-word; }
+.hero-trademark { font-size: 0.5em; vertical-align: super; line-height: 0; font-weight: 700; display: inline; white-space: nowrap; margin-left: 1px; }
+.hero-sub-text { font-size: 1.15rem; color: var(--c-text-muted); max-width: 680px; line-height: 1.7; margin-bottom: 36px; }
+.hero-actions { display: flex; gap: 16px; flex-wrap: wrap; justify-content: flex-start; align-items: center; }
+
 /* BRAND REASONING BAR / PREMIUM STATS STRIP */
 .editorial-bar { background: var(--c-black); border-top: 1px solid var(--c-border-dark); border-bottom: 1px solid var(--c-border-dark); padding: 48px 0; color: var(--c-white); }
 .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; width: 100%; }
@@ -74,19 +99,12 @@ img { max-width: 100%; height: auto; display: block; }
   display: flex;
   flex-direction: column;
   justify-content: center;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease, opacity 0.6s ease;
-  opacity: 0;
-  transform: translateY(24px);
-}
-.stat-card.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-  transition-delay: var(--stagger-delay, 0s);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease, opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .stat-card:hover {
   transform: translateY(-4px);
   border-color: var(--c-accent);
-  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5), 0 0 20px -5px rgba(199, 54, 47, 0.25);
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5), 0 0 20px -2px var(--c-accent-glow);
 }
 .stat-val {
   font-family: var(--font-display);
@@ -106,34 +124,31 @@ img { max-width: 100%; height: auto; display: block; }
   color: var(--c-text-muted);
   line-height: 1.4;
 }
-@media (prefers-reduced-motion: reduce) {
-  .stat-card {
-    opacity: 1 !important;
-    transform: none !important;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease !important;
-  }
-}
+
 /* EDITORIAL HEADINGS */
 .section-header-editorial { margin-bottom: 70px; }
 .eyebrow-dark { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; color: var(--c-accent); margin-bottom: 12px; display: block; }
 .editorial-title { font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4.2rem); text-transform: uppercase; }
+
 /* SERVICES EDITORIAL LIST */
 .services-editorial-wrap { border-top: 1px solid var(--c-border-light); }
-.service-row { display: grid; grid-template-columns: 1.2fr 1.5fr 0.8fr; gap: 30px; padding: 40px 0; border-bottom: 1px solid var(--c-border-light); align-items: center; transition: background 0.2s; }
-.service-row:hover { background: var(--c-light-surface); }
+.service-row { display: grid; grid-template-columns: 1.2fr 1.5fr 0.8fr; gap: 30px; padding: 40px 0; border-bottom: 1px solid var(--c-border-light); align-items: center; transition: background 0.25s, transform 0.25s; }
+.service-row:hover { background: var(--c-light-surface); transform: translateX(6px); }
 .service-meta { display: flex; align-items: center; gap: 32px; }
 .service-num { font-family: var(--font-display); font-size: 1.4rem; color: var(--c-accent); font-weight: 700; }
 .service-name { font-family: var(--font-display); font-size: 1.8rem; text-transform: uppercase; letter-spacing: -0.01em; }
 .service-desc { font-size: 0.95rem; color: #555E6B; line-height: 1.6; }
 .service-action { text-align: right; }
-.editorial-link { display: inline-flex; align-items: center; gap: 10px; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--c-black); transition: gap 0.2s; }
+.editorial-link { display: inline-flex; align-items: center; gap: 10px; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--c-black); transition: gap 0.2s, color 0.2s; }
 .service-row:hover .editorial-link { gap: 16px; color: var(--c-accent); }
+
 /* WHY US / EDITORIAL PROP */
 .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
 .why-editorial-body { font-size: 1.1rem; color: var(--c-text-muted); margin-bottom: 36px; line-height: 1.8; }
 .trust-editorial-list { list-style: none; display: flex; flex-direction: column; gap: 16px; margin-bottom: 40px; }
 .trust-editorial-item { display: flex; gap: 12px; font-size: 1rem; font-weight: 600; color: var(--c-white); }
 .trust-bullet { color: var(--c-accent); font-weight: 800; }
+
 /* REPUTATION EDITORIAL */
 .rating-editorial-block { border: 1px solid var(--c-border-dark); padding: 50px; background: var(--c-dark-surface); text-align: center; }
 .rating-huge-val { font-family: var(--font-display); font-size: 6rem; line-height: 0.9; color: var(--c-white); font-weight: 800; }
@@ -143,6 +158,7 @@ img { max-width: 100%; height: auto; display: block; }
 .editorial-quote-box { border-left: 2px solid var(--c-accent); padding: 20px 0 20px 24px; background: rgba(255,255,255,0.02); }
 .quote-text { font-size: 1.05rem; font-style: italic; color: var(--c-white); margin-bottom: 12px; line-height: 1.6; }
 .quote-author { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--c-text-muted); font-weight: 700; }
+
 /* GALLERY ASYMMETRIC SYSTEM */
 .gallery-asymmetric { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; }
 .gallery-cell { position: relative; overflow: hidden; background: var(--c-graphite); width: 100%; }
@@ -158,6 +174,7 @@ img { max-width: 100%; height: auto; display: block; }
 .h-340 { height: 340px; }
 .h-320 { height: 320px; }
 .h-190 { height: 190px; }
+
 /* CONTACT / HOURS EDITORIAL */
 .contact-editorial-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
 .contact-meta-label { font-size: 0.75rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--c-accent); margin-bottom: 12px; display: block; }
@@ -165,16 +182,28 @@ img { max-width: 100%; height: auto; display: block; }
 .contact-phone-link { font-size: 1.5rem; font-weight: 700; color: var(--c-black); text-decoration: underline; text-underline-offset: 6px; }
 .hours-editorial-list { list-style: none; display: flex; flex-direction: column; }
 .hours-editorial-row { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--c-border-light); font-size: 0.95rem; font-weight: 600; }
+
 /* FOOTER */
 .footer-editorial { background: var(--c-black); color: var(--c-text-muted); padding: 60px 0 40px; border-top: 1px solid var(--c-border-dark); font-size: 0.8rem; }
 .footer-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); }
+
+/* ACCESSIBILITY: REDUCED MOTION */
+@media (prefers-reduced-motion: reduce) {
+  .reveal-up, .reveal-left, .reveal-right, .reveal-scale {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.25s ease !important;
+  }
+}
+
 /* RESPONSIVE DESIGN */
 @media (max-width: 992px) {
   .container { padding-left: 24px; padding-right: 24px; }
+  .hero-editorial { padding-top: 140px; padding-bottom: 70px; }
   .hero-display-title { font-size: 3.5rem; }
-  .hero-bottom-grid, .why-grid, .contact-editorial-grid { grid-template-columns: 1fr; gap: 40px; }
-  .hero-actions { justify-content: flex-start; }
+  .why-grid, .contact-editorial-grid { grid-template-columns: 1fr; gap: 40px; }
   .service-row { grid-template-columns: 1fr; gap: 16px; }
+  .service-row:hover { transform: none; }
   .service-action { text-align: left; }
   .nav-menu { display: none; }
   .col-span-8, .col-span-7, .col-span-5, .col-span-4 { grid-column: span 12; }
@@ -187,12 +216,12 @@ img { max-width: 100%; height: auto; display: block; }
   .editorial-section { padding: 60px 0; }
   .hero-editorial { padding-top: 120px; padding-bottom: 50px; min-height: auto; }
   .hero-display-title { font-size: 2.6rem; margin-bottom: 16px; }
-  .brand-logo-img { max-height: 32px; }
+  .brand-logo-img { max-height: 40px; }
   .brand-wordmark { font-size: 1.2rem; }
   .nav-header { padding: 16px 0; }
   .header-cta { padding: 10px 16px; font-size: 0.75rem; letter-spacing: 0.05em; width: auto; }
   .hero-top-tag { font-size: 0.7rem; letter-spacing: 0.15em; }
-  .hero-sub-text { font-size: 1rem; }
+  .hero-sub-text { font-size: 1rem; margin-bottom: 28px; }
   .hero-actions .btn-editorial, .final-cta-wrap .btn-editorial { width: 100%; padding: 16px 24px; font-size: 0.8rem; }
   .hero-actions { width: 100%; flex-direction: column; }
   .service-name { font-size: 1.4rem; }
@@ -230,11 +259,11 @@ img { max-width: 100%; height: auto; display: block; }
       <div class="hero-overlay"></div>
     </div>
     <div class="container hero-content-wrap">
-      <span class="hero-top-tag">/// Mobile Automotive Service — Round Rock, TX, US</span>
-      <h1 class="d-heading hero-display-title">Auto Repair, Everywhere!™</h1>
-      <div class="hero-bottom-grid">
-        <p class="hero-sub-text">Top-Rated Mobile Mechanic Services Near You.</p>
-        <div class="hero-actions">
+      <div class="hero-column">
+        <span class="hero-top-tag reveal-up" style="--stagger-delay: 0s;">/// Mobile Automotive Service — Round Rock, TX, US</span>
+        <h1 class="d-heading hero-display-title reveal-up" style="--stagger-delay: 0.12s;">Auto Repair, Everywhere!<span class="hero-trademark">™</span></h1>
+        <p class="hero-sub-text reveal-up" style="--stagger-delay: 0.24s;">Top-Rated Mobile Mechanic Services Near You.</p>
+        <div class="hero-actions reveal-up" style="--stagger-delay: 0.36s;">
           <a href="https://www.gofix2you.com/new-appointment-2-0" class="btn-editorial btn-accent">Schedule Mobile Service</a>
           <a href="tel:7378770249" class="btn-editorial btn-outline-light">Call (737) 877-0249</a>
         </div>
@@ -247,17 +276,17 @@ img { max-width: 100%; height: auto; display: block; }
       <div class="container">
         <div class="stats-grid">
           
-            <div class="stat-card" style="--stagger-delay: 0s;">
+            <div class="stat-card reveal-up" style="--stagger-delay: 0s;">
               <span class="stat-val">4.9 ★</span>
               <span class="stat-lbl">70+ Customer Reviews</span>
             </div>
           
-            <div class="stat-card" style="--stagger-delay: 0.15s;">
+            <div class="stat-card reveal-up" style="--stagger-delay: 0.14s;">
               <span class="stat-val">On-Site</span>
               <span class="stat-lbl">Mobile Operations</span>
             </div>
           
-            <div class="stat-card" style="--stagger-delay: 0.3s;">
+            <div class="stat-card reveal-up" style="--stagger-delay: 0.28s;">
               <span class="stat-val">Local</span>
               <span class="stat-lbl">Serving Round Rock, TX, US</span>
             </div>
@@ -269,13 +298,13 @@ img { max-width: 100%; height: auto; display: block; }
   <!-- SERVICES SECTION -->
   <section id="services" class="editorial-section">
     <div class="container">
-      <div class="section-header-editorial">
+      <div class="section-header-editorial reveal-up">
         <span class="eyebrow-dark">Capabilities</span>
         <h2 class="editorial-title dark-text">Services &amp; Diagnostics</h2>
       </div>
       <div class="services-editorial-wrap">
         
-    <article class="service-row">
+    <article class="service-row reveal-up" style="--stagger-delay: 0s;">
       <div class="service-meta">
         <span class="service-num">01</span>
         <h3 class="service-name">General Auto Repair</h3>
@@ -289,7 +318,7 @@ img { max-width: 100%; height: auto; display: block; }
       </div>
     </article>
   
-    <article class="service-row">
+    <article class="service-row reveal-up" style="--stagger-delay: 0.1s;">
       <div class="service-meta">
         <span class="service-num">02</span>
         <h3 class="service-name">Engine Diagnostics</h3>
@@ -303,7 +332,7 @@ img { max-width: 100%; height: auto; display: block; }
       </div>
     </article>
   
-    <article class="service-row">
+    <article class="service-row reveal-up" style="--stagger-delay: 0.2s;">
       <div class="service-meta">
         <span class="service-num">03</span>
         <h3 class="service-name">Tire Service</h3>
@@ -317,7 +346,7 @@ img { max-width: 100%; height: auto; display: block; }
       </div>
     </article>
   
-    <article class="service-row">
+    <article class="service-row reveal-up" style="--stagger-delay: 0.30000000000000004s;">
       <div class="service-meta">
         <span class="service-num">04</span>
         <h3 class="service-name">Maintenance</h3>
@@ -331,7 +360,7 @@ img { max-width: 100%; height: auto; display: block; }
       </div>
     </article>
   
-    <article class="service-row">
+    <article class="service-row reveal-up" style="--stagger-delay: 0.4s;">
       <div class="service-meta">
         <span class="service-num">05</span>
         <h3 class="service-name">Fleet Service</h3>
@@ -351,7 +380,7 @@ img { max-width: 100%; height: auto; display: block; }
   <!-- WHY CHOOSE US -->
   <section id="why-us" class="editorial-section dark-bg border-top">
     <div class="container why-grid">
-      <div>
+      <div class="reveal-left">
         <span class="eyebrow-dark">The Standard</span>
         <h2 class="editorial-title light-text" style="margin-bottom: 24px;">Precision Automotive Care</h2>
         <p class="why-editorial-body">Mobile automotive service available at your location.</p>
@@ -367,7 +396,7 @@ img { max-width: 100%; height: auto; display: block; }
         
         <a href="https://www.gofix2you.com/new-appointment-2-0" class="btn-editorial btn-accent">Schedule Mobile Service</a>
       </div>
-      <div>
+      <div class="reveal-right">
         
       <div class="rating-editorial-block">
         <div class="rating-huge-val">4.9</div>
@@ -384,28 +413,28 @@ img { max-width: 100%; height: auto; display: block; }
   
       <section id="gallery" class="editorial-section dark-bg border-top">
         <div class="container">
-          <div class="section-header-editorial">
+          <div class="section-header-editorial reveal-up">
             <span class="eyebrow-dark">Portfolio</span>
             <h2 class="editorial-title light-text">Workshop & Field Operations</h2>
           </div>
           <div class="gallery-asymmetric">
             
-        <div class="gallery-cell col-span-4 h-320">
+        <div class="gallery-cell col-span-4 h-320 reveal-scale" style="--stagger-delay: 0s;">
           <img src="https://irp.cdn-website.com/91472117/dms3rep/multi/BeCasso-2025-03-01-21-37-52.PNG" alt="GoFix LLC work sample 1" loading="lazy" />
         </div>
-        <div class="gallery-cell col-span-4 h-320">
+        <div class="gallery-cell col-span-4 h-320 reveal-scale" style="--stagger-delay: 0.1s;">
           <img src="https://irp.cdn-website.com/91472117/dms3rep/multi/BeCasso-2025-03-01-21-35-32.PNG" alt="GoFix LLC work sample 2" loading="lazy" />
         </div>
-        <div class="gallery-cell col-span-4 h-320">
+        <div class="gallery-cell col-span-4 h-320 reveal-scale" style="--stagger-delay: 0.2s;">
           <img src="https://irp.cdn-website.com/91472117/dms3rep/multi/BeCasso-2025-03-01-21-31-52.PNG" alt="GoFix LLC work sample 3" loading="lazy" />
         </div>
-        <div class="gallery-cell col-span-4 h-320">
+        <div class="gallery-cell col-span-4 h-320 reveal-scale" style="--stagger-delay: 0.3s;">
           <img src="https://irp.cdn-website.com/91472117/dms3rep/multi/opt/BeCasso-2025-03-01-21-29-55-1056w.PNG" alt="GoFix LLC work sample 4" loading="lazy" />
         </div>
-        <div class="gallery-cell col-span-4 h-320">
+        <div class="gallery-cell col-span-4 h-320 reveal-scale" style="--stagger-delay: 0.4s;">
           <img src="https://irp.cdn-website.com/91472117/dms3rep/multi/opt/Subject-2d7a5310-762w.png" alt="GoFix LLC work sample 5" loading="lazy" />
         </div>
-        <div class="gallery-cell col-span-4 h-320">
+        <div class="gallery-cell col-span-4 h-320 reveal-scale" style="--stagger-delay: 0.5s;">
           <img src="https://irp.cdn-website.com/91472117/dms3rep/multi/BeCasso-2024-11-15-22-38-48.jpeg" alt="GoFix LLC work sample 6" loading="lazy" />
         </div>
       
@@ -416,13 +445,13 @@ img { max-width: 100%; height: auto; display: block; }
   <!-- CONTACT & HOURS -->
   <section id="contact" class="editorial-section">
     <div class="container contact-editorial-grid">
-      <div>
+      <div class="reveal-left">
         <span class="contact-meta-label">Location & Direct Line</span>
         <h3 class="contact-address dark-text">Round Rock, TX, US</h3>
         <p style="margin-bottom: 24px;"><a href="tel:7378770249" class="contact-phone-link">(737) 877-0249</a></p>
         <p><a href="https://www.gofix2you.com/" target="_blank" rel="noopener" style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; text-decoration: underline;">Visit Current Website ↗</a></p>
       </div>
-      <div>
+      <div class="reveal-right">
         <span class="contact-meta-label">Operating Schedule</span>
         
           <ul class="hours-editorial-list">
@@ -434,7 +463,7 @@ img { max-width: 100%; height: auto; display: block; }
   </section>
   <!-- FINAL CTA -->
   <section class="editorial-section graphite-bg border-top" style="text-align: center;">
-    <div class="container">
+    <div class="container reveal-up">
       <span class="eyebrow-dark">Service Request</span>
       <h2 class="editorial-title light-text" style="margin-bottom: 20px;">Ready for Vehicle Service?</h2>
       <p style="color: var(--c-text-muted); max-width: 550px; margin: 0 auto 40px; font-size: 1.05rem;">Connect with GoFix LLC today to discuss diagnostics, mobile service scheduling, or response options.</p>
@@ -446,7 +475,7 @@ img { max-width: 100%; height: auto; display: block; }
   </section>
 </main>
 <!-- FOOTER -->
-<footer class="footer-editorial">
+<footer class="footer-editorial reveal-up">
   <div class="container">
     <div class="footer-bottom">
       <div>
@@ -460,29 +489,25 @@ img { max-width: 100%; height: auto; display: block; }
 </footer>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const cards = document.querySelectorAll('.stat-card');
-  if (!cards.length) return;
+  const elements = document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right, .reveal-scale');
+  if (!elements.length) return;
   
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (prefersReducedMotion) {
-    cards.forEach(card => card.classList.add('is-visible'));
+  if (prefersReducedMotion || !('IntersectionObserver' in window)) {
+    elements.forEach(el => el.classList.add('is-visible'));
     return;
   }
   
-  if ('IntersectionObserver' in window) {
-    const observer = new IntersectionObserver((entries, obs) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          obs.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.15 });
-    
-    cards.forEach(card => observer.observe(card));
-  } else {
-    cards.forEach(card => card.classList.add('is-visible'));
-  }
+  const observer = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: "0px 0px -8% 0px" });
+  
+  elements.forEach(el => observer.observe(el));
 });
 </script>
 </body>
