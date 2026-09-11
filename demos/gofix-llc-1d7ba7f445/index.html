@@ -800,7 +800,7 @@ document.addEventListener('DOMContentLoaded', () => {
         entry.target.classList.add('is-visible');
         if (entry.target.classList.contains('why-animate')) {
           const ratingEl = entry.target.querySelector('[data-rating]');
-          if (ratingEl) animateRatingCountUp(entry.target);
+          if (ratingEl) animateRatingCountUp(ratingEl);
         }
         obs.unobserve(entry.target);
       }
