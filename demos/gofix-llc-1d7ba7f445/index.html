@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GoFix LLC | Reliable Car Repair Services in Round Rock</title>
+<meta name="description" content="Keeping Your Vehicle Running Smoothly" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg-dark: #11130F;
+  --bg-card-dark: #1A1D17;
+  --bg-light: #F6F7F5;
+  --bg-white: #FFFFFF;
+  --accent-green: #184F32;
+  --accent-green-hover: #123B25;
+  --accent-gold: #F2B51D;
+  --text-dark: #11130F;
+  --text-muted: #5A6258;
+  --text-light: #ECF0EA;
+  --text-dim: #9BA398;
+  --border-light: rgba(17, 19, 15, 0.08);
+  --border-dark: rgba(255, 255, 255, 0.1);
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 24px;
+  --font-heading: 'Archivo Black', -apple-system, sans-serif;
+  --font-body: 'Manrope', -apple-system, sans-serif;
+  --shadow: 0 16px 40px rgba(17, 19, 15, 0.06);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body { font-family: var(--font-body); background-color: var(--bg-light); color: var(--text-dark); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+h1, h2, h3, .heading-font { font-family: var(--font-heading); text-transform: uppercase; letter-spacing: -0.02em; line-height: 1.05; }
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; height: auto; display: block; }
+
+.container { width: min(1280px, calc(100% - 40px)); margin: 0 auto; }
+.section { padding: 90px 0; }
+.section-dark { background-color: var(--bg-dark); color: var(--text-light); }
+.section-white { background-color: var(--bg-white); }
+
+.kicker { display: inline-block; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent-green); margin-bottom: 12px; }
+.section-dark .kicker { color: var(--accent-gold); }
+.section-title { font-size: clamp(2rem, 4vw, 3.2rem); margin-bottom: 20px; }
+.section-head { margin-bottom: 50px; }
+
+/* HEADER */
+.header { position: sticky; top: 0; z-index: 1000; background: rgba(246, 247, 245, 0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-light); }
+.header-inner { display: flex; align-items: center; justify-content: space-between; height: 76px; }
+.brand-logo { max-height: 42px; width: auto; object-fit: contain; }
+.brand-text { font-family: var(--font-heading); font-size: 1.35rem; color: var(--text-dark); }
+.nav-group { display: flex; align-items: center; gap: 32px; }
+.nav-links { display: flex; gap: 24px; list-style: none; }
+.nav-link { font-size: 0.9rem; font-weight: 700; color: var(--text-dark); transition: color 0.2s; }
+.nav-link:hover { color: var(--accent-green); }
+
+/* BUTTONS */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 28px; font-size: 0.9rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; border-radius: var(--radius-sm); transition: all 0.2s ease; cursor: pointer; border: none; }
+.btn-primary { background-color: var(--accent-green); color: var(--bg-white); }
+.btn-primary:hover { background-color: var(--accent-green-hover); transform: translateY(-2px); }
+.btn-gold { background-color: var(--accent-gold); color: var(--text-dark); }
+.btn-gold:hover { opacity: 0.9; transform: translateY(-2px); }
+.btn-secondary { background-color: transparent; color: var(--text-dark); border: 2px solid var(--text-dark); }
+.btn-secondary:hover { background-color: var(--text-dark); color: var(--bg-white); }
+.btn-phone { background: var(--bg-white); color: var(--text-dark); border: 1px solid var(--border-light); }
+
+/* HERO */
+.hero { padding: 70px 0 90px; overflow: hidden; }
+.hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 60px; align-items: center; }
+.badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; background: rgba(24, 79, 50, 0.1); color: var(--accent-green); border-radius: 50px; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; margin-bottom: 20px; }
+.hero-title { font-size: clamp(2.8rem, 5.5vw, 4.8rem); margin-bottom: 20px; color: var(--text-dark); }
+.hero-subtitle { font-size: 1.15rem; color: var(--text-muted); margin-bottom: 36px; max-width: 580px; }
+.hero-ctas { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 40px; }
+.hero-frame { position: relative; border-radius: var(--radius-lg); overflow: hidden; background-color: var(--bg-dark); box-shadow: var(--shadow); }
+.hero-img { width: 100%; height: 500px; object-fit: cover; }
+.hero-fallback { height: 450px; display: flex; flex-direction: column; justify-content: center; padding: 50px; background: linear-gradient(135deg, var(--bg-dark), var(--accent-green)); color: var(--text-light); }
+
+/* TRUST BAR */
+.trust-bar { background-color: var(--bg-dark); color: var(--text-light); padding: 30px 0; border-bottom: 1px solid var(--border-dark); }
+.trust-bar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 30px; text-align: center; }
+.trust-metric-val { font-family: var(--font-heading); font-size: 2.2rem; color: var(--accent-gold); line-height: 1; }
+.trust-metric-lbl { font-size: 0.85rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; margin-top: 6px; }
+
+/* SERVICES */
+.services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px; }
+.service-card { background: var(--bg-light); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 36px; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s, box-shadow 0.2s; }
+.service-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--accent-green); }
+.service-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+.service-number { font-family: var(--font-heading); font-size: 1.2rem; color: var(--accent-green); opacity: 0.6; }
+.service-title { font-size: 1.4rem; color: var(--text-dark); }
+.service-desc { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 28px; flex-grow: 1; }
+.service-link { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; color: var(--accent-green); }
+
+/* VALUE PROP SECTION */
+.value-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+.value-grid.no-reputation { grid-template-columns: 1fr; }
+.trust-list { list-style: none; display: flex; flex-direction: column; gap: 16px; margin-top: 24px; }
+.trust-item { display: flex; align-items: center; gap: 14px; font-size: 1.05rem; font-weight: 700; }
+.trust-icon { width: 28px; height: 28px; border-radius: 50%; background: var(--accent-green); color: var(--bg-white); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+/* GALLERY */
+.gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.gallery-item { border-radius: var(--radius-md); overflow: hidden; height: 280px; }
+.gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+.gallery-item:hover img { transform: scale(1.05); }
+
+/* REPUTATION & REVIEWS */
+.reputation-box { text-align: center; background: var(--bg-white); padding: 50px; border-radius: var(--radius-lg); border: 1px solid var(--border-light); max-width: 650px; margin: 0 auto; }
+.reputation-rating { font-family: var(--font-heading); font-size: 4rem; color: var(--text-dark); line-height: 1; }
+.reputation-stars { color: var(--accent-gold); font-size: 1.8rem; margin: 10px 0; }
+.reputation-text { font-size: 1.1rem; color: var(--text-muted); }
+
+.reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+.review-card { background: var(--bg-white); border: 1px solid var(--border-light); padding: 30px; border-radius: var(--radius-md); }
+.review-stars { color: var(--accent-gold); margin-bottom: 12px; }
+.review-text { font-size: 0.95rem; color: var(--text-dark); margin-bottom: 16px; font-style: italic; }
+.review-author { font-weight: 800; font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); }
+
+/* INFO / HOURS */
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; background: var(--bg-white); border-radius: var(--radius-lg); padding: 50px; border: 1px solid var(--border-light); }
+.info-block { display: flex; flex-direction: column; gap: 12px; }
+.info-label { font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent-green); }
+.hours-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.hours-row { display: flex; justify-content: space-between; font-weight: 600; font-size: 0.95rem; border-bottom: 1px dashed var(--border-light); padding-bottom: 6px; }
+
+/* CTA SECTION */
+.cta-banner { background: var(--bg-dark); color: var(--text-light); border-radius: var(--radius-lg); padding: clamp(40px, 6vw, 80px); text-align: center; position: relative; overflow: hidden; }
+.cta-title { font-size: clamp(2.2rem, 4.5vw, 3.8rem); margin-bottom: 16px; }
+.cta-desc { font-size: 1.1rem; color: var(--text-dim); max-width: 600px; margin: 0 auto 36px; }
+
+/* FOOTER */
+.footer { background: var(--bg-dark); color: var(--text-dim); padding: 40px 0; border-top: 1px solid var(--border-dark); font-size: 0.85rem; }
+.footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+
+/* RESPONSIVE */
+@media (max-width: 992px) {
+  .hero-grid, .value-grid, .info-grid { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .gallery-grid { grid-template-columns: 1fr; }
+  .hero-ctas { flex-direction: column; }
+  .btn { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="container header-inner">
+    <a href="#" class="brand">
+      <img src="https://lirp.cdn-website.com/91472117/dms3rep/multi/opt/GoFixLLC-white-letters-1-03cbb59c-1920w.png" alt="GoFix LLC" class="brand-logo" />
+    </a>
+    <div class="nav-group">
+      <nav>
+        <ul class="nav-links">
+          <li><a href="#services" class="nav-link">Services</a></li>
+          <li><a href="#why-us" class="nav-link">Why Us</a></li>
+          <li><a href="#gallery" class="nav-link">Work</a></li>
+          <li><a href="#contact" class="nav-link">Contact</a></li>
+        </ul>
+      </nav>
+      <a href="https://www.gofix2you.com/new-appointment-2-0" class="btn btn-primary">Schedule Mobile Service</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>Round Rock, TX, US</span>
+        </div>
+        <h1 class="hero-title">Reliable Car Repair Services in Round Rock</h1>
+        <p class="hero-subtitle">Keeping Your Vehicle Running Smoothly</p>
+        <div class="hero-ctas">
+          <a href="https://www.gofix2you.com/new-appointment-2-0" class="btn btn-primary">Schedule Mobile Service</a>
+          <a href="tel:7378770249" class="btn btn-phone">Call (737) 877-0249</a>
+        </div>
+      </div>
+      <div class="hero-frame">
+        
+          <img src="https://irp.cdn-website.com/91472117/dms3rep/multi/BeCasso-2024-11-15-22-38-48.jpeg" alt="GoFix LLC" class="hero-img" />
+        
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUST BAR -->
+  
+  <section class="trust-bar">
+    <div class="container trust-bar-grid">
+      
+        <div>
+          <div class="trust-metric-val">4.9 ★</div>
+          <div class="trust-metric-lbl">70+ Reviews</div>
+        </div>
+      
+        <div>
+          <div class="trust-metric-val">On-Site</div>
+          <div class="trust-metric-lbl">Mobile Service</div>
+        </div>
+      
+        <div>
+          <div class="trust-metric-val">Local</div>
+          <div class="trust-metric-lbl">Round Rock, TX, US</div>
+        </div>
+      
+    </div>
+  </section>
+  
+
+  <!-- SERVICES SECTION -->
+  <section id="services" class="section section-white">
+    <div class="container">
+      <div class="section-head">
+        <span class="kicker">Our Services</span>
+        <h2 class="section-title">Automotive Services</h2>
+      </div>
+      <div class="services-grid">
+        
+    <article class="service-card">
+      <div class="service-card-header">
+        <span class="service-number">01</span>
+        <h3 class="service-title">General Auto Repair</h3>
+      </div>
+      <p class="service-desc">Contact the shop for details, availability, and service options.</p>
+      <a href="https://www.gofix2you.com/new-appointment-2-0" class="service-link">
+        <span>Request Service</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </article>
+  
+    <article class="service-card">
+      <div class="service-card-header">
+        <span class="service-number">02</span>
+        <h3 class="service-title">Engine Diagnostics</h3>
+      </div>
+      <p class="service-desc">Contact the shop for details, availability, and service options.</p>
+      <a href="https://www.gofix2you.com/new-appointment-2-0" class="service-link">
+        <span>Request Service</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </article>
+  
+    <article class="service-card">
+      <div class="service-card-header">
+        <span class="service-number">03</span>
+        <h3 class="service-title">Tire Service</h3>
+      </div>
+      <p class="service-desc">Contact the shop for details, availability, and service options.</p>
+      <a href="https://www.gofix2you.com/new-appointment-2-0" class="service-link">
+        <span>Request Service</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </article>
+  
+    <article class="service-card">
+      <div class="service-card-header">
+        <span class="service-number">04</span>
+        <h3 class="service-title">Maintenance</h3>
+      </div>
+      <p class="service-desc">Contact the shop for details, availability, and service options.</p>
+      <a href="https://www.gofix2you.com/new-appointment-2-0" class="service-link">
+        <span>Request Service</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </article>
+  
+    <article class="service-card">
+      <div class="service-card-header">
+        <span class="service-number">05</span>
+        <h3 class="service-title">Fleet Service</h3>
+      </div>
+      <p class="service-desc">Contact the shop for details, availability, and service options.</p>
+      <a href="https://www.gofix2you.com/new-appointment-2-0" class="service-link">
+        <span>Request Service</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </article>
+  
+      </div>
+    </div>
+  </section>
+
+  <!-- VALUE PROP / WHY CHOOSE US -->
+  <section id="why-us" class="section">
+    <div class="container value-grid ">
+      <div>
+        <span class="kicker">Why Choose Us</span>
+        <h2 class="section-title">Mobile automotive repair brought directly to you.</h2>
+        <p style="color: var(--text-muted); font-size: 1.05rem;">Contact GoFix LLC to discuss your vehicle's service needs.</p>
+        
+        <ul class="trust-list">
+          
+    <li class="trust-item">
+      <div class="trust-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <span>Mobile Service - We Come To You</span>
+    </li>
+  
+        </ul>
+        
+        <div style="margin-top: 36px;">
+          <a href="https://www.gofix2you.com/new-appointment-2-0" class="btn btn-primary">Schedule Mobile Service</a>
+        </div>
+      </div>
+      
+      <div class="reputation-container">
+        
+      <div class="reputation-box">
+        <div class="reputation-rating">4.9</div>
+        <div class="reputation-stars">★★★★★</div>
+        <p class="reputation-text">Based on <strong>70 verified customer reviews</strong>.</p>
+      </div>
+    
+      </div>
+      
+    </div>
+  </section>
+
+  <!-- GALLERY SECTION -->
+  
+    <section id="gallery" class="section section-dark">
+      <div class="container">
+        <div class="section-head">
+          <span class="kicker">Real Work</span>
+          <h2 class="section-title">In the Shop & On the Road</h2>
+        </div>
+        <div class="gallery-grid">
+          
+            <div class="gallery-item gallery-item-1">
+              <img src="https://irp.cdn-website.com/91472117/dms3rep/multi/BeCasso-2025-03-01-21-37-52.PNG" alt="GoFix LLC work sample" loading="lazy" />
+            </div>
+          
+            <div class="gallery-item gallery-item-2">
+              <img src="https://irp.cdn-website.com/91472117/dms3rep/multi/BeCasso-2025-03-01-21-35-32.PNG" alt="GoFix LLC work sample" loading="lazy" />
+            </div>
+          
+            <div class="gallery-item gallery-item-3">
+              <img src="https://irp.cdn-website.com/91472117/dms3rep/multi/BeCasso-2025-03-01-21-31-52.PNG" alt="GoFix LLC work sample" loading="lazy" />
+            </div>
+          
+            <div class="gallery-item gallery-item-1">
+              <img src="https://irp.cdn-website.com/91472117/dms3rep/multi/opt/BeCasso-2025-03-01-21-29-55-1056w.PNG" alt="GoFix LLC work sample" loading="lazy" />
+            </div>
+          
+            <div class="gallery-item gallery-item-2">
+              <img src="https://irp.cdn-website.com/91472117/dms3rep/multi/opt/Subject-2d7a5310-762w.png" alt="GoFix LLC work sample" loading="lazy" />
+            </div>
+          
+            <div class="gallery-item gallery-item-3">
+              <img src="https://irp.cdn-website.com/91472117/dms3rep/multi/BeCasso-2024-11-15-22-38-48.jpeg" alt="GoFix LLC work sample" loading="lazy" />
+            </div>
+          
+        </div>
+      </div>
+    </section>
+  
+
+  <!-- HOURS & LOCATION -->
+  <section id="contact" class="section section-white">
+    <div class="container">
+      <div class="info-grid">
+        <div class="info-block">
+          <span class="info-label">Location & Contact</span>
+          <h3 style="font-size: 1.8rem; margin-bottom: 10px;">GoFix LLC</h3>
+          <p style="font-size: 1.05rem; font-weight: 600; color: var(--text-dark);">Round Rock, TX, US</p>
+          <p style="font-size: 1.2rem; font-weight: 800; color: var(--accent-green); margin-top: 8px;"><a href="tel:7378770249">(737) 877-0249</a></p>
+          <p style="margin-top: 12px;"><a href="https://www.gofix2you.com/" target="_blank" rel="noopener" style="font-weight: 700; text-decoration: underline;">Visit Original Website ↗</a></p>
+        </div>
+        <div class="info-block">
+          <span class="info-label">Hours of Operation</span>
+          
+            <ul class="hours-list">
+              <li class="hours-row"><span>Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday: 06:00 - 22:30</span></li>
+            </ul>
+          
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-banner">
+        <h2 class="cta-title">Ready to service your vehicle?</h2>
+        <p class="cta-desc">Contact GoFix LLC to discuss service availability and scheduling.</p>
+        <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+          <a href="https://www.gofix2you.com/new-appointment-2-0" class="btn btn-gold">Schedule Mobile Service</a>
+          <a href="tel:7378770249" class="btn btn-secondary" style="color: white; border-color: white;">Call (737) 877-0249</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container footer-inner">
+    <div>
+      <strong>GoFix LLC</strong> — Round Rock, TX, US
+    </div>
+    <div>
+      PurelyBuild demonstration concept created from publicly available business information.
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
