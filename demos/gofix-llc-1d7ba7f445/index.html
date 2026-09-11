@@ -218,11 +218,11 @@ img { max-width: 100%; height: auto; display: block; }
 .service-row:hover { background: var(--c-light-surface); transform: translateX(6px); }
 .service-meta { display: flex; align-items: center; gap: 32px; }
 .service-num { font-family: var(--font-display); font-size: 1.4rem; color: var(--c-accent); font-weight: 700; }
-.service-name { font-family: var(--font-display); font-size: 1.8rem; text-transform: uppercase; letter-spacing: -0.01em; }
+.service-name { font-family: var(--font-display); font-size: 1.8rem; text-transform: uppercase; letter-spacing: -0.01em; font-weight: 700; }
 .service-desc { font-size: 0.95rem; color: #555E6B; line-height: 1.6; }
 .service-action { text-align: right; }
-.editorial-link { display: inline-flex; align-items: center; gap: 10px; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--c-black); transition: gap 0.2s, color 0.2s; }
-.service-row:hover .editorial-link { gap: 16px; color: var(--c-accent); }
+.editorial-link { display: inline-flex; align-items: center; gap: 10px; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--c-black); transition: gap 0.2s; }
+.service-row:hover .editorial-link { gap: 16px; }
 /* WHY US / EDITORIAL PROP */
 .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
 .why-editorial-body { font-size: 1.1rem; color: var(--c-text-muted); margin-bottom: 36px; line-height: 1.8; }
@@ -377,6 +377,63 @@ img { max-width: 100%; height: auto; display: block; }
   }
 }
 /* RESPONSIVE DESIGN */
+@media (min-width: 993px) {
+  #services.editorial-section {
+    padding: 80px 0;
+  }
+  #services .section-header-editorial {
+    margin-bottom: 48px;
+  }
+  .service-row {
+    grid-template-columns: 1.35fr 1.4fr 0.55fr;
+    gap: 22px;
+    padding: 28px 0;
+    position: relative;
+    transition: background 0.25s, transform 0.25s, box-shadow 0.25s;
+  }
+  .service-row::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--c-accent);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .service-row:hover {
+    background: var(--c-light-surface);
+    transform: translateX(2px);
+  }
+  .service-row:hover::before {
+    opacity: 1;
+  }
+  .service-meta {
+    gap: 24px;
+  }
+  .service-num {
+    font-size: 1.05rem;
+  }
+  .service-name {
+    font-size: 1.55rem;
+    font-weight: 700;
+  }
+  .service-desc {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    max-width: 520px;
+  }
+  .editorial-link {
+    gap: 8px;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+  }
+  .service-row:hover .editorial-link {
+    gap: 12px;
+    color: var(--c-accent);
+  }
+}
 @media (max-width: 992px) {
   .container { padding-left: 24px; padding-right: 24px; }
   .hero-editorial { padding-top: 140px; padding-bottom: 70px; }
@@ -394,6 +451,16 @@ img { max-width: 100%; height: auto; display: block; }
 @media (max-width: 600px) {
   .container { padding-left: 20px; padding-right: 20px; }
   .editorial-section { padding: 60px 0; }
+  #services.editorial-section { padding: 48px 0; }
+  #services .section-header-editorial { margin-bottom: 32px; }
+  #services .editorial-title { font-size: 2rem; }
+  .service-row { grid-template-columns: 1fr; padding: 22px 0; gap: 8px; }
+  .service-meta { gap: 10px; }
+  .service-num { font-size: 1rem; }
+  .service-name { font-size: 1.2rem; line-height: 1.1; }
+  .service-desc { font-size: 0.84rem; line-height: 1.4; margin-top: 2px; margin-bottom: 0; }
+  .service-action { text-align: left; margin-top: 4px; }
+  .editorial-link { font-size: 0.7rem; letter-spacing: 0.08em; }
   .hero-editorial { padding-top: 82px; padding-bottom: 28px; min-height: auto; }
   .hero-display-title { font-size: 2.05rem; margin-bottom: 10px; line-height: 1.03; }
   .brand-logo-img { max-height: 34px; }
@@ -405,8 +472,6 @@ img { max-width: 100%; height: auto; display: block; }
   .hero-sub-text { font-size: 0.92rem; margin-bottom: 14px; line-height: 1.4; max-width: 95%; }
   .hero-actions .btn-editorial, .final-cta-wrap .btn-editorial { width: 100%; padding: 13px 18px; font-size: 0.74rem; }
   .hero-actions { width: 100%; flex-direction: column; gap: 8px; }
-  .service-name { font-size: 1.4rem; }
-  .service-meta { gap: 16px; }
   .contact-address { font-size: 1.6rem; }
   .contact-phone-link { font-size: 1.2rem; }
   .h-400, .h-380, .h-340, .h-320, .h-190 { height: 220px; }
