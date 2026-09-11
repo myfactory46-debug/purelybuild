@@ -93,18 +93,46 @@ img { max-width: 100%; height: auto; display: block; }
 .editorial-bar { background: var(--c-black); border-top: 1px solid var(--c-border-dark); border-bottom: 1px solid var(--c-border-dark); padding: 48px 0; color: var(--c-white); }
 .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; width: 100%; }
 .stat-card {
+  position: relative;
   background: var(--c-dark-surface);
   border: 1px solid var(--c-border-dark);
   padding: 36px 32px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease, opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0;
+  transform: translateY(44px) scale(0.97);
+  will-change: transform, opacity, border-color, box-shadow;
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+  transition-delay: var(--stagger-delay, 0s);
+  overflow: hidden;
+}
+.stat-card.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.stat-card-inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  will-change: transform;
+}
+.stat-card.is-visible .stat-card-inner {
+  animation: statAmbientFloat 6s ease-in-out infinite;
+  animation-delay: calc(0.85s + var(--float-delay, 0s));
+}
+@keyframes statAmbientFloat {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(-3px); }
+  100% { transform: translateY(0); }
 }
 .stat-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-5px);
   border-color: var(--c-accent);
   box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5), 0 0 20px -2px var(--c-accent-glow);
+}
+.stat-card:hover .stat-card-inner {
+  animation-play-state: paused;
 }
 .stat-val {
   font-family: var(--font-display);
@@ -115,6 +143,18 @@ img { max-width: 100%; height: auto; display: block; }
   margin-bottom: 12px;
   letter-spacing: -0.01em;
   text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
+  will-change: transform, opacity;
+}
+.stat-card.is-visible .stat-val {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: calc(var(--stagger-delay, 0s) + 0.15s);
+}
+.stat-card:hover .stat-val {
+  filter: brightness(1.2);
 }
 .stat-lbl {
   font-size: 0.85rem;
@@ -123,6 +163,18 @@ img { max-width: 100%; height: auto; display: block; }
   text-transform: uppercase;
   color: var(--c-text-muted);
   line-height: 1.4;
+}
+.stat-accent-line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 28%;
+  background: var(--c-accent);
+  transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.stat-card:hover .stat-accent-line {
+  width: 100%;
 }
 
 /* EDITORIAL HEADINGS */
@@ -189,9 +241,10 @@ img { max-width: 100%; height: auto; display: block; }
 
 /* ACCESSIBILITY: REDUCED MOTION */
 @media (prefers-reduced-motion: reduce) {
-  .reveal-up, .reveal-left, .reveal-right, .reveal-scale {
+  .reveal-up, .reveal-left, .reveal-right, .reveal-scale, .stat-card, .stat-val, .stat-card-inner {
     opacity: 1 !important;
     transform: none !important;
+    animation: none !important;
     transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.25s ease !important;
   }
 }
@@ -260,7 +313,7 @@ img { max-width: 100%; height: auto; display: block; }
     </div>
     <div class="container hero-content-wrap">
       <div class="hero-column">
-        <span class="hero-top-tag reveal-up" style="--stagger-delay: 0s;">/// Mobile Automotive Service — Round Rock, TX, US</span>
+        <span class="hero-top-tag reveal-up" style="--stagger-delay: 0s;">Mobile Auto Repair · Round Rock, TX</span>
         <h1 class="d-heading hero-display-title reveal-up" style="--stagger-delay: 0.12s;">Auto Repair, Everywhere!<span class="hero-trademark">™</span></h1>
         <p class="hero-sub-text reveal-up" style="--stagger-delay: 0.24s;">Top-Rated Mobile Mechanic Services Near You.</p>
         <div class="hero-actions reveal-up" style="--stagger-delay: 0.36s;">
@@ -276,19 +329,28 @@ img { max-width: 100%; height: auto; display: block; }
       <div class="container">
         <div class="stats-grid">
           
-            <div class="stat-card reveal-up" style="--stagger-delay: 0s;">
-              <span class="stat-val">4.9 ★</span>
-              <span class="stat-lbl">70+ Customer Reviews</span>
+            <div class="stat-card" style="--stagger-delay: 0s; --float-delay: 0s;">
+              <div class="stat-card-inner">
+                <span class="stat-val">4.9 ★</span>
+                <span class="stat-lbl">70+ Customer Reviews</span>
+              </div>
+              <div class="stat-accent-line"></div>
             </div>
           
-            <div class="stat-card reveal-up" style="--stagger-delay: 0.14s;">
-              <span class="stat-val">On-Site</span>
-              <span class="stat-lbl">Mobile Operations</span>
+            <div class="stat-card" style="--stagger-delay: 0.16s; --float-delay: 1.8s;">
+              <div class="stat-card-inner">
+                <span class="stat-val">On-Site</span>
+                <span class="stat-lbl">Mobile Operations</span>
+              </div>
+              <div class="stat-accent-line"></div>
             </div>
           
-            <div class="stat-card reveal-up" style="--stagger-delay: 0.28s;">
-              <span class="stat-val">Local</span>
-              <span class="stat-lbl">Serving Round Rock, TX, US</span>
+            <div class="stat-card" style="--stagger-delay: 0.32s; --float-delay: 3.6s;">
+              <div class="stat-card-inner">
+                <span class="stat-val">Local</span>
+                <span class="stat-lbl">Serving Round Rock, TX</span>
+              </div>
+              <div class="stat-accent-line"></div>
             </div>
           
         </div>
@@ -479,7 +541,7 @@ img { max-width: 100%; height: auto; display: block; }
   <div class="container">
     <div class="footer-bottom">
       <div>
-        <strong style="color: var(--c-white);">GoFix LLC</strong> — Round Rock, TX, US
+        <strong style="color: var(--c-white);">GoFix LLC</strong> — Round Rock, TX
       </div>
       <div>
         PurelyBuild custom design concept created using public business profile data.
@@ -489,7 +551,7 @@ img { max-width: 100%; height: auto; display: block; }
 </footer>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const elements = document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right, .reveal-scale');
+  const elements = document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right, .reveal-scale, .stat-card');
   if (!elements.length) return;
   
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
