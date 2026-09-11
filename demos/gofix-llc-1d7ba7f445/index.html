@@ -451,16 +451,18 @@ img { max-width: 100%; height: auto; display: block; }
 @media (max-width: 600px) {
   .container { padding-left: 20px; padding-right: 20px; }
   .editorial-section { padding: 60px 0; }
-  #services.editorial-section { padding: 48px 0; }
+  #services.editorial-section { padding: 42px 0; }
   #services .section-header-editorial { margin-bottom: 32px; }
   #services .editorial-title { font-size: 2rem; }
-  .service-row { grid-template-columns: 1fr; padding: 22px 0; gap: 8px; }
-  .service-meta { gap: 10px; }
-  .service-num { font-size: 1rem; }
-  .service-name { font-size: 1.2rem; line-height: 1.1; }
-  .service-desc { font-size: 0.84rem; line-height: 1.4; margin-top: 2px; margin-bottom: 0; }
-  .service-action { text-align: left; margin-top: 4px; }
-  .editorial-link { font-size: 0.7rem; letter-spacing: 0.08em; }
+  .service-row { grid-template-columns: 1fr; padding: 18px 0; gap: 6px; }
+  .service-row::before { display: none; }
+  .service-row:hover { background: transparent; transform: none; box-shadow: none; }
+  .service-meta { gap: 8px; align-items: baseline; }
+  .service-num { font-size: 0.95rem; }
+  .service-name { font-size: 1.15rem; line-height: 1.08; }
+  .service-desc { font-size: 0.8rem; line-height: 1.35; margin-top: 1px; margin-bottom: 0; }
+  .service-action { text-align: left; margin-top: 2px; }
+  .editorial-link { font-size: 0.66rem; letter-spacing: 0.06em; gap: 7px; }
   .hero-editorial { padding-top: 82px; padding-bottom: 28px; min-height: auto; }
   .hero-display-title { font-size: 2.05rem; margin-bottom: 10px; line-height: 1.03; }
   .brand-logo-img { max-height: 34px; }
