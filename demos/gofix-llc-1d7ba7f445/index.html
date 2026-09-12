@@ -32,7 +32,7 @@ body { font-family: var(--font-sans); line-height: 1.6; -webkit-font-smoothing: 
   top: 0;
   left: 0;
   width: 100%;
-  height: 24px;
+  height: 28px;
   background: var(--c-black);
   border-bottom: 1px solid var(--c-border-dark);
   z-index: 1000;
@@ -40,15 +40,15 @@ body { font-family: var(--font-sans); line-height: 1.6; -webkit-font-smoothing: 
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font-size: 0.65rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--c-text-muted);
 }
 .demo-preview-dot {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background-color: var(--c-accent);
   display: inline-block;
@@ -66,7 +66,7 @@ img { max-width: 100%; height: auto; display: block; }
 .graphite-bg { background: var(--c-dark-surface); color: var(--c-white); }
 .border-top { border-top: 1px solid var(--c-border-dark); }
 /* HEADER */
-.nav-header { position: absolute; top: 24px; left: 0; right: 0; z-index: 100; padding: 32px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.nav-header { position: absolute; top: 28px; left: 0; right: 0; z-index: 100; padding: 32px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
 .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .brand-logo-img { max-height: 60px; width: auto; filter: brightness(1); object-fit: contain; }
 .brand-wordmark { font-family: var(--font-display); font-size: 1.8rem; font-weight: 800; color: var(--c-white); letter-spacing: 0.02em; text-transform: uppercase; }
@@ -476,8 +476,9 @@ img { max-width: 100%; height: auto; display: block; }
   .stats-grid { grid-template-columns: 1fr; gap: 16px; }
 }
 @media (max-width: 600px) {
-  .demo-preview-bar { height: 22px; font-size: 0.58rem; letter-spacing: 0.14em; }
-  .nav-header { top: 22px; }
+  .demo-preview-bar { height: 24px; font-size: 0.6rem; }
+  .demo-preview-dot { width: 5px; height: 5px; }
+  .nav-header { top: 24px; }
   .container { padding-left: 20px; padding-right: 20px; }
   .editorial-section { padding: 60px 0; }
   #services.editorial-section { padding: 42px 0; }
