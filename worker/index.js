@@ -151,7 +151,7 @@ async function captureCheckout(request, env) {
   try {
     response = await fetch(CHECKOUT_CAPTURE_URL, {
       method: 'POST',
-      headers: { 'content-type': 'application/json', 'X-Checkout-Internal-Key': env.N8N_CHECKOUT_INTERNAL_KEY },
+      headers: { 'content-type': 'application/json', 'X-Checkout-Internal-Key': env.N8N_CHECKOUT_INTERNAL_KEY, authorization: `Bearer ${token}` },
       body: JSON.stringify({ attempt_id: attemptId, order_id: orderId }),
     });
   } catch {
