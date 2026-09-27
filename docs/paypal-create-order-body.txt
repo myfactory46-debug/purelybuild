@@ -14,9 +14,9 @@
   payment_source: {
     paypal: {
       experience_context: {
-        return_url: 'https://purelybuild.com/checkout-return.html?attempt_id=' +
+        return_url: $('Checkout Start').first().json.body.checkout_return_origin + '/checkout-return.html?attempt_id=' +
           encodeURIComponent($('Start Payment Attempt').first().json.attempt_id),
-        cancel_url: 'https://purelybuild.com/checkout-return.html?cancelled=1&attempt_id=' +
+        cancel_url: $('Checkout Start').first().json.body.checkout_return_origin + '/checkout-return.html?cancelled=1&attempt_id=' +
           encodeURIComponent($('Start Payment Attempt').first().json.attempt_id)
       }
     }
