@@ -19,6 +19,7 @@
       <h1 class="text-3xl font-bold">Payment status</h1>
       <p id="message" role="status" aria-live="polite" class="text-slate-300 mt-5">Checking your payment...</p>
       <button id="capture" type="button" hidden class="mt-7 rounded-lg bg-blue-600 px-5 py-3 font-semibold hover:bg-blue-500 disabled:bg-slate-700">Complete test payment</button>
+      <button id="recheck" type="button" hidden class="mt-7 rounded-lg border border-slate-500 px-5 py-3 font-semibold hover:bg-slate-800 disabled:opacity-50">Check payment status</button>
       <p class="text-sm text-slate-500 mt-6">Only a confirmed payment event marks this payment complete.</p>
     </div>
   </main>
@@ -32,6 +33,7 @@
     const orderId = params.get('token');
     const message = document.getElementById('message');
     const button = document.getElementById('capture');
+    const recheck = document.getElementById('recheck');
     const submittedKey = `purelybuild_capture_${attemptId}`;
     let session;
 
@@ -52,6 +54,7 @@
       const result = await api(path);
       if (result.outcome === 'completed') {
         button.hidden = true;
+        recheck.hidden = true;
         message.textContent = 'Payment confirmed. You can return to your dashboard.';
       } else if (result.outcome === 'pending') {
         const submitted = sessionStorage.getItem(submittedKey) === '1';
@@ -59,11 +62,14 @@
           ? 'Confirmation request sent. Check the payment status shortly.'
           : 'PayPal approval received. Complete the sandbox payment to continue.';
         button.hidden = submitted;
+        recheck.hidden = !submitted;
       } else if (result.outcome === 'processing') {
         button.hidden = true;
+        recheck.hidden = false;
         message.textContent = 'Payment submitted. Waiting for verified confirmation. Check this page again shortly.';
       } else {
         button.hidden = true;
+        recheck.hidden = true;
         message.textContent = `Payment status: ${result.outcome}. Contact support if this is unexpected.`;
       }
     }
@@ -84,9 +90,17 @@
       } catch (error) {
         message.textContent = error.message || 'Could not confirm payment. Check the status before trying again.';
         button.hidden = true;
+        recheck.hidden = false;
       } finally {
         button.disabled = false;
       }
+    });
+
+    recheck.addEventListener('click', async () => {
+      recheck.disabled = true;
+      try { await showStatus(); }
+      catch (error) { message.textContent = error.message || 'Could not check payment status.'; }
+      finally { recheck.disabled = false; }
     });
 
     (async () => {
