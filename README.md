@@ -16,4 +16,6 @@ The capture/status routes read `payment_attempts` with the authenticated user's 
 
 A separate sandbox checkout was cancelled at PayPal and returned to the preview with `cancelled=1`; the site displayed a cancellation message without invoking capture. The Worker checks ownership before capture/status and returns `completed` without invoking n8n on an already completed attempt. The return page offers an explicit status recheck after a failed or pending confirmation rather than automatically repeating capture.
 
+A local isolated Worker check passed for a completed attempt (200 without another capture webhook call) and for a different signed-in user (404 without a capture webhook call). These checks mock Supabase responses; they do not prove the live database RPC's concurrent idempotency behavior or substitute for a second-user integration check.
+
 Before Phase 9 can be marked complete, verify retry/idempotency and cross-account ownership against the backend, and confirm the subscription lifecycle or explicitly defer subscription payments to a later phase. Rotate any previously exposed service key. Do not replay capture on an order whose state is unknown; check the attempt and PayPal order first.
