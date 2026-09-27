@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Choose an offer | PurelyBuild</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="min-h-screen bg-slate-950 text-white antialiased">
+  <header class="border-b border-slate-800 px-5 py-5">
+    <div class="max-w-4xl mx-auto flex items-center justify-between gap-4">
+      <a href="dashboard.html" class="font-bold text-blue-400 text-xl">PurelyBuild</a>
+      <a href="dashboard.html" class="text-sm text-slate-300 hover:text-white">Back to dashboard</a>
+    </div>
+  </header>
+  <main class="max-w-4xl mx-auto px-5 py-12">
+    <p class="text-sm font-medium text-blue-400">Sandbox checkout</p>
+    <h1 class="text-3xl sm:text-4xl font-bold mt-2">Choose an offer</h1>
+    <p class="text-slate-400 mt-3 max-w-2xl">Test the payment flow with a PayPal sandbox buyer account. No real money will be charged.</p>
+    <div id="status" role="status" aria-live="polite" class="text-slate-300 mt-8">Loading offers...</div>
+    <div id="offers" class="grid sm:grid-cols-2 gap-5 mt-6"></div>
+  </main>
+  <script>
+    const client = window.supabase.createClient(
+      'https://zpxqetyrzpeleimnvzgq.supabase.co',
+      'sb_publishable_f8An8GUjq9__N2pzvfmsKg_nrPGnKKY'
+    );
+    const projectId = new URLSearchParams(location.search).get('project_id');
+    const status = document.getElementById('status');
+    const offersElement = document.getElementById('offers');
+    let session;
+
+    async function loadOffers() {
+      if (!projectId || !/^\d+$/.test(projectId)) {
+        status.textContent = 'Choose a project from your dashboard first.';
+        return;
+      }
+      const result = await client.auth.getSession();
+      session = result.data.session;
+      if (!session) {
+        location.href = `auth.html?next=${encodeURIComponent(location.pathname + location.search)}`;
+        return;
+      }
+      const { data: projects, error: projectError } = await client.from('projects')
+        .select('id').eq('id', projectId).eq('user_id', session.user.id).limit(1);
+      if (projectError || !projects?.length) {
+        status.textContent = 'Project not found in your account.';
+        return;
+      }
+      const { data: offers, error } = await client.from('offers')
+        .select('id,name,offer_type,amount,currency,billing_interval')
+        .eq('is_active', true).order('amount');
+      if (error) {
+        status.textContent = 'Could not load offers. Please try again later.';
+        return;
+      }
+      if (!offers?.length) {
+        status.textContent = 'No offers are available yet.';
+        return;
+      }
+      status.textContent = '';
+      for (const offer of offers) {
+        const card = document.createElement('article');
+        card.className = 'rounded-2xl border border-slate-700 bg-slate-900 p-6';
+        const name = document.createElement('h2');
+        name.className = 'text-xl font-semibold';
+        name.textContent = offer.name;
+        const price = document.createElement('p');
+        price.className = 'mt-4 text-3xl font-bold';
+        try {
+          price.textContent = new Intl.NumberFormat('en-US', { style: 'currency', currency: offer.currency }).format(offer.amount);
+        } catch {
+          price.textContent = `${offer.amount} ${offer.currency}`;
+        }
+        const type = document.createElement('p');
+        type.className = 'text-slate-400 text-sm mt-2';
+        type.textContent = offer.offer_type === 'subscription'
+          ? `Billed every ${offer.billing_interval}` : 'One-time payment';
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'mt-6 w-full rounded-lg bg-blue-600 px-5 py-3 font-semibold hover:bg-blue-500 disabled:bg-slate-700 disabled:text-slate-400';
+        button.disabled = offer.offer_type !== 'one_time';
+        button.textContent = button.disabled ? 'Subscriptions coming later' : 'Continue to PayPal sandbox';
+        if (!button.disabled) button.addEventListener('click', () => startCheckout(offer.id, button));
+        card.append(name, price, type, button);
+        offersElement.append(card);
+      }
+    }
+
+    async function startCheckout(offerId, button) {
+      button.disabled = true;
+      button.textContent = 'Starting checkout...';
+      status.textContent = '';
+      try {
+        const { data, error } = await client.auth.getSession();
+        if (error || !data.session) throw new Error('Your session expired. Sign in again.');
+        const response = await fetch('/api/checkout/start', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', authorization: `Bearer ${data.session.access_token}` },
+          body: JSON.stringify({ project_id: Number(projectId), offer_id: offerId }),
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || 'Checkout could not start.');
+        location.assign(result.approval_url);
+      } catch (error) {
+        status.textContent = error.message || 'Checkout could not start.';
+        button.disabled = false;
+        button.textContent = 'Continue to PayPal sandbox';
+      }
+    }
+    loadOffers().catch(() => { status.textContent = 'Could not load offers. Please try again later.'; });
+  </script>
+</body>
+</html>
