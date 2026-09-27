@@ -87,7 +87,12 @@ async function startCheckout(request, env) {
   } catch {
     return json({ error: 'Checkout service is temporarily unavailable' }, 502);
   }
-  if (!response.ok) return json({ error: 'Checkout could not start' }, 502);
+  if (!response.ok) {
+    const status = response.status;
+    const reason = status === 401 || status === 403 ? 'webhook_auth' :
+      status === 404 ? 'webhook_not_found' : 'upstream_error';
+    return json({ error: 'Checkout could not start', upstream_status: status, reason }, 502);
+  }
   let result;
   try {
     result = await response.json();
