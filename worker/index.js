@@ -74,7 +74,7 @@ async function startCheckout(request, env) {
   try {
     response = await fetch(CHECKOUT_START_URL, {
       method: 'POST',
-      headers: { 'content-type': 'application/json', 'X-Checkout-Internal-Key': env.N8N_CHECKOUT_INTERNAL_KEY },
+      headers: { 'content-type': 'application/json', 'X-Checkout-Internal-Key': env.N8N_CHECKOUT_INTERNAL_KEY, authorization: `Bearer ${token}` },
       body: JSON.stringify({
         project_id: projectId,
         offer_id: offerId,
