@@ -81,6 +81,7 @@ async function startCheckout(request, env) {
         provider: 'paypal',
         environment: 'sandbox',
         checkout_request_id: crypto.randomUUID(),
+        checkout_return_origin: new URL(request.url).origin,
       }),
     });
   } catch {
