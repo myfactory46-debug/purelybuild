@@ -1,0 +1,288 @@
+{
+  "name": "PurelyBuild V1 - Payments (Subscription Draft)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "paypal-webhook",
+        "responseMode": "lastNode",
+        "responseData": "noData",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -960,
+        -96
+      ],
+      "id": "3aa5840f-3828-48da-9abe-b03dfbcbc943",
+      "name": "Webhook",
+      "webhookId": "a99993f4-5c4a-4f36-b6a9-3644c2aa2c0a"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api-m.sandbox.paypal.com/v1/oauth2/token",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "grant_type",
+              "value": "client_credentials"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -672,
+        -112
+      ],
+      "id": "6ac3e2f3-b0bb-4484-9637-2cbcc9728123",
+      "name": "PayPal - Get Access Token",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "2P4OnqLQZnurLBWC",
+          "name": "PayPal Sandbox Basic Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api-m.sandbox.paypal.com/v1/notifications/verify-webhook-signature",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $json.access_token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  transmission_id: $('Webhook').first().json.headers['paypal-transmission-id'],\n  transmission_time: $('Webhook').first().json.headers['paypal-transmission-time'],\n  cert_url: $('Webhook').first().json.headers['paypal-cert-url'],\n  auth_algo: $('Webhook').first().json.headers['paypal-auth-algo'],\n  transmission_sig: $('Webhook').first().json.headers['paypal-transmission-sig'],\n  webhook_id: '0Y7460589Y661605U',\n  webhook_event: typeof $('Webhook').first().json.body === 'string'\n    ? JSON.parse($('Webhook').first().json.body)\n    : $('Webhook').first().json.body\n}) }}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -656,
+        128
+      ],
+      "id": "39321f4e-a234-43fb-a20e-1bd2baea18ba",
+      "name": "PayPal - Verify Webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "const verification = $input.first().json;\n\nif (verification.verification_status !== 'SUCCESS') {\n  throw new Error('PayPal webhook signature verification failed');\n}\n\nconst receivedBody = $('Webhook').first().json.body;\nconst event = typeof receivedBody === 'string'\n  ? JSON.parse(receivedBody)\n  : receivedBody;\n\nif (!event || !event.id || !event.event_type) {\n  throw new Error('PayPal webhook event is incomplete');\n}\n\nconst subscriptionTypes = new Set([\n  'PAYMENT.SALE.COMPLETED', 'PAYMENT.SALE.REFUNDED', 'PAYMENT.SALE.REVERSED',\n  'BILLING.SUBSCRIPTION.ACTIVATED', 'BILLING.SUBSCRIPTION.CANCELLED',\n  'BILLING.SUBSCRIPTION.SUSPENDED', 'BILLING.SUBSCRIPTION.EXPIRED',\n  'BILLING.SUBSCRIPTION.PAYMENT.FAILED'\n]);\nconst isSubscriptionEvent = subscriptionTypes.has(event.event_type);\nconst subscriptionId = event.event_type.startsWith('PAYMENT.SALE.')\n  ? event.resource?.billing_agreement_id : event.resource?.id;\nif (isSubscriptionEvent && !/^I-[A-Z0-9]+$/.test(subscriptionId || '')) {\n  throw new Error('Verified subscription event has no subscription ID');\n}\n\nreturn [{\n  json: {\n    provider: 'paypal',\n    environment: 'sandbox',\n    provider_event_id: event.id,\n    event_type: event.event_type,\n    is_subscription_event: isSubscriptionEvent,\n    subscription_id: isSubscriptionEvent ? subscriptionId : null,\n    event\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -432,
+        -112
+      ],
+      "id": "e4088d59-bb85-4f06-ab97-dfa262025019",
+      "name": "Process Payment Event"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://zpxqetyrzpeleimnvzgq.supabase.co/rest/v1/rpc/record_verified_payment_event",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  p_provider: $json.provider,\n  p_environment: $json.environment,\n  p_event: $json.event\n}) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1300,
+        360
+      ],
+      "id": "e032d149-1735-43d6-b7e3-fb8fbfd1dded",
+      "name": "Save Verified Payment Event",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "tmEckeS2RStlOqny",
+          "name": "Supabase Payment RPC - Secret Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "82709ca5-9fbf-40b7-9af4-3827e876e9dc",
+              "leftValue": "={{ $json.is_subscription_event }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1050,
+        260
+      ],
+      "id": "c15027d1-63bf-41ee-a0cc-d4505c2bd318",
+      "name": "Is Subscription Event?"
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://api-m.sandbox.paypal.com/v1/billing/subscriptions/' + $json.subscription_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $('PayPal - Get Access Token').first().json.access_token }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1300,
+        160
+      ],
+      "id": "aedcd8f5-3639-418f-9def-e5df8d2cd785",
+      "name": "PayPal - Get Subscription Details"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://zpxqetyrzpeleimnvzgq.supabase.co/rest/v1/rpc/record_verified_subscription_event",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ p_provider: $('Process Payment Event').first().json.provider, p_environment: $('Process Payment Event').first().json.environment, p_event: $('Process Payment Event').first().json.event, p_details: $json }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1570,
+        160
+      ],
+      "id": "44dc186d-5933-47b1-91ca-a83645d9cd18",
+      "name": "Save Verified Subscription Event",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "tmEckeS2RStlOqny",
+          "name": "Supabase Payment RPC - Secret Key"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "PayPal - Get Access Token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PayPal - Get Access Token": {
+      "main": [
+        [
+          {
+            "node": "PayPal - Verify Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PayPal - Verify Webhook": {
+      "main": [
+        [
+          {
+            "node": "Process Payment Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Payment Event": {
+      "main": [
+        [
+          {
+            "node": "Is Subscription Event?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Subscription Event?": {
+      "main": [
+        [
+          {
+            "node": "PayPal - Get Subscription Details",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Save Verified Payment Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PayPal - Get Subscription Details": {
+      "main": [
+        [
+          {
+            "node": "Save Verified Subscription Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "active": false,
+  "pinData": {}
+}

@@ -80,15 +80,16 @@
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'mt-6 w-full rounded-lg bg-blue-600 px-5 py-3 font-semibold hover:bg-blue-500 disabled:bg-slate-700 disabled:text-slate-400';
-        button.disabled = offer.offer_type !== 'one_time';
-        button.textContent = button.disabled ? 'Subscriptions coming later' : 'Continue to PayPal sandbox';
-        if (!button.disabled) button.addEventListener('click', () => startCheckout(offer.id, button));
+        button.disabled = !['one_time', 'subscription'].includes(offer.offer_type);
+        button.textContent = button.disabled ? 'Offer unavailable' :
+          offer.offer_type === 'subscription' ? 'Start test subscription' : 'Continue to PayPal sandbox';
+        if (!button.disabled) button.addEventListener('click', () => startCheckout(offer.id, button, offer.offer_type));
         card.append(name, price, type, button);
         offersElement.append(card);
       }
     }
 
-    async function startCheckout(offerId, button) {
+    async function startCheckout(offerId, button, offerType) {
       button.disabled = true;
       button.textContent = 'Starting checkout...';
       status.textContent = '';
@@ -106,7 +107,7 @@
       } catch (error) {
         status.textContent = error.message || 'Checkout could not start.';
         button.disabled = false;
-        button.textContent = 'Continue to PayPal sandbox';
+        button.textContent = offerType === 'subscription' ? 'Start test subscription' : 'Continue to PayPal sandbox';
       }
     }
     loadOffers().catch(() => { status.textContent = 'Could not load offers. Please try again later.'; });

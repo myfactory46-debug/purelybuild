@@ -2,6 +2,7 @@ const SUPABASE_URL = 'https://zpxqetyrzpeleimnvzgq.supabase.co';
 const SUPABASE_PUBLIC_KEY = 'sb_publishable_f8An8GUjq9__N2pzvfmsKg_nrPGnKKY';
 const CHECKOUT_START_URL = 'https://purelybuild-agent.app.n8n.cloud/webhook/checkout-start';
 const CHECKOUT_CAPTURE_URL = 'https://purelybuild-agent.app.n8n.cloud/webhook/checkout-capture';
+const SUBSCRIPTION_START_URL = 'https://purelybuild-agent.app.n8n.cloud/webhook/subscription-start';
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function json(body, status = 200) {
@@ -66,21 +67,62 @@ async function startCheckout(request, env) {
     return json({ error: 'Could not check project or offer' }, 502);
   }
   if (projects.length !== 1) return json({ error: 'Project not found' }, 404);
-  if (offers.length !== 1 || offers[0].offer_type !== 'one_time') {
+  if (offers.length !== 1 || !['one_time', 'subscription'].includes(offers[0].offer_type)) {
     return json({ error: 'Offer is unavailable for this checkout' }, 400);
+  }
+  const subscription = offers[0].offer_type === 'subscription';
+  if (subscription && env.ENABLE_SANDBOX_SUBSCRIPTIONS !== 'true') {
+    return json({ error: 'Subscriptions are not available yet' }, 503);
+  }
+
+  let subscriptionRequest;
+  if (subscription) {
+    try {
+      const prepare = await fetch(`${SUPABASE_URL}/rest/v1/rpc/start_subscription_request`, {
+        method: 'POST',
+        headers: {
+          apikey: SUPABASE_PUBLIC_KEY,
+          authorization: `Bearer ${token}`,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          p_project_id: projectId,
+          p_offer_id: offerId,
+          p_provider: 'paypal',
+          p_environment: 'sandbox',
+          p_checkout_request_id: crypto.randomUUID(),
+        }),
+      });
+      if (!prepare.ok) return json({ error: 'Subscription is unavailable for this project' }, 400);
+      subscriptionRequest = await prepare.json();
+      if (!UUID.test(String(subscriptionRequest.subscription_request_id)) ||
+          !/^P-[A-Z0-9]+$/.test(String(subscriptionRequest.plan_id))) {
+        return json({ error: 'Invalid subscription setup' }, 502);
+      }
+    } catch {
+      return json({ error: 'Could not prepare subscription' }, 502);
+    }
   }
 
   let response;
   try {
-    response = await fetch(CHECKOUT_START_URL, {
+    response = await fetch(subscription ? SUBSCRIPTION_START_URL : CHECKOUT_START_URL, {
       method: 'POST',
-      headers: { 'content-type': 'application/json', 'X-Checkout-Internal-Key': env.N8N_CHECKOUT_INTERNAL_KEY, authorization: `Bearer ${token}` },
+      headers: {
+        'content-type': 'application/json',
+        'X-Checkout-Internal-Key': env.N8N_CHECKOUT_INTERNAL_KEY,
+        authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({
         project_id: projectId,
         offer_id: offerId,
         provider: 'paypal',
         environment: 'sandbox',
         checkout_request_id: crypto.randomUUID(),
+        ...(subscription ? {
+          subscription_request_id: subscriptionRequest.subscription_request_id,
+          plan_id: subscriptionRequest.plan_id,
+        } : {}),
         checkout_return_origin: new URL(request.url).origin,
       }),
     });
@@ -106,7 +148,17 @@ async function startCheckout(request, env) {
   } catch {
     return json({ error: 'Invalid checkout response' }, 502);
   }
-  if (approvalUrl.protocol !== 'https:' || !/(^|\.)paypal\.com$/.test(approvalUrl.hostname) || !output.attempt_id || !output.order_id) {
+  if (approvalUrl.protocol !== 'https:' || !/(^|\.)paypal\.com$/.test(approvalUrl.hostname)) {
+    return json({ error: 'Invalid checkout response' }, 502);
+  }
+  if (subscription) {
+    if (output.subscription_request_id !== subscriptionRequest.subscription_request_id ||
+        !/^I-[A-Z0-9]+$/.test(String(output.subscription_id))) {
+      return json({ error: 'Invalid subscription response' }, 502);
+    }
+    return json({ approval_url: approvalUrl.href, subscription_request_id: output.subscription_request_id });
+  }
+  if (!UUID.test(String(output.attempt_id)) || !output.order_id) {
     return json({ error: 'Invalid checkout response' }, 502);
   }
   return json({ approval_url: approvalUrl.href, attempt_id: output.attempt_id, order_id: output.order_id });
@@ -180,6 +232,29 @@ async function checkoutStatus(request) {
   }
 }
 
+async function subscriptionStatus(request) {
+  const token = bearerToken(request);
+  if (!token) return json({ error: 'Sign in to continue' }, 401);
+  const requestId = new URL(request.url).searchParams.get('request_id');
+  if (!UUID.test(String(requestId))) return json({ error: 'Invalid subscription reference' }, 400);
+  try {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/subscription_request_status`, {
+      method: 'POST',
+      headers: {
+        apikey: SUPABASE_PUBLIC_KEY,
+        authorization: `Bearer ${token}`,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({ p_request_id: requestId }),
+    });
+    if (response.status === 401) return json({ error: 'Session expired. Sign in again' }, 401);
+    if (!response.ok) return json({ error: 'Subscription request not found' }, 404);
+    return json(await response.json());
+  } catch {
+    return json({ error: 'Could not check subscription status' }, 502);
+  }
+}
+
 export default {
   async fetch(request, env) {
     const pathname = new URL(request.url).pathname;
@@ -194,6 +269,10 @@ export default {
     if (pathname === '/api/checkout/status') {
       if (request.method !== 'GET') return json({ error: 'Method not allowed' }, 405);
       return checkoutStatus(request);
+    }
+    if (pathname === '/api/checkout/subscription-status') {
+      if (request.method !== 'GET') return json({ error: 'Method not allowed' }, 405);
+      return subscriptionStatus(request);
     }
     if (pathname.startsWith('/api/')) return json({ error: 'Not found' }, 404);
     return env.ASSETS.fetch(request);
