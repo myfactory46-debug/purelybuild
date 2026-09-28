@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Subscription status | PurelyBuild</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="min-h-screen bg-slate-950 text-white antialiased">
+  <header class="border-b border-slate-800 px-5 py-5">
+    <div class="max-w-2xl mx-auto flex items-center justify-between">
+      <a href="dashboard.html" class="font-bold text-blue-400 text-xl">PurelyBuild</a>
+      <a href="dashboard.html" class="text-sm text-slate-300 hover:text-white">Dashboard</a>
+    </div>
+  </header>
+  <main class="max-w-2xl mx-auto px-5 py-16">
+    <div class="rounded-2xl border border-slate-700 bg-slate-900 p-7 sm:p-10">
+      <h1 class="text-3xl font-bold">Subscription status</h1>
+      <p id="message" role="status" aria-live="polite" class="text-slate-300 mt-5">Checking your subscription...</p>
+      <button id="check-again" type="button" class="mt-7 rounded-lg bg-blue-600 px-5 py-3 font-semibold hover:bg-blue-500">Check again</button>
+      <p class="text-sm text-slate-500 mt-6">Access begins only after the payment is confirmed by PayPal.</p>
+    </div>
+  </main>
+  <script>
+    const client = window.supabase.createClient(
+      'https://zpxqetyrzpeleimnvzgq.supabase.co',
+      'sb_publishable_f8An8GUjq9__N2pzvfmsKg_nrPGnKKY'
+    );
+    const params = new URLSearchParams(location.search);
+    const requestId = params.get('request_id');
+    const message = document.getElementById('message');
+    const button = document.getElementById('check-again');
+
+    async function check() {
+      if (!requestId || !/^[0-9a-f-]{36}$/i.test(requestId)) {
+        message.textContent = 'The subscription return link is incomplete.';
+        return;
+      }
+      const { data, error } = await client.auth.getSession();
+      if (error || !data.session) {
+        location.href = `auth.html?next=${encodeURIComponent(location.pathname + location.search)}`;
+        return;
+      }
+      button.disabled = true;
+      try {
+        const response = await fetch(`/api/checkout/subscription-status?request_id=${encodeURIComponent(requestId)}`, {
+          headers: { authorization: `Bearer ${data.session.access_token}` },
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || 'Could not check subscription status.');
+        if (result.payment_confirmed) {
+          message.textContent = 'Your test subscription payment is confirmed.';
+        } else if (result.subscription_status === 'needs_review') {
+          message.textContent = 'This subscription needs a payment review. No access was granted.';
+        } else if (['cancelled', 'expired', 'suspended'].includes(result.subscription_status)) {
+          message.textContent = `Subscription status: ${result.subscription_status}.`;
+        } else if (result.subscription_status === 'past_due') {
+          message.textContent = 'The subscription payment has failed. Check your PayPal account.';
+        } else {
+          message.textContent = 'PayPal approval was received. Waiting for verified payment confirmation; check again shortly.';
+        }
+      } catch (error) {
+        message.textContent = error.message || 'Could not check subscription status.';
+      } finally {
+        button.disabled = false;
+      }
+    }
+    button.addEventListener('click', check);
+    if (params.get('cancelled') === '1') {
+      message.textContent = 'PayPal subscription approval was cancelled. No payment was confirmed here.';
+    } else {
+      check();
+    }
+  </script>
+</body>
+</html>

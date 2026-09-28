@@ -63,6 +63,11 @@
         const SUPABASE_URL = 'https://zpxqetyrzpeleimnvzgq.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_f8An8GUjq9__N2pzvfmsKg_nrPGnKKY';
         let supabaseClient = null;
+        const next = new URLSearchParams(location.search).get('next');
+        let nextUrl = null;
+        try { nextUrl = next ? new URL(next, location.origin) : null; } catch (_) {}
+        const destination = nextUrl && next.startsWith('/') && nextUrl.origin === location.origin
+            ? nextUrl.pathname + nextUrl.search : 'dashboard.html';
 
         function getSupabase() {
             if (!supabaseClient) {
@@ -118,7 +123,7 @@
                     if (error) throw error;
                     msg.className = 'text-center text-xs font-medium text-emerald-400 mt-4';
                     msg.innerText = '🎉 Logged in! Redirecting...';
-                    setTimeout(() => window.location.href = 'dashboard.html', 800);
+                    setTimeout(() => window.location.href = destination, 800);
                 } else {
                     const { data, error } = await client.auth.signUp({ 
                         email, 
@@ -133,7 +138,7 @@
                     } else if (data.session) {
                         msg.className = 'text-center text-xs font-medium text-emerald-400 mt-4';
                         msg.innerText = '🎉 Account created! Redirecting...';
-                        setTimeout(() => window.location.href = 'dashboard.html', 800);
+                        setTimeout(() => window.location.href = destination, 800);
                     }
                 }
             } catch (err) {
