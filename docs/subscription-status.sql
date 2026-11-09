@@ -26,7 +26,7 @@ begin
     'subscription_status', v_sub.status,
     'paid_through', v_sub.current_period_end,
     'payment_confirmed', coalesce(
-      v_sub.status = 'active' and v_sub.current_period_end > now(), false)
+      v_sub.status in ('active', 'cancelled') and v_sub.current_period_end > now(), false)
   );
 end;
 $$;
