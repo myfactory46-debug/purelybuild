@@ -1,0 +1,222 @@
+{
+  "name": "PurelyBuild V1 - Subscription Start (Sandbox Draft)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "subscription-start",
+        "authentication": "headerAuth",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        320,
+        300
+      ],
+      "id": "51be0c08-b826-4bd6-a542-3fe731d5f993",
+      "name": "Subscription Start",
+      "webhookId": "7f9f32bf-48b7-4eb2-868b-79fba1f602da",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mr3JbJHJjDxI63Ap",
+          "name": "Checkout Start - Internal Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api-m.sandbox.paypal.com/v1/oauth2/token",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "grant_type",
+              "value": "client_credentials"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        590,
+        300
+      ],
+      "id": "9f467bcf-4f78-472a-8ddf-c3d041c53680",
+      "name": "PayPal - Get Access Token",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "2P4OnqLQZnurLBWC",
+          "name": "PayPal Sandbox Basic Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api-m.sandbox.paypal.com/v1/billing/subscriptions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $json.access_token }}"
+            },
+            {
+              "name": "PayPal-Request-Id",
+              "value": "={{ $('Subscription Start').first().json.body.subscription_request_id }}"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ plan_id: $('Subscription Start').first().json.body.plan_id, custom_id: $('Subscription Start').first().json.body.subscription_request_id, application_context: { brand_name: 'PurelyBuild', shipping_preference: 'NO_SHIPPING', return_url: 'https://codex-phase9-sandbox-checkout-purelybuild.myfactory46.workers.dev/subscription-return.html?request_id=' + encodeURIComponent($('Subscription Start').first().json.body.subscription_request_id), cancel_url: 'https://codex-phase9-sandbox-checkout-purelybuild.myfactory46.workers.dev/subscription-return.html?cancelled=1&request_id=' + encodeURIComponent($('Subscription Start').first().json.body.subscription_request_id) } }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        860,
+        300
+      ],
+      "id": "281985a4-946d-49e7-a310-78c51fe40c79",
+      "name": "PayPal - Create Subscription"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://zpxqetyrzpeleimnvzgq.supabase.co/rest/v1/rpc/bind_subscription_request",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "p_request_id",
+              "value": "={{ $('Subscription Start').first().json.body.subscription_request_id }}"
+            },
+            {
+              "name": "p_subscription_id",
+              "value": "={{ $('PayPal - Create Subscription').first().json.id }}"
+            },
+            {
+              "name": "p_plan_id",
+              "value": "={{ $('PayPal - Create Subscription').first().json.plan_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1130,
+        300
+      ],
+      "id": "528a8ea3-625e-48a8-bd46-ed10d294232f",
+      "name": "Bind PayPal Subscription",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "xd7DAvxEgDvva7pd",
+          "name": "Supabase Service Secret - Payment Orders"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d199c082-69df-4b45-a73d-b4a5740f365c",
+              "name": "approval_url",
+              "value": "={{ $('PayPal - Create Subscription').first().json.links.find(link => link.rel === 'approve')?.href }}",
+              "type": "string"
+            },
+            {
+              "id": "c70844d4-75dc-42d7-8dc9-50f6036f4b30",
+              "name": "subscription_id",
+              "value": "={{ $('PayPal - Create Subscription').first().json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "abac4f7e-9302-4ab6-a7c0-44d4a2a810d3",
+              "name": "subscription_request_id",
+              "value": "={{ $('Subscription Start').first().json.body.subscription_request_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1400,
+        300
+      ],
+      "id": "5b59155b-652e-4fb8-8c95-b87079bf3786",
+      "name": "Subscription Response"
+    }
+  ],
+  "connections": {
+    "Subscription Start": {
+      "main": [
+        [
+          {
+            "node": "PayPal - Get Access Token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PayPal - Get Access Token": {
+      "main": [
+        [
+          {
+            "node": "PayPal - Create Subscription",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PayPal - Create Subscription": {
+      "main": [
+        [
+          {
+            "node": "Bind PayPal Subscription",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bind PayPal Subscription": {
+      "main": [
+        [
+          {
+            "node": "Subscription Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false
+}

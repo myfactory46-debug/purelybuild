@@ -1,0 +1,24 @@
+{{ JSON.stringify({
+  intent: 'CAPTURE',
+  purchase_units: [{
+    reference_id: $('Start Payment Attempt').first().json.attempt_id,
+    custom_id: $('Start Payment Attempt').first().json.attempt_id,
+    payee: {
+      merchant_id: String($('Start Payment Attempt').first().json.merchant_id).trim()
+    },
+    amount: {
+      currency_code: $('Start Payment Attempt').first().json.currency,
+      value: Number($('Start Payment Attempt').first().json.amount).toFixed(2)
+    }
+  }],
+  payment_source: {
+    paypal: {
+      experience_context: {
+        return_url: $('Checkout Start').first().json.body.checkout_return_origin + '/checkout-return.html?attempt_id=' +
+          encodeURIComponent($('Start Payment Attempt').first().json.attempt_id),
+        cancel_url: $('Checkout Start').first().json.body.checkout_return_origin + '/checkout-return.html?cancelled=1&attempt_id=' +
+          encodeURIComponent($('Start Payment Attempt').first().json.attempt_id)
+      }
+    }
+  }
+}) }}

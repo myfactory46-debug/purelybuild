@@ -141,31 +141,46 @@
                     return;
                 }
 
-                container.innerHTML = sites.map(site => `
+                container.innerHTML = sites.map(site => {
+                    const name = escapeHtml(site.name || site.site_name || 'Untitled Site');
+                    const subdomain = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(site.subdomain || '')
+                        ? site.subdomain : null;
+                    const projectId = Number(site.id);
+                    if (!Number.isSafeInteger(projectId) || projectId <= 0) return '';
+                    return `
                     <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition flex flex-col justify-between">
                         <div>
                             <div class="flex items-center justify-between mb-2">
-                                <h3 class="font-semibold text-white text-base">${site.name || site.site_name || 'Untitled Site'}</h3>
+                                <h3 class="font-semibold text-white text-base">${name}</h3>
                                 <div class="flex items-center gap-2">
                                     <span class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full font-medium">Active</span>
-                                    <button onclick="promptDeleteSite(${site.id})" title="Delete Site" class="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition cursor-pointer border border-transparent hover:border-red-500/20">
+                                    <button onclick="promptDeleteSite(${projectId})" title="Delete Site" class="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition cursor-pointer border border-transparent hover:border-red-500/20">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                         </svg>
                                     </button>
                                 </div>
                             </div>
-                            <p class="text-xs text-slate-400 font-mono">${site.subdomain ? site.subdomain + '.purelybuild.com' : 'no-domain'}</p>
+                            <p class="text-xs text-slate-400 font-mono">${subdomain ? subdomain + '.purelybuild.com' : 'no-domain'}</p>
                         </div>
                         <div class="mt-6 pt-4 border-t border-slate-800/80 flex justify-between items-center text-xs">
                             <span class="text-slate-500">Deployed</span>
-                            <a href="https://${site.subdomain || 'demo'}.purelybuild.com" target="_blank" class="text-blue-400 hover:underline font-medium">Visit Site →</a>
+                            <div class="flex gap-3 items-center">
+                                <a href="checkout.html?project_id=${projectId}" class="text-blue-400 hover:underline font-medium">Test checkout →</a>
+                                ${subdomain ? `<a href="https://${subdomain}.purelybuild.com" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline font-medium">Visit Site →</a>` : ''}
+                            </div>
                         </div>
                     </div>
-                `).join('');
+                `}).join('');
             } catch (e) {
                 showEmptyState();
             }
+        }
+
+        function escapeHtml(value) {
+            return String(value).replace(/[&<>"']/g, char => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            })[char]);
         }
 
         function showEmptyState() {

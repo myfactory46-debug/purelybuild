@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Payment status | PurelyBuild</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="min-h-screen bg-slate-950 text-white antialiased">
+  <header class="border-b border-slate-800 px-5 py-5">
+    <div class="max-w-2xl mx-auto flex items-center justify-between">
+      <a href="dashboard.html" class="font-bold text-blue-400 text-xl">PurelyBuild</a>
+      <a href="dashboard.html" class="text-sm text-slate-300 hover:text-white">Dashboard</a>
+    </div>
+  </header>
+  <main class="max-w-2xl mx-auto px-5 py-16">
+    <div class="rounded-2xl border border-slate-700 bg-slate-900 p-7 sm:p-10">
+      <h1 class="text-3xl font-bold">Payment status</h1>
+      <p id="message" role="status" aria-live="polite" class="text-slate-300 mt-5">Checking your payment...</p>
+      <button id="capture" type="button" hidden class="mt-7 rounded-lg bg-blue-600 px-5 py-3 font-semibold hover:bg-blue-500 disabled:bg-slate-700">Complete test payment</button>
+      <button id="recheck" type="button" hidden class="mt-7 rounded-lg border border-slate-500 px-5 py-3 font-semibold hover:bg-slate-800 disabled:opacity-50">Check payment status</button>
+      <p class="text-sm text-slate-500 mt-6">Only a confirmed payment event marks this payment complete.</p>
+    </div>
+  </main>
+  <script>
+    const client = window.supabase.createClient(
+      'https://zpxqetyrzpeleimnvzgq.supabase.co',
+      'sb_publishable_f8An8GUjq9__N2pzvfmsKg_nrPGnKKY'
+    );
+    const params = new URLSearchParams(location.search);
+    const attemptId = params.get('attempt_id');
+    const orderId = params.get('token');
+    const message = document.getElementById('message');
+    const button = document.getElementById('capture');
+    const recheck = document.getElementById('recheck');
+    const submittedKey = `purelybuild_capture_${attemptId}`;
+    let session;
+
+    async function api(path, options = {}) {
+      const { data, error } = await client.auth.getSession();
+      if (error || !data.session) throw new Error('Your session expired. Sign in again.');
+      const response = await fetch(path, {
+        ...options,
+        headers: { ...(options.headers || {}), authorization: `Bearer ${data.session.access_token}` },
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Could not check your payment.');
+      return result;
+    }
+
+    async function showStatus() {
+      const path = `/api/checkout/status?${new URLSearchParams({ attempt_id: attemptId, order_id: orderId })}`;
+      const result = await api(path);
+      if (result.outcome === 'completed') {
+        button.hidden = true;
+        recheck.hidden = true;
+        message.textContent = 'Payment confirmed. You can return to your dashboard.';
+      } else if (result.outcome === 'pending') {
+        const submitted = sessionStorage.getItem(submittedKey) === '1';
+        message.textContent = submitted
+          ? 'Confirmation request sent. Check the payment status shortly.'
+          : 'PayPal approval received. Complete the sandbox payment to continue.';
+        button.hidden = submitted;
+        recheck.hidden = !submitted;
+      } else if (result.outcome === 'processing') {
+        button.hidden = true;
+        recheck.hidden = false;
+        message.textContent = 'Payment submitted. Waiting for verified confirmation. Check this page again shortly.';
+      } else {
+        button.hidden = true;
+        recheck.hidden = true;
+        message.textContent = `Payment status: ${result.outcome}. Contact support if this is unexpected.`;
+      }
+    }
+
+    button.addEventListener('click', async () => {
+      button.disabled = true;
+      button.hidden = true;
+      sessionStorage.setItem(submittedKey, '1');
+      message.textContent = 'Confirming your payment...';
+      try {
+        await api('/api/checkout/capture', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ attempt_id: attemptId, order_id: orderId }),
+        });
+        button.hidden = true;
+        await showStatus();
+      } catch (error) {
+        message.textContent = error.message || 'Could not confirm payment. Check the status before trying again.';
+        button.hidden = true;
+        recheck.hidden = false;
+      } finally {
+        button.disabled = false;
+      }
+    });
+
+    recheck.addEventListener('click', async () => {
+      recheck.disabled = true;
+      try { await showStatus(); }
+      catch (error) { message.textContent = error.message || 'Could not check payment status.'; }
+      finally { recheck.disabled = false; }
+    });
+
+    (async () => {
+      if (params.get('cancelled') === '1') {
+        message.textContent = 'PayPal checkout was cancelled. No payment was completed here.';
+        return;
+      }
+      if (!attemptId || !orderId) {
+        message.textContent = 'The payment return link is incomplete.';
+        return;
+      }
+      session = (await client.auth.getSession()).data.session;
+      if (!session) {
+        location.href = `auth.html?next=${encodeURIComponent(location.pathname + location.search)}`;
+        return;
+      }
+      try { await showStatus(); }
+      catch (error) { message.textContent = error.message || 'Could not check payment status.'; }
+    })();
+  </script>
+</body>
+</html>
