@@ -49,7 +49,18 @@
         });
         const result = await response.json();
         if (!response.ok) throw new Error(result.error || 'Could not check subscription status.');
-        if (result.payment_confirmed) {
+        if (result.subscription_status === 'cancelled' && result.payment_confirmed) {
+          const paidThrough = new Date(result.paid_through);
+          const date = Number.isNaN(paidThrough.getTime())
+            ? null
+            : new Intl.DateTimeFormat('en-GB', {
+                day: 'numeric', month: 'long', year: 'numeric',
+                hour: '2-digit', minute: '2-digit', timeZone: 'UTC', timeZoneName: 'short',
+              }).format(paidThrough);
+          message.textContent = date
+            ? `Renewal is cancelled. Your paid access continues until ${date}.`
+            : 'Renewal is cancelled. Your paid access continues until the end of the paid period.';
+        } else if (result.payment_confirmed) {
           message.textContent = 'Your test subscription payment is confirmed.';
         } else if (result.subscription_status === 'needs_review') {
           message.textContent = 'This subscription needs a payment review. No access was granted.';
