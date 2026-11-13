@@ -19,6 +19,7 @@ declare
   v_original public.payment_events%rowtype;
   v_existing public.payment_events%rowtype;
   v_subscription public.subscriptions%rowtype;
+  v_newer_paid_sale boolean;
 begin
   if p_provider is distinct from 'paypal'
      or p_environment is distinct from 'sandbox'
@@ -96,11 +97,37 @@ begin
                               'event_id', v_existing.id);
   end if;
 
-  update public.subscriptions
-  set status = 'needs_review',
-      current_period_end = least(coalesce(current_period_end, now()), now()),
-      updated_at = now()
-  where id = v_subscription.id;
+  -- A refund for an earlier billing cycle must not revoke a later paid cycle.
+  -- The subscription row is locked above, so this decision uses its current period.
+  select exists (
+    select 1
+    from public.payment_events newer
+    where newer.provider = p_provider
+      and newer.environment = p_environment
+      and newer.provider_subscription_id = v_original.provider_subscription_id
+      and newer.normalized_event_type = 'subscription_payment_completed'
+      and newer.verification_status = 'verified'
+      and newer.processing_status = 'processed'
+      and newer.id <> v_original.id
+      and (newer.raw_payload #>> '{resource,create_time}')::timestamptz
+          > (v_original.raw_payload #>> '{resource,create_time}')::timestamptz
+      and (newer.raw_payload #>> '{resource,create_time}')::timestamptz
+          >= v_subscription.current_period_start - interval '10 minutes'
+  ) into v_newer_paid_sale;
+
+  if not (
+    v_newer_paid_sale
+    and v_subscription.status in ('active', 'cancelled')
+    and v_subscription.current_period_start
+        > (v_original.raw_payload #>> '{resource,create_time}')::timestamptz
+    and v_subscription.current_period_end > now()
+  ) then
+    update public.subscriptions
+    set status = 'needs_review',
+        current_period_end = least(coalesce(current_period_end, now()), now()),
+        updated_at = now()
+    where id = v_subscription.id;
+  end if;
 
   update public.payment_events
   set normalized_event_type = 'subscription_payment_refunded',
@@ -114,7 +141,13 @@ begin
   return jsonb_build_object(
     'outcome', 'processed',
     'event_id', v_existing.id,
-    'subscription_id', v_original.provider_subscription_id
+    'subscription_id', v_original.provider_subscription_id,
+    'access_action', case when v_newer_paid_sale
+      and v_subscription.status in ('active', 'cancelled')
+      and v_subscription.current_period_start
+          > (v_original.raw_payload #>> '{resource,create_time}')::timestamptz
+      and v_subscription.current_period_end > now()
+      then 'preserved_newer_paid_period' else 'revoked_for_refund' end
   );
 end;
 $$;
